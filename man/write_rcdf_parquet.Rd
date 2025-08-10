@@ -2,13 +2,29 @@
 % Please edit documentation in R/write_parquet.R
 \name{write_rcdf_parquet}
 \alias{write_rcdf_parquet}
-\title{Title}
+\title{Write RCDF Data to Parquet Files}
 \usage{
 write_rcdf_parquet(data, path, ..., parent_dir = NULL)
 }
 \arguments{
-\item{parent_dir}{}
+\item{data}{A list where each element is a data frame or tibble that will be written to a Parquet file.}
+
+\item{path}{The directory path where the Parquet files will be written.}
+
+\item{...}{Additional arguments passed to `rcdf::write_parquet()` while writing each Parquet file.}
+
+\item{parent_dir}{An optional parent directory to be included in the path where the files will be written.}
+}
+\value{
+A character vector of file paths to the written Parquet files.
 }
 \description{
-Title
+This function writes an RCDF object (a list of data frames) to multiple Parquet files. Each data frame in the list is written to its corresponding Parquet file in the specified path.
+}
+\examples{
+data_list <- list(
+  df1 = tibble(a = 1:5),
+  df2 = tibble(b = 6:10)
+)
+write_rcdf_parquet(data_list, "output_folder")
 }

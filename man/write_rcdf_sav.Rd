@@ -2,13 +2,27 @@
 % Please edit documentation in R/write_rcdf_as.R
 \name{write_rcdf_sav}
 \alias{write_rcdf_sav}
-\title{Title}
+\title{Write RCDF Data to SPSS `.sav` Files}
 \usage{
 write_rcdf_sav(data, path, ..., parent_dir = NULL)
 }
 \arguments{
-\item{parent_dir}{}
+\item{data}{A valid RCDF object.}
+
+\item{path}{Output directory for files.}
+
+\item{...}{Additional arguments passed to `haven::write_sav()`.}
+
+\item{parent_dir}{Optional subdirectory under `path` to group SPSS files.}
+}
+\value{
+Invisibly returns `NULL`. Files are written to disk.
 }
 \description{
-Title
+Writes each table in the RCDF object to a `.sav` file using the `haven` package for compatibility with SPSS.
+}
+\examples{
+\dontrun{
+write_rcdf_sav(my_rcdf_data, "spss_exports/")
+}
 }

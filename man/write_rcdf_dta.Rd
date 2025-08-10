@@ -2,13 +2,27 @@
 % Please edit documentation in R/write_rcdf_as.R
 \name{write_rcdf_dta}
 \alias{write_rcdf_dta}
-\title{Title}
+\title{Write RCDF Data to Stata `.dta` Files}
 \usage{
 write_rcdf_dta(data, path, ..., parent_dir = NULL)
 }
 \arguments{
-\item{parent_dir}{}
+\item{data}{A valid RCDF object.}
+
+\item{path}{Output directory for files.}
+
+\item{...}{Additional arguments passed to `foreign::write.dta()`.}
+
+\item{parent_dir}{Optional subdirectory under `path` to group Stata files.}
+}
+\value{
+Invisibly returns `NULL`. Files are written to disk.
 }
 \description{
-Title
+Writes each table in the RCDF object to a `.dta` file for use in Stata.
+}
+\examples{
+\dontrun{
+write_rcdf_dta(my_rcdf_data, "stata_exports/")
+}
 }

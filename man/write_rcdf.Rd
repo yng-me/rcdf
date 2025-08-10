@@ -2,13 +2,32 @@
 % Please edit documentation in R/write_rcdf.R
 \name{write_rcdf}
 \alias{write_rcdf}
-\title{Title}
+\title{Write Data to RCDF Format}
 \usage{
 write_rcdf(data, path, pub_key, ..., metadata = list())
 }
 \arguments{
-\item{metadata}{}
+\item{data}{A list of data frames or tables to be written to RCDF format. Each element of the list represents a record.}
+
+\item{path}{The path where the RCDF file will be written. The file will be saved with a `.rcdf` extension if not already specified.}
+
+\item{pub_key}{The public RSA key used to encrypt the AES encryption keys.}
+
+\item{...}{Additional arguments passed to helper functions if needed.}
+
+\item{metadata}{A list of metadata to be included in the RCDF file. Can contain system information or other relevant details.}
+}
+\value{
+NULL. The function writes the data to a `.rcdf` file at the specified path.
 }
 \description{
-Title
+This function writes data to an RCDF (Reusable Data Container Format) archive. It encrypts the data using AES, generates metadata,
+and then creates a zip archive containing both the encrypted Parquet files and metadata. The function supports the inclusion of
+metadata such as system information and encryption keys.
+}
+\examples{
+\dontrun{
+# Example usage of writing an RCDF file
+write_rcdf(data = my_data, path = "path/to/rcdf_file.rcdf", pub_key = my_pub_key)
+}
 }

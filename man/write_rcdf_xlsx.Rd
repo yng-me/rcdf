@@ -2,13 +2,27 @@
 % Please edit documentation in R/write_rcdf_as.R
 \name{write_rcdf_xlsx}
 \alias{write_rcdf_xlsx}
-\title{Title}
+\title{Write RCDF Data to Excel Files}
 \usage{
 write_rcdf_xlsx(data, path, ..., parent_dir = NULL)
 }
 \arguments{
-\item{parent_dir}{}
+\item{data}{A valid RCDF object.}
+
+\item{path}{The output directory.}
+
+\item{...}{Additional arguments passed to `openxlsx::write.xlsx()`.}
+
+\item{parent_dir}{Optional subdirectory under `path` to group Excel files.}
+}
+\value{
+Invisibly returns `NULL`. Files are written to disk.
 }
 \description{
-Title
+Writes each table in the RCDF object as a separate `.xlsx` file using the `openxlsx` package.
+}
+\examples{
+\dontrun{
+write_rcdf_xlsx(my_rcdf_data, "excel_exports/")
+}
 }

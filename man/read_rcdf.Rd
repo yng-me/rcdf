@@ -2,13 +2,36 @@
 % Please edit documentation in R/read_rcdf.R
 \name{read_rcdf}
 \alias{read_rcdf}
-\title{Title}
+\title{Read and Decrypt RCDF Data}
 \usage{
 read_rcdf(path, decryption_key, ..., password = NULL, metadata = NULL)
 }
 \arguments{
-\item{metadata}{}
+\item{path}{A string specifying the path to the RCDF archive (zip file).}
+
+\item{decryption_key}{The key used to decrypt the RCDF contents. This can be an RSA or AES key, depending on how the RCDF was encrypted.}
+
+\item{...}{Additional parameters passed to other functions, if needed.}
+
+\item{password}{A password used for RSA decryption (optional).}
+
+\item{metadata}{An optional metadata object containing data dictionaries and value sets. This metadata is applied to the data if provided.}
+}
+\value{
+An RCDF object, which is a list of Parquet files (one for each record) along with attached metadata.
 }
 \description{
-Title
+This function reads an RCDF (Reusable Data Container Format) archive, decrypts its contents using the specified decryption key,
+and loads it into R as an RCDF object. The data files within the archive (usually Parquet files) are decrypted and, if provided,
+metadata (such as data dictionary and value sets) are applied to the data.
+}
+\examples{
+\dontrun{
+# Example usage of reading and decrypting an RCDF file
+rcdf_data <- read_rcdf(
+  path = "path/to/rcdf.zip",
+  decryption_key = my_decryption_key,
+  password = "my_password"
+)
+}
 }

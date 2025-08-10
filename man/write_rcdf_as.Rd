@@ -2,13 +2,27 @@
 % Please edit documentation in R/write_rcdf_as.R
 \name{write_rcdf_as}
 \alias{write_rcdf_as}
-\title{Title}
+\title{Write RCDF Data to Multiple Formats}
 \usage{
 write_rcdf_as(data, path, formats, ...)
 }
 \arguments{
-\item{...}{}
+\item{data}{A named list or RCDF object. Each element should be a table or tibble-like object (typically a `dbplyr` or `dplyr` table).}
+
+\item{path}{The target directory where output files should be saved.}
+
+\item{formats}{A character vector of file formats to export to. Supported formats include: `"csv"`, `"tsv"`, `"json"`, `"parquet"`, `"xlsx"`, `"dta"`, `"sav"`, and `"sqlite"`.}
+
+\item{...}{Additional arguments passed to the respective writer functions.}
+}
+\value{
+Invisibly returns `NULL`. Files are written to disk.
 }
 \description{
-Title
+Exports RCDF-formatted data to one or more supported open data formats. The function automatically dispatches to the appropriate writer function based on the `formats` provided.
+}
+\examples{
+\dontrun{
+write_rcdf_as(my_rcdf_data, "exports/", formats = c("csv", "json", "sqlite"))
+}
 }

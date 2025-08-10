@@ -2,13 +2,28 @@
 % Please edit documentation in R/write_rcdf_as.R
 \name{write_rcdf_csv}
 \alias{write_rcdf_csv}
-\title{Title}
+\title{Write RCDF Data to CSV Files}
 \usage{
 write_rcdf_csv(data, path, ..., parent_dir = NULL)
 }
 \arguments{
-\item{parent_dir}{}
+\item{data}{A valid RCDF object.}
+
+\item{path}{The base output directory.}
+
+\item{...}{Additional arguments passed to `write.csv()`.}
+
+\item{parent_dir}{Optional subdirectory under `path` to group CSV files.}
+}
+\value{
+Invisibly returns `NULL`. Files are written to disk.
 }
 \description{
-Title
+Writes each table in the RCDF object as a separate `.csv` file.
+}
+\examples{
+\dontrun{
+write_rcdf_csv(my_rcdf_data, "data_exports/")
+}
+
 }

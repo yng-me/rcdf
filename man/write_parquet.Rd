@@ -2,13 +2,32 @@
 % Please edit documentation in R/write_parquet.R
 \name{write_parquet}
 \alias{write_parquet}
-\title{Title}
+\title{Write Parquet File with Optional Encryption}
 \usage{
 write_parquet(data, path, ..., encryption_key = NULL)
 }
 \arguments{
-\item{encryption_key}{}
+\item{data}{A data frame or tibble to write to a Parquet file.}
+
+\item{path}{The file path where the Parquet file will be written.}
+
+\item{...}{Additional arguments passed to `arrow::write_parquet()` if no encryption key is provided.}
+
+\item{encryption_key}{A list containing `aes_key` and `aes_iv`. If provided, the data will be encrypted using AES before writing to Parquet.}
+}
+\value{
+None. The function writes the data to a Parquet file at the specified `path`.
 }
 \description{
-Title
+This function writes a dataset to a Parquet file. If an encryption key is provided, the data will be encrypted before writing.
+Otherwise, the function writes the data as a regular Parquet file without encryption.
+}
+\examples{
+data <- tibble(a = 1:5, b = letters[1:5])
+encryption_key <- list(aes_key = "your_aes_key", aes_iv = "your_aes_iv")
+write_parquet(data, "data.parquet", encryption_key = encryption_key)
+
+# Without encryption
+write_parquet(data, "data_no_encryption.parquet")
+
 }

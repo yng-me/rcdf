@@ -2,13 +2,27 @@
 % Please edit documentation in R/write_rcdf_as.R
 \name{write_rcdf_json}
 \alias{write_rcdf_json}
-\title{Title}
+\title{Write RCDF Data to JSON Files}
 \usage{
 write_rcdf_json(data, path, ..., parent_dir = NULL)
 }
 \arguments{
-\item{parent_dir}{}
+\item{data}{A valid RCDF object.}
+
+\item{path}{The output directory for files.}
+
+\item{...}{Additional arguments passed to `jsonlite::write_json()`.}
+
+\item{parent_dir}{Optional subdirectory under `path` to group JSON files.}
+}
+\value{
+Invisibly returns `NULL`. Files are written to disk.
 }
 \description{
-Title
+Writes each table in the RCDF object as a separate `.json` file.
+}
+\examples{
+\dontrun{
+write_rcdf_json(my_rcdf_data, "exports/")
+}
 }

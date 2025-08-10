@@ -2,13 +2,29 @@
 % Please edit documentation in R/write_rcdf_as.R
 \name{write_rcdf_sqlite}
 \alias{write_rcdf_sqlite}
-\title{Title}
+\title{Write RCDF Data to a SQLite Database}
 \usage{
 write_rcdf_sqlite(data, path, db_name = "cbms_data", ..., parent_dir = NULL)
 }
 \arguments{
-\item{parent_dir}{}
+\item{data}{A valid RCDF object.}
+
+\item{path}{Output directory for the database file.}
+
+\item{db_name}{Name of the SQLite database file (without extension).}
+
+\item{...}{Additional arguments passed to `DBI::dbWriteTable()`.}
+
+\item{parent_dir}{Optional subdirectory under `path` to store the SQLite file.}
+}
+\value{
+Invisibly returns `NULL`. A `.db` file is written to disk.
 }
 \description{
-Title
+Writes all tables in the RCDF object to a single SQLite database file.
+}
+\examples{
+\dontrun{
+write_rcdf_sqlite(my_rcdf_data, "db_exports/", db_name = "my_data")
+}
 }

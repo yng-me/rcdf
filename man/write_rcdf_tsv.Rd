@@ -2,13 +2,27 @@
 % Please edit documentation in R/write_rcdf_as.R
 \name{write_rcdf_tsv}
 \alias{write_rcdf_tsv}
-\title{Title}
+\title{Write RCDF Data to TSV Files}
 \usage{
 write_rcdf_tsv(data, path, ..., parent_dir = NULL)
 }
 \arguments{
-\item{parent_dir}{}
+\item{data}{A valid RCDF object.}
+
+\item{path}{The base output directory.}
+
+\item{...}{Additional arguments passed to `write.table()`.}
+
+\item{parent_dir}{Optional subdirectory under `path` to group TSV files.}
+}
+\value{
+Invisibly returns `NULL`. Files are written to disk.
 }
 \description{
-Title
+Writes each table in the RCDF object as a separate tab-separated `.txt` file.
+}
+\examples{
+\dontrun{
+write_rcdf_tsv(my_rcdf_data, "exports/")
+}
 }
