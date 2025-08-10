@@ -21,11 +21,6 @@ Invisibly returns `NULL`. Files are written to disk.
 \description{
 Writes each table in the RCDF object to a `.dta` file for use in Stata.
 }
-\examples{
-\dontrun{
-write_rcdf_dta(my_rcdf_data, "stata_exports/")
-}
-}
 \seealso{
 \link[rcdf]{write_rcdf_as}
 }

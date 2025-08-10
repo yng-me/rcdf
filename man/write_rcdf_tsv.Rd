@@ -21,11 +21,6 @@ Invisibly returns `NULL`. Files are written to disk.
 \description{
 Writes each table in the RCDF object as a separate tab-separated `.txt` file.
 }
-\examples{
-\dontrun{
-write_rcdf_tsv(my_rcdf_data, "exports/")
-}
-}
 \seealso{
 \link[rcdf]{write_rcdf_as}
 }

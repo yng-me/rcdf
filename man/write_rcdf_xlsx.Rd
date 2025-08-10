@@ -21,11 +21,6 @@ Invisibly returns `NULL`. Files are written to disk.
 \description{
 Writes each table in the RCDF object as a separate `.xlsx` file using the `openxlsx` package.
 }
-\examples{
-\dontrun{
-write_rcdf_xlsx(my_rcdf_data, "excel_exports/")
-}
-}
 \seealso{
 \link[rcdf]{write_rcdf_as}
 }

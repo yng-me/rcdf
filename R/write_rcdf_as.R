@@ -14,9 +14,7 @@
 #'
 #' @examples
 #'
-#' \dontrun{
-#' write_rcdf_as(my_rcdf_data, "exports/", formats = c("csv", "json", "sqlite"))
-#' }
+
 
 
 write_rcdf_as <- function(data, path, formats, ...) {
@@ -74,9 +72,6 @@ write_rcdf_as <- function(data, path, formats, ...) {
 #' @seealso \link[rcdf]{write_rcdf_as}
 #'
 #' @examples
-#' \dontrun{
-#' write_rcdf_csv(my_rcdf_data, "data_exports/")
-#' }
 #'
 
 write_rcdf_csv <- function(data, path, ..., parent_dir = NULL) {
@@ -114,9 +109,6 @@ write_rcdf_csv <- function(data, path, ..., parent_dir = NULL) {
 #' @seealso \link[rcdf]{write_rcdf_as}
 #'
 #' @examples
-#' \dontrun{
-#' write_rcdf_tsv(my_rcdf_data, "exports/")
-#' }
 
 write_rcdf_tsv <- function(data, path, ..., parent_dir = NULL) {
 
@@ -154,9 +146,7 @@ write_rcdf_tsv <- function(data, path, ..., parent_dir = NULL) {
 #' @seealso \link[rcdf]{write_rcdf_as}
 #'
 #' @examples
-#' \dontrun{
-#' write_rcdf_json(my_rcdf_data, "exports/")
-#' }
+
 
 write_rcdf_json <- function(data, path, ..., parent_dir = NULL) {
 
@@ -195,9 +185,7 @@ write_rcdf_json <- function(data, path, ..., parent_dir = NULL) {
 #' @seealso \link[rcdf]{write_rcdf_as}
 #'
 #' @examples
-#' \dontrun{
-#' write_rcdf_xlsx(my_rcdf_data, "excel_exports/")
-#' }
+
 
 write_rcdf_xlsx <- function(data, path, ..., parent_dir = NULL) {
 
@@ -235,9 +223,7 @@ write_rcdf_xlsx <- function(data, path, ..., parent_dir = NULL) {
 #' @seealso \link[rcdf]{write_rcdf_as}
 #'
 #' @examples
-#' \dontrun{
-#' write_rcdf_dta(my_rcdf_data, "stata_exports/")
-#' }
+
 
 write_rcdf_dta <- function(data, path, ..., parent_dir = NULL) {
 
@@ -275,9 +261,7 @@ write_rcdf_dta <- function(data, path, ..., parent_dir = NULL) {
 #' @seealso \link[rcdf]{write_rcdf_as}
 #'
 #' @examples
-#' \dontrun{
-#' write_rcdf_sav(my_rcdf_data, "spss_exports/")
-#' }
+
 
 write_rcdf_sav <- function(data, path, ..., parent_dir = NULL) {
 
@@ -316,9 +300,6 @@ write_rcdf_sav <- function(data, path, ..., parent_dir = NULL) {
 #' @seealso \link[rcdf]{write_rcdf_as}
 #'
 #' @examples
-#' \dontrun{
-#' write_rcdf_sqlite(my_rcdf_data, "db_exports/", db_name = "my_data")
-#' }
 
 write_rcdf_sqlite <- function(data, path, db_name = "cbms_data", ..., parent_dir = NULL) {
 
