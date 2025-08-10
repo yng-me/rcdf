@@ -8,15 +8,19 @@ as_rcdf <- function(data) {
   set_class(data, class_name = 'rcdf')
 }
 
+
 is_rcdf <- function(data) {
   inherits(data, 'rcdf') & inherits(data, 'list')
 }
+
+
 
 check_if_rcdf <- function(data) {
   if(!is_rcdf(data)) {
     stop('Not a valid RCDF data file')
   }
 }
+
 
 raw_to_hex <- function(x) {
   if (!is.raw(x)) {
@@ -26,6 +30,12 @@ raw_to_hex <- function(x) {
   hex_string <- paste0(sprintf("%02X", as.integer(x)), collapse = "")
 
   return(hex_string)
+}
+
+
+hex_to_raw <- function(x) {
+  digits <- strtoi(strsplit(x, "")[[1]], base = 16L)
+  as.raw(bitwShiftL(digits[c(TRUE, FALSE)], 4) + digits[c(FALSE, TRUE)])
 }
 
 
@@ -46,6 +56,7 @@ generate_aes_key <- function(passphrase = "") {
 }
 
 
+
 dir_create_new <- function(path, parent_dir = NULL) {
   if(!is.null(parent_dir)) {
     path <- file.path(path, parent_dir)
@@ -53,6 +64,7 @@ dir_create_new <- function(path, parent_dir = NULL) {
   fs::dir_create(path)
   return(path)
 }
+
 
 
 decrypt_info_aes <- function(data, key = list()) {
@@ -88,6 +100,8 @@ decrypt_info_aes <- function(data, key = list()) {
 
 }
 
+
+
 extract_key <- function(meta) {
 
   key <- meta$key_app
@@ -109,12 +123,15 @@ extract_key <- function(meta) {
 }
 
 
+
+
 encrypt_info_rsa <- function(data, pub_key) {
   data |>
     serialize(connection = NULL) |>
     openssl::rsa_encrypt(pubkey = pub_key) |>
     openssl::base64_encode()
 }
+
 
 
 decrypt_info_rsa <- function(data, prv_key, password = NULL) {

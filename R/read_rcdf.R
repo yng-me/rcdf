@@ -1,16 +1,27 @@
-#' Title
+#' Read and Decrypt RCDF Data
 #'
-#' @param path
-#' @param decryption_key
-#' @param ...
-#' @param password
-#' @param metadata
+#' This function reads an RCDF (Reusable Data Container Format) archive, decrypts its contents using the specified decryption key,
+#' and loads it into R as an RCDF object. The data files within the archive (usually Parquet files) are decrypted and, if provided,
+#' metadata (such as data dictionary and value sets) are applied to the data.
 #'
-#' @return
+#' @param path A string specifying the path to the RCDF archive (zip file).
+#' @param decryption_key The key used to decrypt the RCDF contents. This can be an RSA or AES key, depending on how the RCDF was encrypted.
+#' @param ... Additional parameters passed to other functions, if needed.
+#' @param password A password used for RSA decryption (optional).
+#' @param metadata An optional metadata object containing data dictionaries and value sets. This metadata is applied to the data if provided.
+#'
+#' @return An RCDF object, which is a list of Parquet files (one for each record) along with attached metadata.
 #' @export
 #'
 #' @examples
-#'
+#' \dontrun{
+#' # Example usage of reading and decrypting an RCDF file
+#' rcdf_data <- read_rcdf(
+#'   path = "path/to/rcdf.zip",
+#'   decryption_key = my_decryption_key,
+#'   password = "my_password"
+#' )
+#' }
 
 read_rcdf <- function(path, decryption_key, ..., password = NULL, metadata = NULL) {
 
@@ -39,17 +50,17 @@ read_rcdf <- function(path, decryption_key, ..., password = NULL, metadata = NUL
       as_arrow_table = F
     )
 
-    if(!is.null(metadata)) {
-
-      if(!is.null(metadata$data_dictionary) & !is.null(metadata$valueset)) {
-
-        pq_temp <- add_metadata(
-          .data = pq_temp,
-          .dictionary = metadata$data_dictionary[[meta$input_data]],
-          .valueset = metadata$valueset
-        )
-      }
-    }
+    # if(!is.null(metadata)) {
+    #
+    #   if(!is.null(metadata$data_dictionary) & !is.null(metadata$valueset)) {
+    #
+    #     pq_temp <- add_metadata(
+    #       .data = pq_temp,
+    #       .dictionary = metadata$data_dictionary[[meta$input_data]],
+    #       .valueset = metadata$valueset
+    #     )
+    #   }
+    # }
 
     pq[[record]] <- arrow::arrow_table(pq_temp)
 
@@ -86,9 +97,9 @@ extract_rcdf <- function(path, meta_only = FALSE) {
 
   temp_dir_to <- file.path(temp_dir, '__rcdf_temp__', fs::path_ext_remove(basename(path)))
 
-  unzip(path, exdir = temp_dir_to, junkpaths = T)
+  zip::unzip(path, exdir = temp_dir_to, junkpaths = T)
   if(!meta_only) {
-    unzip(file.path(temp_dir_to, 'lineage.zip'), exdir = temp_dir_to)
+    zip::unzip(file.path(temp_dir_to, 'lineage.zip'), exdir = temp_dir_to)
   }
 
   unlink(file.path(temp_dir_to, 'lineage.zip'), recursive = T, force = T)

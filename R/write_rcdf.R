@@ -1,16 +1,23 @@
-#' Title
+#' Write Data to RCDF Format
 #'
-#' @param data
-#' @param path
-#' @param pub_key
-#' @param ...
-#' @param metadata
+#' This function writes data to an RCDF (Reusable Data Container Format) archive. It encrypts the data using AES, generates metadata,
+#' and then creates a zip archive containing both the encrypted Parquet files and metadata. The function supports the inclusion of
+#' metadata such as system information and encryption keys.
 #'
-#' @return
+#' @param data A list of data frames or tables to be written to RCDF format. Each element of the list represents a record.
+#' @param path The path where the RCDF file will be written. The file will be saved with a `.rcdf` extension if not already specified.
+#' @param pub_key The public RSA key used to encrypt the AES encryption keys.
+#' @param ... Additional arguments passed to helper functions if needed.
+#' @param metadata A list of metadata to be included in the RCDF file. Can contain system information or other relevant details.
+#'
+#' @return NULL. The function writes the data to a `.rcdf` file at the specified path.
 #' @export
 #'
 #' @examples
-#'
+#' \dontrun{
+#' # Example usage of writing an RCDF file
+#' write_rcdf(data = my_data, path = "path/to/rcdf_file.rcdf", pub_key = my_pub_key)
+#' }
 
 write_rcdf <- function(data, path, pub_key, ..., metadata = list()) {
 

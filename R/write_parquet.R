@@ -1,14 +1,23 @@
-#' Title
+#' Write Parquet File with Optional Encryption
 #'
-#' @param data
-#' @param path
-#' @param ...
-#' @param encryption_key
+#' This function writes a dataset to a Parquet file. If an encryption key is provided, the data will be encrypted before writing.
+#' Otherwise, the function writes the data as a regular Parquet file without encryption.
 #'
-#' @return
+#' @param data A data frame or tibble to write to a Parquet file.
+#' @param path The file path where the Parquet file will be written.
+#' @param ... Additional arguments passed to `arrow::write_parquet()` if no encryption key is provided.
+#' @param encryption_key A list containing `aes_key` and `aes_iv`. If provided, the data will be encrypted using AES before writing to Parquet.
+#'
+#' @return None. The function writes the data to a Parquet file at the specified `path`.
 #' @export
 #'
 #' @examples
+#' data <- tibble(a = 1:5, b = letters[1:5])
+#' encryption_key <- list(aes_key = "your_aes_key", aes_iv = "your_aes_iv")
+#' write_parquet(data, "data.parquet", encryption_key = encryption_key)
+#'
+#' # Without encryption
+#' write_parquet(data, "data_no_encryption.parquet")
 #'
 
 write_parquet <- function(data, path, ..., encryption_key = NULL) {
@@ -42,17 +51,25 @@ write_parquet <- function(data, path, ..., encryption_key = NULL) {
 }
 
 
-#' Title
+
+#' Write RCDF Data to Parquet Files
 #'
-#' @param data
-#' @param path
-#' @param ...
-#' @param parent_dir
+#' This function writes an RCDF object (a list of data frames) to multiple Parquet files. Each data frame in the list is written to its corresponding Parquet file in the specified path.
 #'
-#' @return
+#' @param data A list where each element is a data frame or tibble that will be written to a Parquet file.
+#' @param path The directory path where the Parquet files will be written.
+#' @param ... Additional arguments passed to `rcdf::write_parquet()` while writing each Parquet file.
+#' @param parent_dir An optional parent directory to be included in the path where the files will be written.
+#'
+#' @return A character vector of file paths to the written Parquet files.
 #' @export
 #'
 #' @examples
+#' data_list <- list(
+#'   df1 = tibble(a = 1:5),
+#'   df2 = tibble(b = 6:10)
+#' )
+#' write_rcdf_parquet(data_list, "output_folder")
 
 write_rcdf_parquet <- function(data, path, ..., parent_dir = NULL) {
 

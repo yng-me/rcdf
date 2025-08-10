@@ -1,20 +1,22 @@
-#' Title
+#' Write RCDF Data to Multiple Formats
 #'
-#' @param data
-#' @param path
-#' @param formats
-#' @param ...
+#' Exports RCDF-formatted data to one or more supported open data formats. The function automatically dispatches to the appropriate writer function based on the `formats` provided.
 #'
-#' @return
+#' @param data A named list or RCDF object. Each element should be a table or tibble-like object (typically a `dbplyr` or `dplyr` table).
+#' @param path The target directory where output files should be saved.
+#' @param formats A character vector of file formats to export to. Supported formats include: `"csv"`, `"tsv"`, `"json"`, `"parquet"`, `"xlsx"`, `"dta"`, `"sav"`, and `"sqlite"`.
+#' @param ... Additional arguments passed to the respective writer functions.
+#'
+#' @return Invisibly returns `NULL`. Files are written to disk.
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' write_rcdf_as(my_rcdf_data, "exports/", formats = c("csv", "json", "sqlite"))
+#' }
+
 
 write_rcdf_as <- function(data, path, formats, ...) {
-
-  # TODO:
-  # - gheet format
-  # - othe db formats
 
   valid_formats <- c("csv", "tsv", "json", "parquet", "xlsx", "dta", "sav", "sqlite")
   label_formats <- c("CSV", "TSV", "JSON", "Parquet", "Excel", "Stata", "SPSS", "SQLite")
@@ -54,17 +56,22 @@ write_rcdf_as <- function(data, path, formats, ...) {
 
 
 
-#' Title
+#' Write RCDF Data to CSV Files
 #'
-#' @param data
-#' @param path
-#' @param ...
-#' @param parent_dir
+#' Writes each table in the RCDF object as a separate `.csv` file.
 #'
-#' @return
+#' @param data A valid RCDF object.
+#' @param path The base output directory.
+#' @param ... Additional arguments passed to `write.csv()`.
+#' @param parent_dir Optional subdirectory under `path` to group CSV files.
+#'
+#' @return Invisibly returns `NULL`. Files are written to disk.
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' write_rcdf_csv(my_rcdf_data, "data_exports/")
+#' }
 #'
 
 write_rcdf_csv <- function(data, path, ..., parent_dir = NULL) {
@@ -78,7 +85,7 @@ write_rcdf_csv <- function(data, path, ..., parent_dir = NULL) {
 
     record <- records[i]
 
-    write.csv(
+    utils::write.csv(
       x = dplyr::collect(data[[record]]),
       file = file.path(path, glue::glue("{record}.csv"))
     )
@@ -87,18 +94,22 @@ write_rcdf_csv <- function(data, path, ..., parent_dir = NULL) {
 }
 
 
-#' Title
+#' Write RCDF Data to TSV Files
 #'
-#' @param data
-#' @param path
-#' @param ...
-#' @param parent_dir
+#' Writes each table in the RCDF object as a separate tab-separated `.txt` file.
 #'
-#' @return
+#' @param data A valid RCDF object.
+#' @param path The base output directory.
+#' @param ... Additional arguments passed to `write.table()`.
+#' @param parent_dir Optional subdirectory under `path` to group TSV files.
+#'
+#' @return Invisibly returns `NULL`. Files are written to disk.
 #' @export
 #'
 #' @examples
-#'
+#' \dontrun{
+#' write_rcdf_tsv(my_rcdf_data, "exports/")
+#' }
 
 write_rcdf_tsv <- function(data, path, ..., parent_dir = NULL) {
 
@@ -111,7 +122,7 @@ write_rcdf_tsv <- function(data, path, ..., parent_dir = NULL) {
 
     record <- records[i]
 
-    write.table(
+    utils::write.table(
       x = dplyr::collect(data[[record]]),
       file = file.path(path, glue::glue("{record}.txt")),
       sep = "\t"
@@ -121,17 +132,22 @@ write_rcdf_tsv <- function(data, path, ..., parent_dir = NULL) {
 }
 
 
-#' Title
+#' Write RCDF Data to JSON Files
 #'
-#' @param data
-#' @param path
-#' @param ...
-#' @param parent_dir
+#' Writes each table in the RCDF object as a separate `.json` file.
 #'
-#' @return
+#' @param data A valid RCDF object.
+#' @param path The output directory for files.
+#' @param ... Additional arguments passed to `jsonlite::write_json()`.
+#' @param parent_dir Optional subdirectory under `path` to group JSON files.
+#'
+#' @return Invisibly returns `NULL`. Files are written to disk.
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' write_rcdf_json(my_rcdf_data, "exports/")
+#' }
 
 write_rcdf_json <- function(data, path, ..., parent_dir = NULL) {
 
@@ -157,18 +173,22 @@ write_rcdf_json <- function(data, path, ..., parent_dir = NULL) {
 
 
 
-#' Title
+#' Write RCDF Data to Excel Files
 #'
-#' @param data
-#' @param path
-#' @param ...
-#' @param parent_dir
+#' Writes each table in the RCDF object as a separate `.xlsx` file using the `openxlsx` package.
 #'
-#' @return
+#' @param data A valid RCDF object.
+#' @param path The output directory.
+#' @param ... Additional arguments passed to `openxlsx::write.xlsx()`.
+#' @param parent_dir Optional subdirectory under `path` to group Excel files.
+#'
+#' @return Invisibly returns `NULL`. Files are written to disk.
 #' @export
 #'
 #' @examples
-#'
+#' \dontrun{
+#' write_rcdf_xlsx(my_rcdf_data, "excel_exports/")
+#' }
 
 write_rcdf_xlsx <- function(data, path, ..., parent_dir = NULL) {
 
@@ -191,18 +211,22 @@ write_rcdf_xlsx <- function(data, path, ..., parent_dir = NULL) {
 }
 
 
-#' Title
+#' Write RCDF Data to Stata `.dta` Files
 #'
-#' @param data
-#' @param path
-#' @param ...
-#' @param parent_dir
+#' Writes each table in the RCDF object to a `.dta` file for use in Stata.
 #'
-#' @return
+#' @param data A valid RCDF object.
+#' @param path Output directory for files.
+#' @param ... Additional arguments passed to `foreign::write.dta()`.
+#' @param parent_dir Optional subdirectory under `path` to group Stata files.
+#'
+#' @return Invisibly returns `NULL`. Files are written to disk.
 #' @export
 #'
 #' @examples
-#'
+#' \dontrun{
+#' write_rcdf_dta(my_rcdf_data, "stata_exports/")
+#' }
 
 write_rcdf_dta <- function(data, path, ..., parent_dir = NULL) {
 
@@ -225,18 +249,22 @@ write_rcdf_dta <- function(data, path, ..., parent_dir = NULL) {
 }
 
 
-#' Title
+#' Write RCDF Data to SPSS `.sav` Files
 #'
-#' @param data
-#' @param path
-#' @param ...
-#' @param parent_dir
+#' Writes each table in the RCDF object to a `.sav` file using the `haven` package for compatibility with SPSS.
 #'
-#' @return
+#' @param data A valid RCDF object.
+#' @param path Output directory for files.
+#' @param ... Additional arguments passed to `haven::write_sav()`.
+#' @param parent_dir Optional subdirectory under `path` to group SPSS files.
+#'
+#' @return Invisibly returns `NULL`. Files are written to disk.
 #' @export
 #'
 #' @examples
-#'
+#' \dontrun{
+#' write_rcdf_sav(my_rcdf_data, "spss_exports/")
+#' }
 
 write_rcdf_sav <- function(data, path, ..., parent_dir = NULL) {
 
@@ -259,19 +287,23 @@ write_rcdf_sav <- function(data, path, ..., parent_dir = NULL) {
 }
 
 
-#' Title
+#' Write RCDF Data to a SQLite Database
 #'
-#' @param data
-#' @param path
-#' @param db_name
-#' @param ...
-#' @param parent_dir
+#' Writes all tables in the RCDF object to a single SQLite database file.
 #'
-#' @return
+#' @param data A valid RCDF object.
+#' @param path Output directory for the database file.
+#' @param db_name Name of the SQLite database file (without extension).
+#' @param ... Additional arguments passed to `DBI::dbWriteTable()`.
+#' @param parent_dir Optional subdirectory under `path` to store the SQLite file.
+#'
+#' @return Invisibly returns `NULL`. A `.db` file is written to disk.
 #' @export
 #'
 #' @examples
-#'
+#' \dontrun{
+#' write_rcdf_sqlite(my_rcdf_data, "db_exports/", db_name = "my_data")
+#' }
 
 write_rcdf_sqlite <- function(data, path, db_name = "cbms_data", ..., parent_dir = NULL) {
 
