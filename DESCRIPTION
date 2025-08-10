@@ -2,7 +2,7 @@ Package: rcdf
 Type: Package
 Title: RCDF File Management
 Version: 0.1.0
-Description: R Package for managing RDCF file format.
+Description: A comprehensive toolkit for working with RCDF (Encrypted Parquet) files in R. This package provides utilities for reading, writing, and managing RCDF files, including encryption and decryption support. It offers a flexible interface for handling data stored in encrypted Parquet format, along with metadata extraction, key management, and secure operations using AES and RSA encryption.
 Authors@R: c(
     person(
       "Bhas", 
@@ -25,28 +25,26 @@ Imports:
   openxlsx,
   fs,
   zip,
+  glue,
+  utils (>= 4.0.0),
   openssl (>= 2.1.1),
   dplyr (>= 1.1.0),
-  tidyr (>= 1.1.0),
   stringr (>= 1.4.0),
   jsonlite (>= 1.8.0),
-  yaml (>= 2.3.0),
   DBI (>= 1.1.0),
-  RMySQL (>= 0.10.0),
   RSQLite (>= 2.2.0),
-  purrr (>= 1.0.0),
-  tibble (>= 3.0.0),
-  googlesheets4 (>= 1.0.0),
-  lubridate (>= 1.7.0),
-  utils (>= 4.0.0),
-  rlang (>= 1.0.2),
-  uuid (>= 0.1.2)
+  uuid (>= 0.1.2),
+  methods
 Suggests: 
+  rlang (>= 1.0.2),
   testthat (>= 3.0.0),
   cli,
   devtools,
   knitr,
   rmarkdown,
+  mockery,
+  tibble,
+  withr,
   gt (>= 0.10.0)
 Config/testthat/edition: 3
 RoxygenNote: 7.2.3
