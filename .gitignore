@@ -1,0 +1,14 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+.DS_Store
+.parquet
+.rcdf
+.xlsx
+.csv
+.txt
+.pem
+
+playground
+inst/doc

@@ -1,0 +1,56 @@
+Package: rcdf
+Type: Package
+Title: RCDF File Management
+Version: 0.1.0
+Description: R Package for managing RDCF file format.
+Authors@R: c(
+    person(
+      "Bhas", 
+      "Abdulsamad", 
+      email = "aeabdulsamad@gmail.com",
+      comment = c(ORCID = "0009-0002-5891-8124"),
+      role = c("aut", "cre", "cph")
+    )
+  )
+Author: Bhas Abdulsamad [aut, cre, cph] (<https://orcid.org/0009-0002-5891-8124>)
+Maintainer: Bhas Abdulsamad <aeabdulsamad@gmail.com>
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Imports:
+  arrow,
+  duckdb,
+  foreign,
+  haven,
+  openxlsx,
+  fs,
+  zip,
+  openssl (>= 2.1.1),
+  dplyr (>= 1.1.0),
+  tidyr (>= 1.1.0),
+  stringr (>= 1.4.0),
+  jsonlite (>= 1.8.0),
+  yaml (>= 2.3.0),
+  DBI (>= 1.1.0),
+  RMySQL (>= 0.10.0),
+  RSQLite (>= 2.2.0),
+  purrr (>= 1.0.0),
+  tibble (>= 3.0.0),
+  googlesheets4 (>= 1.0.0),
+  lubridate (>= 1.7.0),
+  utils (>= 4.0.0),
+  rlang (>= 1.0.2),
+  uuid (>= 0.1.2)
+Suggests: 
+  testthat (>= 3.0.0),
+  cli,
+  devtools,
+  knitr,
+  rmarkdown,
+  gt (>= 0.10.0)
+Config/testthat/edition: 3
+RoxygenNote: 7.2.3
+BugReports: https://github.com/yng-me/rcdf/issues
+VignetteBuilder: knitr
+Depends: 
+    R (>= 2.10)

@@ -1,0 +1,154 @@
+---
+title: "Using RCDF Data File"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{rcdf}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(rcdf)
+```
+
+---
+
+## File management
+
+### RDCF source
+
+### Folder structure and naming convention
+
+---
+
+## Reading and importing RCDF
+
+
+### Decryption key
+
+```{r, eval=F}
+env <- read_env(".env")
+decryption_key <- env$DECRYPTION_KEY
+
+```
+
+### Metadata integration
+
+```{r, eval=F}
+
+```
+
+
+### Importing RCDF
+
+```{r, eval=F}
+cbms_data <- read_rcdf(
+  path = "",
+  decryption_key = decryption_key
+)
+
+```
+
+
+---
+
+## Exporting RCDF to other data formats
+
+```{r, eval=F}
+output_path <- ""
+
+```
+
+
+### Open formats
+
+#### CSV/TSV
+
+```{r, eval=F}
+write_rcdf_csv(
+  data = cbms_data,
+  path = output_path,
+  parent_dir = "CSV"
+)
+
+
+write_rcdf_tsv(
+  data = cbms_data,
+  path = output_path,
+  parent_dir = "TSV"
+)
+```
+
+
+#### Parquet
+
+```{r, eval=F}
+write_rcdf_parquet(
+  
+)
+```
+
+#### JSON
+
+```{r, eval=F}
+write_rcdf_json(
+  
+)
+```
+
+
+### Proprietary formats
+
+#### Excel
+
+```{r, eval=F}
+write_rcdf_xlsx(
+  
+)
+```
+
+#### Stata
+
+```{r, eval=F}
+write_rcdf_dta(
+  
+)
+```
+
+#### SPSS
+
+```{r, eval=F}
+write_rcdf_sav(
+
+)
+```
+
+
+### Multiple formats at once
+
+```{r, eval=FALSE}
+write_rcdf_as(
+  data = '',
+  path = '',
+  formats = c("csv", "xlsx", "dta")
+)
+```
+
+
+### Database formats using SQL
+
+#### SQLite
+
+#### DuckDB
+
+#### MySQL
+
+#### PostgreSQL
+
