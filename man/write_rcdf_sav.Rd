@@ -26,3 +26,6 @@ Writes each table in the RCDF object to a `.sav` file using the `haven` package 
 write_rcdf_sav(my_rcdf_data, "spss_exports/")
 }
 }
+\seealso{
+\link[rcdf]{write_rcdf_as}
+}

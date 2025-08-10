@@ -26,3 +26,6 @@ Writes each table in the RCDF object to a `.dta` file for use in Stata.
 write_rcdf_dta(my_rcdf_data, "stata_exports/")
 }
 }
+\seealso{
+\link[rcdf]{write_rcdf_as}
+}

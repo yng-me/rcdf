@@ -26,3 +26,6 @@ Writes each table in the RCDF object as a separate `.xlsx` file using the `openx
 write_rcdf_xlsx(my_rcdf_data, "excel_exports/")
 }
 }
+\seealso{
+\link[rcdf]{write_rcdf_as}
+}

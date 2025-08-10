@@ -26,3 +26,6 @@ Writes each table in the RCDF object as a separate `.json` file.
 write_rcdf_json(my_rcdf_data, "exports/")
 }
 }
+\seealso{
+\link[rcdf]{write_rcdf_as}
+}

@@ -10,7 +10,10 @@
 #' @return Invisibly returns `NULL`. Files are written to disk.
 #' @export
 #'
+#' @seealso \link[rcdf]{write_rcdf_csv}  \link[rcdf]{write_rcdf_tsv}  \link[rcdf]{write_rcdf_json}  \link[rcdf]{write_rcdf_xlsx}  \link[rcdf]{write_rcdf_dta}  \link[rcdf]{write_rcdf_sav}  \link[rcdf]{write_rcdf_sqlite}
+#'
 #' @examples
+#'
 #' \dontrun{
 #' write_rcdf_as(my_rcdf_data, "exports/", formats = c("csv", "json", "sqlite"))
 #' }
@@ -68,6 +71,8 @@ write_rcdf_as <- function(data, path, formats, ...) {
 #' @return Invisibly returns `NULL`. Files are written to disk.
 #' @export
 #'
+#' @seealso \link[rcdf]{write_rcdf_as}
+#'
 #' @examples
 #' \dontrun{
 #' write_rcdf_csv(my_rcdf_data, "data_exports/")
@@ -105,6 +110,8 @@ write_rcdf_csv <- function(data, path, ..., parent_dir = NULL) {
 #'
 #' @return Invisibly returns `NULL`. Files are written to disk.
 #' @export
+#'
+#' @seealso \link[rcdf]{write_rcdf_as}
 #'
 #' @examples
 #' \dontrun{
@@ -144,6 +151,8 @@ write_rcdf_tsv <- function(data, path, ..., parent_dir = NULL) {
 #' @return Invisibly returns `NULL`. Files are written to disk.
 #' @export
 #'
+#' @seealso \link[rcdf]{write_rcdf_as}
+#'
 #' @examples
 #' \dontrun{
 #' write_rcdf_json(my_rcdf_data, "exports/")
@@ -171,8 +180,6 @@ write_rcdf_json <- function(data, path, ..., parent_dir = NULL) {
 }
 
 
-
-
 #' Write RCDF Data to Excel Files
 #'
 #' Writes each table in the RCDF object as a separate `.xlsx` file using the `openxlsx` package.
@@ -184,6 +191,8 @@ write_rcdf_json <- function(data, path, ..., parent_dir = NULL) {
 #'
 #' @return Invisibly returns `NULL`. Files are written to disk.
 #' @export
+#'
+#' @seealso \link[rcdf]{write_rcdf_as}
 #'
 #' @examples
 #' \dontrun{
@@ -223,6 +232,8 @@ write_rcdf_xlsx <- function(data, path, ..., parent_dir = NULL) {
 #' @return Invisibly returns `NULL`. Files are written to disk.
 #' @export
 #'
+#' @seealso \link[rcdf]{write_rcdf_as}
+#'
 #' @examples
 #' \dontrun{
 #' write_rcdf_dta(my_rcdf_data, "stata_exports/")
@@ -260,6 +271,8 @@ write_rcdf_dta <- function(data, path, ..., parent_dir = NULL) {
 #'
 #' @return Invisibly returns `NULL`. Files are written to disk.
 #' @export
+#'
+#' @seealso \link[rcdf]{write_rcdf_as}
 #'
 #' @examples
 #' \dontrun{
@@ -299,6 +312,8 @@ write_rcdf_sav <- function(data, path, ..., parent_dir = NULL) {
 #'
 #' @return Invisibly returns `NULL`. A `.db` file is written to disk.
 #' @export
+#'
+#' @seealso \link[rcdf]{write_rcdf_as}
 #'
 #' @examples
 #' \dontrun{

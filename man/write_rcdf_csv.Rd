@@ -27,3 +27,6 @@ write_rcdf_csv(my_rcdf_data, "data_exports/")
 }
 
 }
+\seealso{
+\link[rcdf]{write_rcdf_as}
+}

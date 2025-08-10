@@ -28,3 +28,6 @@ Writes all tables in the RCDF object to a single SQLite database file.
 write_rcdf_sqlite(my_rcdf_data, "db_exports/", db_name = "my_data")
 }
 }
+\seealso{
+\link[rcdf]{write_rcdf_as}
+}
