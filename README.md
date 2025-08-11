@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# rcdf
+# The `rcdf` Package
 
 <!-- badges: start -->
 <!-- badges: end -->
@@ -14,17 +14,14 @@ AES keys, and more.
 
 Key features include:
 
-Secure Data Handling: Functions for reading and writing encrypted
-Parquet files using AES and RSA encryption.
-
-Metadata Management: Tools for handling and storing metadata in RCDF
-files, including automated key generation and decryption.
-
-Parquet Integration: Full integration with the arrow package to read and
-write Parquet files seamlessly.
-
-Cross-Platform Support: Compatible with Linux, macOS, and Windows
-environments.
+- **Secure Data Handling**: Functions for reading and writing encrypted
+  Parquet files using AES and RSA encryption.
+- **Metadata Management**: Tools for handling and storing metadata in
+  RCDF files, including automated key generation and decryption.
+- **Parquet Integration**: Full integration with the `arrow` package to
+  read and write Parquet files seamlessly.
+- **Cross-Platform Support**: Compatible with Linux, macOS, and Windows
+  environments.
 
 ## Installation
 

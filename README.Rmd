@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# rcdf
+# The `rcdf` Package
 
 <!-- badges: start -->
 <!-- badges: end -->
@@ -22,15 +22,10 @@ knitr::opts_chunk$set(
 
 Key features include:
 
-Secure Data Handling: Functions for reading and writing encrypted Parquet files using AES and RSA encryption.
-
-Metadata Management: Tools for handling and storing metadata in RCDF files, including automated key generation and decryption.
-
-Parquet Integration: Full integration with the arrow package to read and write Parquet files seamlessly.
-
-Cross-Platform Support: Compatible with Linux, macOS, and Windows environments.
-
-
+- **Secure Data Handling**: Functions for reading and writing encrypted Parquet files using AES and RSA encryption.
+- **Metadata Management**: Tools for handling and storing metadata in RCDF files, including automated key generation and decryption.
+- **Parquet Integration**: Full integration with the `arrow` package to read and write Parquet files seamlessly.
+- **Cross-Platform Support**: Compatible with Linux, macOS, and Windows environments.
 
 ## Installation
 
