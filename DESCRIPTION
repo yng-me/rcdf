@@ -1,8 +1,8 @@
 Package: rcdf
 Type: Package
-Title: RCDF File Management
+Title: A comprehensive toolkit for working with RCDF (Encrypted Parquet) files in R. 
 Version: 0.1.0
-Description: A comprehensive toolkit for working with RCDF (Encrypted Parquet) files in R. This package provides utilities for reading, writing, and managing RCDF files, including encryption and decryption support. It offers a flexible interface for handling data stored in encrypted Parquet format, along with metadata extraction, key management, and secure operations using AES and RSA encryption.
+Description: This package provides utilities for reading, writing, and managing RCDF files, including encryption and decryption support. It offers a flexible interface for handling data stored in encrypted Parquet format, along with metadata extraction, key management, and secure operations using AES and RSA encryption.
 Authors@R: c(
     person(
       "Bhas", 
