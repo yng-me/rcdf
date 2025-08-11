@@ -1,0 +1,25 @@
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://yng-me.github.io/rcdf/404.html</loc></url>
+<url><loc>https://yng-me.github.io/rcdf/LICENSE-text.html</loc></url>
+<url><loc>https://yng-me.github.io/rcdf/LICENSE.html</loc></url>
+<url><loc>https://yng-me.github.io/rcdf/articles/index.html</loc></url>
+<url><loc>https://yng-me.github.io/rcdf/articles/rcdf.html</loc></url>
+<url><loc>https://yng-me.github.io/rcdf/authors.html</loc></url>
+<url><loc>https://yng-me.github.io/rcdf/index.html</loc></url>
+<url><loc>https://yng-me.github.io/rcdf/reference/index.html</loc></url>
+<url><loc>https://yng-me.github.io/rcdf/reference/read_env.html</loc></url>
+<url><loc>https://yng-me.github.io/rcdf/reference/read_parquet.html</loc></url>
+<url><loc>https://yng-me.github.io/rcdf/reference/read_rcdf.html</loc></url>
+<url><loc>https://yng-me.github.io/rcdf/reference/write_parquet.html</loc></url>
+<url><loc>https://yng-me.github.io/rcdf/reference/write_rcdf.html</loc></url>
+<url><loc>https://yng-me.github.io/rcdf/reference/write_rcdf_as.html</loc></url>
+<url><loc>https://yng-me.github.io/rcdf/reference/write_rcdf_csv.html</loc></url>
+<url><loc>https://yng-me.github.io/rcdf/reference/write_rcdf_dta.html</loc></url>
+<url><loc>https://yng-me.github.io/rcdf/reference/write_rcdf_json.html</loc></url>
+<url><loc>https://yng-me.github.io/rcdf/reference/write_rcdf_parquet.html</loc></url>
+<url><loc>https://yng-me.github.io/rcdf/reference/write_rcdf_sav.html</loc></url>
+<url><loc>https://yng-me.github.io/rcdf/reference/write_rcdf_sqlite.html</loc></url>
+<url><loc>https://yng-me.github.io/rcdf/reference/write_rcdf_tsv.html</loc></url>
+<url><loc>https://yng-me.github.io/rcdf/reference/write_rcdf_xlsx.html</loc></url>
+</urlset>
+
