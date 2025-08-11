@@ -12,12 +12,14 @@
 #' @export
 #'
 #' @examples
-#' data <- tibble(a = 1:5, b = letters[1:5])
+#' \dontrun{
+#' data <- tibble::tibble(a = 1:5, b = letters[1:5])
 #' encryption_key <- list(aes_key = "your_aes_key", aes_iv = "your_aes_iv")
 #' write_parquet(data, "data.parquet", encryption_key = encryption_key)
 #'
 #' # Without encryption
 #' write_parquet(data, "data_no_encryption.parquet")
+#'}
 #'
 
 write_parquet <- function(data, path, ..., encryption_key = NULL) {
@@ -65,11 +67,13 @@ write_parquet <- function(data, path, ..., encryption_key = NULL) {
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' data_list <- list(
-#'   df1 = tibble(a = 1:5),
-#'   df2 = tibble(b = 6:10)
+#'   df1 = tibble::tibble(a = 1:5),
+#'   df2 = tibble::tibble(b = 6:10)
 #' )
 #' write_rcdf_parquet(data_list, "output_folder")
+#' }
 
 write_rcdf_parquet <- function(data, path, ..., parent_dir = NULL) {
 

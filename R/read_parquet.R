@@ -11,12 +11,14 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' # Without decryption
 #' df <- read_parquet("data.parquet")
 #'
 #' # With decryption
 #' decryption_key <- list(aes_key = "your_aes_key", aes_iv = "your_aes_iv")
 #' df <- read_parquet("data_encrypted.parquet", decryption_key = decryption_key)
+#' }
 
 read_parquet <- function(path, ..., decryption_key = NULL, as_arrow_table = TRUE) {
 

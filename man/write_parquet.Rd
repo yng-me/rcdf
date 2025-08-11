@@ -23,11 +23,13 @@ This function writes a dataset to a Parquet file. If an encryption key is provid
 Otherwise, the function writes the data as a regular Parquet file without encryption.
 }
 \examples{
-data <- tibble(a = 1:5, b = letters[1:5])
+\dontrun{
+data <- tibble::tibble(a = 1:5, b = letters[1:5])
 encryption_key <- list(aes_key = "your_aes_key", aes_iv = "your_aes_iv")
 write_parquet(data, "data.parquet", encryption_key = encryption_key)
 
 # Without encryption
 write_parquet(data, "data_no_encryption.parquet")
+}
 
 }

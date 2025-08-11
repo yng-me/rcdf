@@ -23,6 +23,11 @@ Invisibly returns `NULL`. A `.db` file is written to disk.
 \description{
 Writes all tables in the RCDF object to a single SQLite database file.
 }
+\examples{
+\dontrun{
+write_rcdf_sqlite(data = rcdf_data, path = "path/to/output")
+}
+}
 \seealso{
 \link[rcdf]{write_rcdf_as}
 }

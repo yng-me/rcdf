@@ -21,6 +21,12 @@ Invisibly returns `NULL`. Files are written to disk.
 \description{
 Exports RCDF-formatted data to one or more supported open data formats. The function automatically dispatches to the appropriate writer function based on the `formats` provided.
 }
+\examples{
+
+\dontrun{
+write_rcdf_as(data = rcdf_data, path = "path/to/output", formats = c("xlsx", "csv"))
+}
+}
 \seealso{
 \link[rcdf]{write_rcdf_csv}  \link[rcdf]{write_rcdf_tsv}  \link[rcdf]{write_rcdf_json}  \link[rcdf]{write_rcdf_xlsx}  \link[rcdf]{write_rcdf_dta}  \link[rcdf]{write_rcdf_sav}  \link[rcdf]{write_rcdf_sqlite}
 }

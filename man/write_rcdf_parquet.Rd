@@ -22,9 +22,11 @@ A character vector of file paths to the written Parquet files.
 This function writes an RCDF object (a list of data frames) to multiple Parquet files. Each data frame in the list is written to its corresponding Parquet file in the specified path.
 }
 \examples{
+\dontrun{
 data_list <- list(
-  df1 = tibble(a = 1:5),
-  df2 = tibble(b = 6:10)
+  df1 = tibble::tibble(a = 1:5),
+  df2 = tibble::tibble(b = 6:10)
 )
 write_rcdf_parquet(data_list, "output_folder")
+}
 }

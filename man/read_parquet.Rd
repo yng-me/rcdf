@@ -22,10 +22,12 @@ An Arrow table or a data frame, depending on the value of `as_arrow_table`.
 This function reads a Parquet file, optionally decrypting it using the provided decryption key. If no decryption key is provided, it reads the file normally without decryption. It supports reading Parquet files as Arrow tables or regular data frames, depending on the `as_arrow_table` argument.
 }
 \examples{
+\dontrun{
 # Without decryption
 df <- read_parquet("data.parquet")
 
 # With decryption
 decryption_key <- list(aes_key = "your_aes_key", aes_iv = "your_aes_iv")
 df <- read_parquet("data_encrypted.parquet", decryption_key = decryption_key)
+}
 }

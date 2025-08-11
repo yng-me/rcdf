@@ -14,7 +14,9 @@
 #'
 #' @examples
 #'
-
+#' \dontrun{
+#' write_rcdf_as(data = rcdf_data, path = "path/to/output", formats = c("xlsx", "csv"))
+#' }
 
 
 write_rcdf_as <- function(data, path, formats, ...) {
@@ -72,7 +74,9 @@ write_rcdf_as <- function(data, path, formats, ...) {
 #' @seealso \link[rcdf]{write_rcdf_as}
 #'
 #' @examples
-#'
+#' \dontrun{
+#' write_rcdf_csv(data = rcdf_data, path = "path/to/output", row.names = FALSE)
+#' }
 
 write_rcdf_csv <- function(data, path, ..., parent_dir = NULL) {
 
@@ -109,6 +113,9 @@ write_rcdf_csv <- function(data, path, ..., parent_dir = NULL) {
 #' @seealso \link[rcdf]{write_rcdf_as}
 #'
 #' @examples
+#' \dontrun{
+#' write_rcdf_tsv(data = rcdf_data, path = "path/to/output", row.names = FALSE)
+#' }
 
 write_rcdf_tsv <- function(data, path, ..., parent_dir = NULL) {
 
@@ -146,6 +153,9 @@ write_rcdf_tsv <- function(data, path, ..., parent_dir = NULL) {
 #' @seealso \link[rcdf]{write_rcdf_as}
 #'
 #' @examples
+#' \dontrun{
+#' write_rcdf_json(data = rcdf_data, path = "path/to/output", pretty = TRUE)
+#' }
 
 
 write_rcdf_json <- function(data, path, ..., parent_dir = NULL) {
@@ -185,7 +195,9 @@ write_rcdf_json <- function(data, path, ..., parent_dir = NULL) {
 #' @seealso \link[rcdf]{write_rcdf_as}
 #'
 #' @examples
-
+#' \dontrun{
+#' write_rcdf_xlsx(data = rcdf_data, path = "path/to/output")
+#' }
 
 write_rcdf_xlsx <- function(data, path, ..., parent_dir = NULL) {
 
@@ -223,7 +235,9 @@ write_rcdf_xlsx <- function(data, path, ..., parent_dir = NULL) {
 #' @seealso \link[rcdf]{write_rcdf_as}
 #'
 #' @examples
-
+#' \dontrun{
+#' write_rcdf_dta(data = rcdf_data, path = "path/to/output")
+#' }
 
 write_rcdf_dta <- function(data, path, ..., parent_dir = NULL) {
 
@@ -261,6 +275,9 @@ write_rcdf_dta <- function(data, path, ..., parent_dir = NULL) {
 #' @seealso \link[rcdf]{write_rcdf_as}
 #'
 #' @examples
+#' \dontrun{
+#' write_rcdf_sav(data = rcdf_data, path = "path/to/output")
+#' }
 
 
 write_rcdf_sav <- function(data, path, ..., parent_dir = NULL) {
@@ -300,6 +317,10 @@ write_rcdf_sav <- function(data, path, ..., parent_dir = NULL) {
 #' @seealso \link[rcdf]{write_rcdf_as}
 #'
 #' @examples
+#' \dontrun{
+#' write_rcdf_sqlite(data = rcdf_data, path = "path/to/output")
+#' }
+
 
 write_rcdf_sqlite <- function(data, path, db_name = "cbms_data", ..., parent_dir = NULL) {
 

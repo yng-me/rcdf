@@ -34,9 +34,11 @@ read_env <- function(path) {
   }
 
   env_file <- readLines(path)
-  env_values <- unlist(stringr::str_split(env_file, '\n')[[1]])
+  env_values <- unlist(stringr::str_split(env_file, '\n'))
   env_values <- env_values[env_values != '']
   env_values <- env_values[!grepl('^#', env_values)]
+
+  print(env_values)
 
   if (length(env_values) == 0) {
     return(NULL)

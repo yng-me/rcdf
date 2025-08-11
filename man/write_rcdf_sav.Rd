@@ -21,6 +21,11 @@ Invisibly returns `NULL`. Files are written to disk.
 \description{
 Writes each table in the RCDF object to a `.sav` file using the `haven` package for compatibility with SPSS.
 }
+\examples{
+\dontrun{
+write_rcdf_sav(data = rcdf_data, path = "path/to/output")
+}
+}
 \seealso{
 \link[rcdf]{write_rcdf_as}
 }
