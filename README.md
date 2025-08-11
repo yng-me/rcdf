@@ -4,6 +4,8 @@
 # The `rcdf` Package
 
 <!-- badges: start -->
+
+[![R-CMD-check](https://github.com/yng-me/rcdf/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/yng-me/rcdf/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 `rcdf` provides functions to easily create, read, and manipulate RCDF
