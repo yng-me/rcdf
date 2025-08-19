@@ -91,3 +91,4 @@ test_that("read_rcdf throws error if decryption key is invalid", {
   unlink(file.path(temp_dir, 'pub.pem'))
 
 })
+
