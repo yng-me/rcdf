@@ -38,8 +38,6 @@ read_env <- function(path) {
   env_values <- env_values[env_values != '']
   env_values <- env_values[!grepl('^#', env_values)]
 
-  print(env_values)
-
   if (length(env_values) == 0) {
     return(NULL)
   }

@@ -1,11 +1,44 @@
-set_class <- function(data, class_name) {
-  class(data) <- c(class(data), class_name)
-  return(data)
+#' Create an Empty `rcdf` Object
+#'
+#' Initializes and returns an empty `rcdf` object. This is a convenient constructor
+#' for creating a new `rcdf`-class list structure.
+#'
+#' @return A list object of class `"rcdf"`.
+#' @export
+#'
+#' @examples
+#' rcdf <- rcdf_list()
+#' class(rcdf)
+
+rcdf_list <- function() {
+  value <- list()
+  as_rcdf(value)
 }
 
 
+
+#' Convert to `rcdf` Class
+#'
+#' Converts an existing list or compatible object into an object of class `"rcdf"`.
+#'
+#' @param data A list or object to be converted to class `"rcdf"`.
+#'
+#' @return The input object with class set to `"rcdf"`.
+#' @export
+#'
+#' @examples
+#' my_list <- list(a = 1, b = 2)
+#' rcdf_obj <- as_rcdf(my_list)
+#' class(rcdf_obj)
+
 as_rcdf <- function(data) {
   set_class(data, class_name = 'rcdf')
+}
+
+
+set_class <- function(data, class_name) {
+  class(data) <- c(class(data), class_name)
+  return(data)
 }
 
 

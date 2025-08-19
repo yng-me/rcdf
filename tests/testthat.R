@@ -7,8 +7,6 @@
 # * https://testthat.r-lib.org/articles/special-files.html
 
 library(testthat)
-library(dplyr)
 library(rcdf)
 
 test_check("rcdf")
-

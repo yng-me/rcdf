@@ -250,9 +250,9 @@ write_rcdf_dta <- function(data, path, ..., parent_dir = NULL) {
 
     record <- records[i]
 
-    foreign::write.dta(
-      dataframe = dplyr::collect(data[[record]]),
-      file = file.path(path, glue::glue("{record}.dta")),
+    haven::write_dta(
+      data = dplyr::collect(data[[record]]),
+      path = file.path(path, glue::glue("{record}.dta")),
       ...
     )
   }
@@ -343,5 +343,7 @@ write_rcdf_sqlite <- function(data, path, db_name = "cbms_data", ..., parent_dir
     )
 
   }
+
+  DBI::dbDisconnect(conn, force = TRUE)
 
 }
