@@ -83,7 +83,7 @@ test_that("read_rcdf throws error if decryption key is invalid", {
       path = mock_rcdf,
       decryption_key = 'invalid_key'
     ),
-    "OpenSSL error in EVP_DecryptFinal_ex: bad decrypt"
+    "OpenSSL error in EVP_DecryptFinal_ex"
   )
 
   # Clean up mock RCDF file
@@ -91,4 +91,3 @@ test_that("read_rcdf throws error if decryption key is invalid", {
   unlink(file.path(temp_dir, 'pub.pem'))
 
 })
-

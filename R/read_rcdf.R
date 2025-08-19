@@ -50,6 +50,7 @@ read_rcdf <- function(path, decryption_key, ..., password = NULL, metadata = NUL
       as_arrow_table = F
     )
 
+    # TODO: METADATA
     # if(!is.null(metadata)) {
     #
     #   if(!is.null(metadata$data_dictionary) & !is.null(metadata$valueset)) {
