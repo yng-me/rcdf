@@ -43,7 +43,6 @@ test_that("write_rcdf_json writes .json files", {
 })
 
 test_that("write_rcdf_xlsx writes .xlsx files", {
-  skip_if_not_installed("openxlsx")
   dir <- withr::local_tempdir()
   write_rcdf_xlsx(mock_rcdf, dir)
 
@@ -56,7 +55,6 @@ test_that("write_rcdf_xlsx writes .xlsx files", {
 })
 
 test_that("write_rcdf_dta writes .dta files", {
-  skip_if_not_installed("foreign")
   dir <- withr::local_tempdir()
   write_rcdf_dta(mock_rcdf, dir)
 
@@ -69,7 +67,6 @@ test_that("write_rcdf_dta writes .dta files", {
 })
 
 test_that("write_rcdf_sav writes .sav files", {
-  skip_if_not_installed("haven")
   dir <- withr::local_tempdir()
   write_rcdf_sav(mock_rcdf, dir)
 
@@ -82,9 +79,6 @@ test_that("write_rcdf_sav writes .sav files", {
 })
 
 test_that("write_rcdf_sqlite writes .db file with tables", {
-  skip_if_not_installed("DBI")
-  skip_if_not_installed("RSQLite")
-
   dir <- withr::local_tempdir()
   db_path <- file.path(dir, "my_db_test.db")
   write_rcdf_sqlite(mock_rcdf, dir, db_name = "my_db_test")
