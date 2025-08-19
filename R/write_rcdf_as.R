@@ -42,8 +42,6 @@ write_rcdf_as <- function(data, path, formats, ...) {
     data_format <- formats[i]
     label_format <- label_formats[which(valid_formats == data_format)]
 
-    cli::cli_alert_info('Writing {data_format}')
-
     write_rcdf_fn <- eval(parse(text = glue::glue("write_rcdf_{data_format}")))
 
     write_rcdf_fn(

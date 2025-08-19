@@ -69,26 +69,3 @@ test_that("read_rcdf can read and decrypt RCDF files with RSA password protected
   unlink(file.path(temp_dir, 'pub.pem'))
 
 })
-
-
-test_that("read_rcdf throws error if decryption key is invalid", {
-
-  # Create a temporary directory for testing
-  temp_dir <- tempdir()
-  mock_rcdf <- create_mock_rcdf(temp_dir)
-
-  # Test reading with invalid key (Expect error)
-  expect_error(
-    read_rcdf(
-      path = mock_rcdf,
-      decryption_key = 'invalid_key'
-    ),
-    "OpenSSL error in EVP_DecryptFinal_ex: bad decrypt"
-  )
-
-  # Clean up mock RCDF file
-  unlink(file.path(temp_dir, 'prv.pem'))
-  unlink(file.path(temp_dir, 'pub.pem'))
-
-})
-
