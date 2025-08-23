@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{rcdf_list}
 \alias{rcdf_list}
-\title{Create an Empty `rcdf` Object}
+\title{Create an empty `rcdf` object}
 \usage{
 rcdf_list()
 }

@@ -60,13 +60,12 @@ write_rcdf(data, path, pub_key, ..., metadata = list())
 
 ```{r, eval=FALSE}
 # Sample data (list of data frames)
-data <- list(
-  table1 = data.frame(x = 1:10, y = letters[1:10]),
-  table2 = data.frame(a = rnorm(10), b = rnorm(10))
-)
+data <- rcdf_list()
+data$table1 = data.frame(x = 1:10, y = letters[1:10])
+data$table2 = data.frame(a = rnorm(10), b = rnorm(10))
 
-# Public RSA key (for encryption)
-pub_key <- "path/to/public_key.pem"
+# Sample public RSA key (for encryption)
+pub_key <- file.path(system.file("extdata", package = "rcdf"), "sample-public-key.pem")
 
 # Write the data to an RCDF file
 write_rcdf(data = data, path = "path/to/rcdf_file.rcdf", pub_key = pub_key)
@@ -102,14 +101,26 @@ read_rcdf(path, decryption_key, ..., password = NULL, metadata = NULL)
 
 
 ```{r, eval=FALSE}
-# Path to the encrypted RCDF file
-path <- "path/to/rcdf_file.rcdf"
+# Using sample RCDF data
+dir <- system.file("extdata", package = "rcdf")
+rcdf_path <- file.path(dir, 'mtcars.rcdf')
+private_key <- file.path(dir, 'sample-private-key.pem')
 
-# Decryption key (RSA or AES)
-decryption_key <- "path/to/decryption_key.pem"
+rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key)
+rcdf_data
 
-# Read and decrypt the RCDF file
-rcdf_data <- read_rcdf(path = path, decryption_key = decryption_key)
+# Using encrypted/password protected private key
+rcdf_path_pw <- file.path(dir, 'mtcars-pw.rcdf')
+private_key_pw <- file.path(dir, 'sample-private-key-pw.pem')
+pw <- '1234'
+
+rcdf_data_with_pw <- read_rcdf(
+  path = rcdf_path_pw,
+  decryption_key = private_key_pw,
+  password = pw
+)
+rcdf_data_with_pw
+
 ```
 
 In this example:

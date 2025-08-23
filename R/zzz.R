@@ -1,15 +1,18 @@
 utils::globalVariables(
   c(
     ".",
-    ":="
+    ":=",
+    "variable_name",
+    "label",
+    "type"
   )
 )
 
 
 .onLoad <- function(libname, pkgname) {
   op <- options()
-  op.rcbms <- list(
-    rcbms.options = list(
+  op.rcdf <- list(
+    rcdf.options = list(
       verbose = TRUE,
       survey_round = "2024",
       records = list(
@@ -26,8 +29,8 @@ utils::globalVariables(
     )
   )
 
-  to_set <- !(names(op.rcbms) %in% names(op))
-  if (any(to_set)) options(op.rcbms[to_set])
+  to_set <- !(names(op.rcdf) %in% names(op))
+  if (any(to_set)) options(op.rcdf[to_set])
 
   invisible()
 }

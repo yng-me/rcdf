@@ -2,7 +2,7 @@
 % Please edit documentation in R/write_rcdf.R
 \name{write_rcdf}
 \alias{write_rcdf}
-\title{Write Data to RCDF Format}
+\title{Write data to RCDF format}
 \usage{
 write_rcdf(data, path, pub_key, ..., metadata = list())
 }
@@ -26,8 +26,27 @@ and then creates a zip archive containing both the encrypted Parquet files and m
 metadata such as system information and encryption keys.
 }
 \examples{
-\dontrun{
 # Example usage of writing an RCDF file
-write_rcdf(data = my_data, path = "path/to/rcdf_file.rcdf", pub_key = my_pub_key)
-}
+
+rcdf_data <- rcdf_list()
+rcdf_data$mtcars <- mtcars
+
+dir <- system.file("extdata", package = "rcdf")
+
+temp_dir <- tempdir()
+
+write_rcdf(
+  data = rcdf_data,
+  path = file.path(temp_dir, "mtcars.rcdf"),
+  pub_key = file.path(dir, 'sample-public-key.pem')
+)
+
+write_rcdf(
+  data = rcdf_data,
+  path = file.path(temp_dir, "mtcars-pw.rcdf"),
+  pub_key = file.path(dir, 'sample-public-key-pw.pem')
+)
+
+unlink(file.path(temp_dir, "mtcars.rcdf"), force = TRUE)
+unlink(file.path(temp_dir, "mtcars-pw.rcdf"), force = TRUE)
 }

@@ -3,6 +3,9 @@
 
 # The `rcdf` Package
 
+A Comprehensive Toolkit for Working with RCDF (Encrypted Parquet) Files
+in R
+
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/yng-me/rcdf/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/yng-me/rcdf/actions/workflows/R-CMD-check.yaml)

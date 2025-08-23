@@ -2,7 +2,7 @@
 % Please edit documentation in R/read_parquet.R
 \name{read_parquet}
 \alias{read_parquet}
-\title{Read Parquet File with Optional Decryption}
+\title{Read Parquet file with optional decryption}
 \usage{
 read_parquet(path, ..., decryption_key = NULL, as_arrow_table = TRUE)
 }
@@ -22,12 +22,22 @@ An Arrow table or a data frame, depending on the value of `as_arrow_table`.
 This function reads a Parquet file, optionally decrypting it using the provided decryption key. If no decryption key is provided, it reads the file normally without decryption. It supports reading Parquet files as Arrow tables or regular data frames, depending on the `as_arrow_table` argument.
 }
 \examples{
-\dontrun{
+# Using sample Parquet files from `mtcars` dataset
+dir <- system.file("extdata", package = "rcdf")
+
 # Without decryption
-df <- read_parquet("data.parquet")
+df <- read_parquet(file.path(dir, "mtcars.parquet"))
+df
 
 # With decryption
-decryption_key <- list(aes_key = "your_aes_key", aes_iv = "your_aes_iv")
-df <- read_parquet("data_encrypted.parquet", decryption_key = decryption_key)
-}
+decryption_key <- list(
+  aes_key = "5bddd0ea4ab48ed5e33b1406180d68158aa255cf3f368bdd4744abc1a7909ead",
+  aes_iv = "7D3EF463F4CCD81B11B6EC3230327B2D"
+)
+
+df_with_encryption <- read_parquet(
+  file.path(dir, "mtcars-encrypted.parquet"),
+  decryption_key = decryption_key
+ )
+df_with_encryption
 }

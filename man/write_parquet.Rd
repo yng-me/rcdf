@@ -2,7 +2,7 @@
 % Please edit documentation in R/write_parquet.R
 \name{write_parquet}
 \alias{write_parquet}
-\title{Write Parquet File with Optional Encryption}
+\title{Write Parquet file with optional encryption}
 \usage{
 write_parquet(data, path, ..., encryption_key = NULL)
 }
@@ -23,13 +23,19 @@ This function writes a dataset to a Parquet file. If an encryption key is provid
 Otherwise, the function writes the data as a regular Parquet file without encryption.
 }
 \examples{
-\dontrun{
-data <- tibble::tibble(a = 1:5, b = letters[1:5])
-encryption_key <- list(aes_key = "your_aes_key", aes_iv = "your_aes_iv")
-write_parquet(data, "data.parquet", encryption_key = encryption_key)
 
-# Without encryption
-write_parquet(data, "data_no_encryption.parquet")
-}
+data <- mtcars
+key <- "5bddd0ea4ab48ed5e33b1406180d68158aa255cf3f368bdd4744abc1a7909ead"
+iv <- "7D3EF463F4CCD81B11B6EC3230327B2D"
+
+temp_dir <- tempdir()
+
+rcdf::write_parquet(
+  data = data,
+  path = file.path(temp_dir, "mtcars.parquet"),
+  encryption_key = list(aes_key = key, aes_iv = iv)
+)
+
+unlink(file.path(temp_dir, "mtcars.parquet"), force = TRUE)
 
 }

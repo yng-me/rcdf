@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{as_rcdf}
 \alias{as_rcdf}
-\title{Convert to `rcdf` Class}
+\title{Convert to `rcdf` class}
 \usage{
 as_rcdf(data)
 }
