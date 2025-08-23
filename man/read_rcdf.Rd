@@ -2,7 +2,7 @@
 % Please edit documentation in R/read_rcdf.R
 \name{read_rcdf}
 \alias{read_rcdf}
-\title{Read and Decrypt RCDF Data}
+\title{Read and decrypt RCDF data}
 \usage{
 read_rcdf(path, decryption_key, ..., password = NULL, metadata = NULL)
 }
@@ -26,12 +26,24 @@ and loads it into R as an RCDF object. The data files within the archive (usuall
 metadata (such as data dictionary and value sets) are applied to the data.
 }
 \examples{
-\dontrun{
-# Example usage of reading and decrypting an RCDF file
-rcdf_data <- read_rcdf(
-  path = "path/to/rcdf.zip",
-  decryption_key = my_decryption_key,
-  password = "my_password"
+dir <- system.file("extdata", package = "rcdf")
+rcdf_path <- file.path(dir, 'mtcars.rcdf')
+private_key <- file.path(dir, 'sample-private-key.pem')
+
+rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key)
+rcdf_data
+
+# Using encrypted/password protected private key
+rcdf_path_pw <- file.path(dir, 'mtcars-pw.rcdf')
+private_key_pw <- file.path(dir, 'sample-private-key-pw.pem')
+pw <- '1234'
+
+rcdf_data_with_pw <- read_rcdf(
+  path = rcdf_path_pw,
+  decryption_key = private_key_pw,
+  password = pw
 )
-}
+
+rcdf_data_with_pw
+
 }

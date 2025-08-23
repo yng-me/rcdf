@@ -1,4 +1,4 @@
-#' Read Environment Variables from a File
+#' Read environment variables from a file
 #'
 #' Reads a `.env` file containing environment variables in the format `KEY=VALUE`, and returns them as a named list.
 #' Lines starting with `#` are considered comments and ignored. The function also removes quotes (`"`) around values if present.

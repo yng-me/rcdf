@@ -2,7 +2,7 @@
 % Please edit documentation in R/write_rcdf_as.R
 \name{write_rcdf_xlsx}
 \alias{write_rcdf_xlsx}
-\title{Write RCDF Data to Excel Files}
+\title{Write RCDF data to Excel files}
 \usage{
 write_rcdf_xlsx(data, path, ..., parent_dir = NULL)
 }
@@ -22,9 +22,16 @@ Invisibly returns `NULL`. Files are written to disk.
 Writes each table in the RCDF object as a separate `.xlsx` file using the `openxlsx` package.
 }
 \examples{
-\dontrun{
-write_rcdf_xlsx(data = rcdf_data, path = "path/to/output")
-}
+dir <- system.file("extdata", package = "rcdf")
+rcdf_path <- file.path(dir, 'mtcars.rcdf')
+private_key <- file.path(dir, 'sample-private-key.pem')
+
+rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key)
+temp_dir <- tempdir()
+
+write_rcdf_xlsx(data = rcdf_data, path = temp_dir)
+
+unlink(temp_dir, force = TRUE)
 }
 \seealso{
 \link[rcdf]{write_rcdf_as}

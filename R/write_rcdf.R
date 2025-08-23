@@ -1,4 +1,4 @@
-#' Write Data to RCDF Format
+#' Write data to RCDF format
 #'
 #' This function writes data to an RCDF (Reusable Data Container Format) archive. It encrypts the data using AES, generates metadata,
 #' and then creates a zip archive containing both the encrypted Parquet files and metadata. The function supports the inclusion of
@@ -14,10 +14,30 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' # Example usage of writing an RCDF file
-#' write_rcdf(data = my_data, path = "path/to/rcdf_file.rcdf", pub_key = my_pub_key)
-#' }
+#'
+#' rcdf_data <- rcdf_list()
+#' rcdf_data$mtcars <- mtcars
+#'
+#' dir <- system.file("extdata", package = "rcdf")
+#'
+#' temp_dir <- tempdir()
+#'
+#' write_rcdf(
+#'   data = rcdf_data,
+#'   path = file.path(temp_dir, "mtcars.rcdf"),
+#'   pub_key = file.path(dir, 'sample-public-key.pem')
+#' )
+#'
+#' write_rcdf(
+#'   data = rcdf_data,
+#'   path = file.path(temp_dir, "mtcars-pw.rcdf"),
+#'   pub_key = file.path(dir, 'sample-public-key-pw.pem')
+#' )
+#'
+#' unlink(file.path(temp_dir, "mtcars.rcdf"), force = TRUE)
+#' unlink(file.path(temp_dir, "mtcars-pw.rcdf"), force = TRUE)
+
 
 write_rcdf <- function(data, path, pub_key, ..., metadata = list()) {
 
@@ -58,8 +78,8 @@ write_rcdf <- function(data, path, pub_key, ..., metadata = list()) {
   jsonlite::write_json(
     x =  meta,
     path = file.path(dir_zip, 'metadata.json'),
-    pretty = T,
-    auto_unbox = T
+    pretty = TRUE,
+    auto_unbox = TRUE
   )
 
   zip::zip(
@@ -78,7 +98,7 @@ write_rcdf <- function(data, path, pub_key, ..., metadata = list()) {
     mode = "cherry-pick"
   )
 
-  unlink(dir_zip, force = T, recursive = T)
-  unlink(file.path(dir_temp, '__rcdf_temp__'), force = T, recursive = T)
+  unlink(dir_zip, force = TRUE, recursive = TRUE)
+  unlink(file.path(dir_temp, '__rcdf_temp__'), force = TRUE, recursive = TRUE)
 
 }

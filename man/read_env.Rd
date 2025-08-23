@@ -2,7 +2,7 @@
 % Please edit documentation in R/helpers.R
 \name{read_env}
 \alias{read_env}
-\title{Read Environment Variables from a File}
+\title{Read environment variables from a file}
 \usage{
 read_env(path)
 }

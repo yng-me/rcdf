@@ -1,4 +1,4 @@
-#' Read and Decrypt RCDF Data
+#' Read and decrypt RCDF data
 #'
 #' This function reads an RCDF (Reusable Data Container Format) archive, decrypts its contents using the specified decryption key,
 #' and loads it into R as an RCDF object. The data files within the archive (usually Parquet files) are decrypted and, if provided,
@@ -14,14 +14,26 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' # Example usage of reading and decrypting an RCDF file
-#' rcdf_data <- read_rcdf(
-#'   path = "path/to/rcdf.zip",
-#'   decryption_key = my_decryption_key,
-#'   password = "my_password"
+#' dir <- system.file("extdata", package = "rcdf")
+#' rcdf_path <- file.path(dir, 'mtcars.rcdf')
+#' private_key <- file.path(dir, 'sample-private-key.pem')
+#'
+#' rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key)
+#' rcdf_data
+#'
+#' # Using encrypted/password protected private key
+#' rcdf_path_pw <- file.path(dir, 'mtcars-pw.rcdf')
+#' private_key_pw <- file.path(dir, 'sample-private-key-pw.pem')
+#' pw <- '1234'
+#'
+#' rcdf_data_with_pw <- read_rcdf(
+#'   path = rcdf_path_pw,
+#'   decryption_key = private_key_pw,
+#'   password = pw
 #' )
-#' }
+#'
+#' rcdf_data_with_pw
+#'
 
 read_rcdf <- function(path, decryption_key, ..., password = NULL, metadata = NULL) {
 
@@ -31,7 +43,7 @@ read_rcdf <- function(path, decryption_key, ..., password = NULL, metadata = NUL
   pq_files <- list.files(
     path = file.path(meta$dir, 'lineage'),
     pattern = '\\.parquet',
-    full.names = T
+    full.names = TRUE
   )
 
   pq <- list()
@@ -47,23 +59,14 @@ read_rcdf <- function(path, decryption_key, ..., password = NULL, metadata = NUL
         aes_key = key$aes_key,
         aes_iv = key$aes_iv
       ),
-      as_arrow_table = F
+      as_arrow_table = FALSE
     )
 
-    # TODO: METADATA
-    # if(!is.null(metadata)) {
-    #
-    #   if(!is.null(metadata$data_dictionary) & !is.null(metadata$valueset)) {
-    #
-    #     pq_temp <- add_metadata(
-    #       .data = pq_temp,
-    #       .dictionary = metadata$data_dictionary[[meta$input_data]],
-    #       .valueset = metadata$valueset
-    #     )
-    #   }
-    # }
+    if(!is.null(metadata)) {
+      pq_temp <- add_metadata(pq_temp, metadata)
+    }
 
-    pq[[record]] <- arrow::arrow_table(pq_temp)
+    pq[[record]] <- arrow::as_arrow_table(pq_temp)
 
   }
 
@@ -85,27 +88,27 @@ extract_rcdf <- function(path, meta_only = FALSE) {
   temp_dir_rcdf <- list.files(
     path = temp_dir_rcdf,
     pattern = '__rcdf_temp__',
-    include.dirs = T,
-    recursive = T,
-    full.names = T
+    include.dirs = TRUE,
+    recursive = TRUE,
+    full.names = TRUE
   )
 
   if(length(temp_dir_rcdf) > 0) {
     for(i in seq_along(temp_dir_rcdf)) {
-      unlink(temp_dir_rcdf[i], recursive = T, force = T)
+      unlink(temp_dir_rcdf[i], recursive = TRUE, force = TRUE)
     }
   }
 
   temp_dir_to <- file.path(temp_dir, '__rcdf_temp__', fs::path_ext_remove(basename(path)))
 
-  zip::unzip(path, exdir = temp_dir_to, junkpaths = T)
+  zip::unzip(path, exdir = temp_dir_to, junkpaths = TRUE)
   if(!meta_only) {
     zip::unzip(file.path(temp_dir_to, 'lineage.zip'), exdir = temp_dir_to)
   }
 
-  unlink(file.path(temp_dir_to, 'lineage.zip'), recursive = T, force = T)
+  unlink(file.path(temp_dir_to, 'lineage.zip'), recursive = TRUE, force = TRUE)
 
-  meta <- jsonlite::read_json(file.path(temp_dir_to, 'metadata.json'), simplifyVector = T)
+  meta <- jsonlite::read_json(file.path(temp_dir_to, 'metadata.json'), simplifyVector = TRUE)
 
   meta$dir <- temp_dir_to
   meta
@@ -148,6 +151,4 @@ decrypt_key <- function(data, key, password = NULL) {
       aes_iv = aes_iv
     )
   )
-
-
 }

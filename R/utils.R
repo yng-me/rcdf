@@ -1,4 +1,4 @@
-#' Create an Empty `rcdf` Object
+#' Create an empty `rcdf` object
 #'
 #' Initializes and returns an empty `rcdf` object. This is a convenient constructor
 #' for creating a new `rcdf`-class list structure.
@@ -17,7 +17,7 @@ rcdf_list <- function() {
 
 
 
-#' Convert to `rcdf` Class
+#' Convert to `rcdf` class
 #'
 #' Converts an existing list or compatible object into an object of class `"rcdf"`.
 #'

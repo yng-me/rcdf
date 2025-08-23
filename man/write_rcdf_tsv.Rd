@@ -2,7 +2,7 @@
 % Please edit documentation in R/write_rcdf_as.R
 \name{write_rcdf_tsv}
 \alias{write_rcdf_tsv}
-\title{Write RCDF Data to TSV Files}
+\title{Write RCDF data to TSV files}
 \usage{
 write_rcdf_tsv(data, path, ..., parent_dir = NULL)
 }
@@ -22,9 +22,16 @@ Invisibly returns `NULL`. Files are written to disk.
 Writes each table in the RCDF object as a separate tab-separated `.txt` file.
 }
 \examples{
-\dontrun{
-write_rcdf_tsv(data = rcdf_data, path = "path/to/output", row.names = FALSE)
-}
+dir <- system.file("extdata", package = "rcdf")
+rcdf_path <- file.path(dir, 'mtcars.rcdf')
+private_key <- file.path(dir, 'sample-private-key.pem')
+
+rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key)
+temp_dir <- tempdir()
+
+write_rcdf_tsv(data = rcdf_data, path = temp_dir)
+
+unlink(temp_dir, force = TRUE)
 }
 \seealso{
 \link[rcdf]{write_rcdf_as}

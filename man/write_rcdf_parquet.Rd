@@ -2,7 +2,7 @@
 % Please edit documentation in R/write_parquet.R
 \name{write_rcdf_parquet}
 \alias{write_rcdf_parquet}
-\title{Write RCDF Data to Parquet Files}
+\title{Write RCDF data to Parquet files}
 \usage{
 write_rcdf_parquet(data, path, ..., parent_dir = NULL)
 }
@@ -22,11 +22,14 @@ A character vector of file paths to the written Parquet files.
 This function writes an RCDF object (a list of data frames) to multiple Parquet files. Each data frame in the list is written to its corresponding Parquet file in the specified path.
 }
 \examples{
-\dontrun{
-data_list <- list(
-  df1 = tibble::tibble(a = 1:5),
-  df2 = tibble::tibble(b = 6:10)
-)
-write_rcdf_parquet(data_list, "output_folder")
-}
+dir <- system.file("extdata", package = "rcdf")
+rcdf_path <- file.path(dir, 'mtcars.rcdf')
+private_key <- file.path(dir, 'sample-private-key.pem')
+
+rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key)
+temp_dir <- tempdir()
+
+write_rcdf_parquet(data = rcdf_data, path = temp_dir)
+
+unlink(temp_dir, force = TRUE)
 }

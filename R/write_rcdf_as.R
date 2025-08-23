@@ -1,4 +1,4 @@
-#' Write RCDF Data to Multiple Formats
+#' Write RCDF data to multiple formats
 #'
 #' Exports RCDF-formatted data to one or more supported open data formats. The function automatically dispatches to the appropriate writer function based on the `formats` provided.
 #'
@@ -13,10 +13,16 @@
 #' @seealso \link[rcdf]{write_rcdf_csv}  \link[rcdf]{write_rcdf_tsv}  \link[rcdf]{write_rcdf_json}  \link[rcdf]{write_rcdf_xlsx}  \link[rcdf]{write_rcdf_dta}  \link[rcdf]{write_rcdf_sav}  \link[rcdf]{write_rcdf_sqlite}
 #'
 #' @examples
+#' dir <- system.file("extdata", package = "rcdf")
+#' rcdf_path <- file.path(dir, 'mtcars.rcdf')
+#' private_key <- file.path(dir, 'sample-private-key.pem')
 #'
-#' \dontrun{
-#' write_rcdf_as(data = rcdf_data, path = "path/to/output", formats = c("xlsx", "csv"))
-#' }
+#' rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key)
+#' temp_dir <- tempdir()
+#'
+#' write_rcdf_as(data = rcdf_data, path = temp_dir, formats = c("csv", "xlsx"))
+#'
+#' unlink(temp_dir, force = TRUE)
 
 
 write_rcdf_as <- function(data, path, formats, ...) {
@@ -57,7 +63,7 @@ write_rcdf_as <- function(data, path, formats, ...) {
 
 
 
-#' Write RCDF Data to CSV Files
+#' Write RCDF data to CSV files
 #'
 #' Writes each table in the RCDF object as a separate `.csv` file.
 #'
@@ -72,9 +78,16 @@ write_rcdf_as <- function(data, path, formats, ...) {
 #' @seealso \link[rcdf]{write_rcdf_as}
 #'
 #' @examples
-#' \dontrun{
-#' write_rcdf_csv(data = rcdf_data, path = "path/to/output", row.names = FALSE)
-#' }
+#' dir <- system.file("extdata", package = "rcdf")
+#' rcdf_path <- file.path(dir, 'mtcars.rcdf')
+#' private_key <- file.path(dir, 'sample-private-key.pem')
+#'
+#' rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key)
+#' temp_dir <- tempdir()
+#'
+#' write_rcdf_csv(data = rcdf_data, path = temp_dir)
+#'
+#' unlink(temp_dir, force = TRUE)
 
 write_rcdf_csv <- function(data, path, ..., parent_dir = NULL) {
 
@@ -96,7 +109,7 @@ write_rcdf_csv <- function(data, path, ..., parent_dir = NULL) {
 }
 
 
-#' Write RCDF Data to TSV Files
+#' Write RCDF data to TSV files
 #'
 #' Writes each table in the RCDF object as a separate tab-separated `.txt` file.
 #'
@@ -111,9 +124,16 @@ write_rcdf_csv <- function(data, path, ..., parent_dir = NULL) {
 #' @seealso \link[rcdf]{write_rcdf_as}
 #'
 #' @examples
-#' \dontrun{
-#' write_rcdf_tsv(data = rcdf_data, path = "path/to/output", row.names = FALSE)
-#' }
+#' dir <- system.file("extdata", package = "rcdf")
+#' rcdf_path <- file.path(dir, 'mtcars.rcdf')
+#' private_key <- file.path(dir, 'sample-private-key.pem')
+#'
+#' rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key)
+#' temp_dir <- tempdir()
+#'
+#' write_rcdf_tsv(data = rcdf_data, path = temp_dir)
+#'
+#' unlink(temp_dir, force = TRUE)
 
 write_rcdf_tsv <- function(data, path, ..., parent_dir = NULL) {
 
@@ -136,7 +156,7 @@ write_rcdf_tsv <- function(data, path, ..., parent_dir = NULL) {
 }
 
 
-#' Write RCDF Data to JSON Files
+#' Write RCDF data to JSON files
 #'
 #' Writes each table in the RCDF object as a separate `.json` file.
 #'
@@ -151,9 +171,16 @@ write_rcdf_tsv <- function(data, path, ..., parent_dir = NULL) {
 #' @seealso \link[rcdf]{write_rcdf_as}
 #'
 #' @examples
-#' \dontrun{
-#' write_rcdf_json(data = rcdf_data, path = "path/to/output", pretty = TRUE)
-#' }
+#' dir <- system.file("extdata", package = "rcdf")
+#' rcdf_path <- file.path(dir, 'mtcars.rcdf')
+#' private_key <- file.path(dir, 'sample-private-key.pem')
+#'
+#' rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key)
+#' temp_dir <- tempdir()
+#'
+#' write_rcdf_json(data = rcdf_data, path = temp_dir)
+#'
+#' unlink(temp_dir, force = TRUE)
 
 
 write_rcdf_json <- function(data, path, ..., parent_dir = NULL) {
@@ -178,7 +205,7 @@ write_rcdf_json <- function(data, path, ..., parent_dir = NULL) {
 }
 
 
-#' Write RCDF Data to Excel Files
+#' Write RCDF data to Excel files
 #'
 #' Writes each table in the RCDF object as a separate `.xlsx` file using the `openxlsx` package.
 #'
@@ -193,9 +220,16 @@ write_rcdf_json <- function(data, path, ..., parent_dir = NULL) {
 #' @seealso \link[rcdf]{write_rcdf_as}
 #'
 #' @examples
-#' \dontrun{
-#' write_rcdf_xlsx(data = rcdf_data, path = "path/to/output")
-#' }
+#' dir <- system.file("extdata", package = "rcdf")
+#' rcdf_path <- file.path(dir, 'mtcars.rcdf')
+#' private_key <- file.path(dir, 'sample-private-key.pem')
+#'
+#' rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key)
+#' temp_dir <- tempdir()
+#'
+#' write_rcdf_xlsx(data = rcdf_data, path = temp_dir)
+#'
+#' unlink(temp_dir, force = TRUE)
 
 write_rcdf_xlsx <- function(data, path, ..., parent_dir = NULL) {
 
@@ -218,7 +252,7 @@ write_rcdf_xlsx <- function(data, path, ..., parent_dir = NULL) {
 }
 
 
-#' Write RCDF Data to Stata `.dta` Files
+#' Write RCDF data to Stata `.dta` files
 #'
 #' Writes each table in the RCDF object to a `.dta` file for use in Stata.
 #'
@@ -233,9 +267,16 @@ write_rcdf_xlsx <- function(data, path, ..., parent_dir = NULL) {
 #' @seealso \link[rcdf]{write_rcdf_as}
 #'
 #' @examples
-#' \dontrun{
-#' write_rcdf_dta(data = rcdf_data, path = "path/to/output")
-#' }
+#' dir <- system.file("extdata", package = "rcdf")
+#' rcdf_path <- file.path(dir, 'mtcars.rcdf')
+#' private_key <- file.path(dir, 'sample-private-key.pem')
+#'
+#' rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key)
+#' temp_dir <- tempdir()
+#'
+#' write_rcdf_dta(data = rcdf_data, path = temp_dir)
+#'
+#' unlink(temp_dir, force = TRUE)
 
 write_rcdf_dta <- function(data, path, ..., parent_dir = NULL) {
 
@@ -258,7 +299,7 @@ write_rcdf_dta <- function(data, path, ..., parent_dir = NULL) {
 }
 
 
-#' Write RCDF Data to SPSS `.sav` Files
+#' Write RCDF data to SPSS `.sav` files
 #'
 #' Writes each table in the RCDF object to a `.sav` file using the `haven` package for compatibility with SPSS.
 #'
@@ -273,9 +314,16 @@ write_rcdf_dta <- function(data, path, ..., parent_dir = NULL) {
 #' @seealso \link[rcdf]{write_rcdf_as}
 #'
 #' @examples
-#' \dontrun{
-#' write_rcdf_sav(data = rcdf_data, path = "path/to/output")
-#' }
+#' dir <- system.file("extdata", package = "rcdf")
+#' rcdf_path <- file.path(dir, 'mtcars.rcdf')
+#' private_key <- file.path(dir, 'sample-private-key.pem')
+#'
+#' rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key)
+#' temp_dir <- tempdir()
+#'
+#' write_rcdf_sav(data = rcdf_data, path = temp_dir)
+#'
+#' unlink(temp_dir, force = TRUE)
 
 
 write_rcdf_sav <- function(data, path, ..., parent_dir = NULL) {
@@ -299,7 +347,7 @@ write_rcdf_sav <- function(data, path, ..., parent_dir = NULL) {
 }
 
 
-#' Write RCDF Data to a SQLite Database
+#' Write RCDF data to a SQLite database
 #'
 #' Writes all tables in the RCDF object to a single SQLite database file.
 #'
@@ -315,10 +363,16 @@ write_rcdf_sav <- function(data, path, ..., parent_dir = NULL) {
 #' @seealso \link[rcdf]{write_rcdf_as}
 #'
 #' @examples
-#' \dontrun{
-#' write_rcdf_sqlite(data = rcdf_data, path = "path/to/output")
-#' }
-
+#' dir <- system.file("extdata", package = "rcdf")
+#' rcdf_path <- file.path(dir, 'mtcars.rcdf')
+#' private_key <- file.path(dir, 'sample-private-key.pem')
+#'
+#' rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key)
+#' temp_dir <- tempdir()
+#'
+#' write_rcdf_sqlite(data = rcdf_data, path = temp_dir)
+#'
+#' unlink(temp_dir, force = TRUE)
 
 write_rcdf_sqlite <- function(data, path, db_name = "cbms_data", ..., parent_dir = NULL) {
 

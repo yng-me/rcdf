@@ -1,4 +1,4 @@
-#' Write Parquet File with Optional Encryption
+#' Write Parquet file with optional encryption
 #'
 #' This function writes a dataset to a Parquet file. If an encryption key is provided, the data will be encrypted before writing.
 #' Otherwise, the function writes the data as a regular Parquet file without encryption.
@@ -12,14 +12,20 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' data <- tibble::tibble(a = 1:5, b = letters[1:5])
-#' encryption_key <- list(aes_key = "your_aes_key", aes_iv = "your_aes_iv")
-#' write_parquet(data, "data.parquet", encryption_key = encryption_key)
 #'
-#' # Without encryption
-#' write_parquet(data, "data_no_encryption.parquet")
-#'}
+#' data <- mtcars
+#' key <- "5bddd0ea4ab48ed5e33b1406180d68158aa255cf3f368bdd4744abc1a7909ead"
+#' iv <- "7D3EF463F4CCD81B11B6EC3230327B2D"
+#'
+#' temp_dir <- tempdir()
+#'
+#' rcdf::write_parquet(
+#'   data = data,
+#'   path = file.path(temp_dir, "mtcars.parquet"),
+#'   encryption_key = list(aes_key = key, aes_iv = iv)
+#' )
+#'
+#' unlink(file.path(temp_dir, "mtcars.parquet"), force = TRUE)
 #'
 
 write_parquet <- function(data, path, ..., encryption_key = NULL) {
@@ -42,7 +48,7 @@ write_parquet <- function(data, path, ..., encryption_key = NULL) {
       conn = pq_conn,
       name = pq_name,
       value = dplyr::collect(data),
-      overwrite = T
+      overwrite = TRUE
     )
 
     DBI::dbExecute(conn = pq_conn, statement = pq_query)
@@ -54,7 +60,7 @@ write_parquet <- function(data, path, ..., encryption_key = NULL) {
 
 
 
-#' Write RCDF Data to Parquet Files
+#' Write RCDF data to Parquet files
 #'
 #' This function writes an RCDF object (a list of data frames) to multiple Parquet files. Each data frame in the list is written to its corresponding Parquet file in the specified path.
 #'
@@ -67,13 +73,16 @@ write_parquet <- function(data, path, ..., encryption_key = NULL) {
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' data_list <- list(
-#'   df1 = tibble::tibble(a = 1:5),
-#'   df2 = tibble::tibble(b = 6:10)
-#' )
-#' write_rcdf_parquet(data_list, "output_folder")
-#' }
+#' dir <- system.file("extdata", package = "rcdf")
+#' rcdf_path <- file.path(dir, 'mtcars.rcdf')
+#' private_key <- file.path(dir, 'sample-private-key.pem')
+#'
+#' rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key)
+#' temp_dir <- tempdir()
+#'
+#' write_rcdf_parquet(data = rcdf_data, path = temp_dir)
+#'
+#' unlink(temp_dir, force = TRUE)
 
 write_rcdf_parquet <- function(data, path, ..., parent_dir = NULL) {
 
@@ -93,6 +102,6 @@ write_rcdf_parquet <- function(data, path, ..., parent_dir = NULL) {
     )
   }
 
-  list.files(path, pattern = '.parquet', full.names = T)
+  list.files(path, pattern = '.parquet', full.names = TRUE)
 
 }
