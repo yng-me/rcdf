@@ -6,6 +6,8 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/yng-me/rcdf/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/yng-me/rcdf/actions/workflows/R-CMD-check.yaml)
+[![CRAN
+status](https://www.r-pkg.org/badges/version/rcdf)](https://CRAN.R-project.org/package=rcdf)
 <!-- badges: end -->
 
 The `rcdf` package is a comprehensive toolkit for securely working with
