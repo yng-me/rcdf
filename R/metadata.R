@@ -55,7 +55,7 @@ add_metadata <- function(data, metadata, ..., set_data_types = FALSE) {
     if(grepl("\\.json$", data)) {
       data <- jsonlite::read_json(data, simplifyVector = TRUE)
     } else if (grepl("\\.csv$", data)) {
-      data <- read.csv(data)
+      data <- utils::read.csv(data)
     } else if (grepl("\\.xlsx$", data)) {
       data <- openxlsx::read.xlsx(data)
     } else if (grepl("\\.parquet$", data)) {

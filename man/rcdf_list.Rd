@@ -4,7 +4,11 @@
 \alias{rcdf_list}
 \title{Create an empty `rcdf` object}
 \usage{
-rcdf_list()
+rcdf_list(...)
+}
+\arguments{
+\item{...}{Optional elements to include in the list. These will be passed to
+the internal list constructor and included in the resulting `rcdf` object.}
 }
 \value{
 A list object of class `"rcdf"`.
