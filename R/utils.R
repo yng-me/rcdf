@@ -10,11 +10,10 @@
 #' rcdf <- rcdf_list()
 #' class(rcdf)
 
-rcdf_list <- function() {
-  value <- list()
+rcdf_list <- function(...) {
+  value <- list(...)
   as_rcdf(value)
 }
-
 
 
 #' Convert to `rcdf` class

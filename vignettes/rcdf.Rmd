@@ -14,29 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-## Introduction
-
-The `rcdf` package is a powerful toolkit for securely working with RCDF (Encrypted Parquet) files in R. RCDF is a custom data format designed to provide strong encryption and metadata management for sensitive datasets. With `rcdf`, users can easily handle encrypted data, including reading, writing, and exporting data stored in this secure format.
-
 This vignette will walk you through the key features of the package, including how to encrypt and save your data in RCDF format, how to decrypt and read RCDF files, and how to export data to other common formats.
-
-
-## Installation
-
-To use the `rcdf` package, you’ll need to install it first. You can install the package directly from GitHub using the `devtools` package:
-
-```{r, eval=FALSE}
-# Install the package from GitHub
-devtools::install_github("yng-me/rcdf")
-```
-
-Once installed, you can load the package and start working with RCDF files.
-
-```{r, eval=FALSE}
-library(rcdf)
-```
-
-
 
 ## Writing data to RCDF format
 
