@@ -50,6 +50,19 @@
 #'
 
 add_metadata <- function(data, metadata, ..., set_data_types = FALSE) {
+
+  if(is.character(data)) {
+    if(grepl("\\.json$", data)) {
+      data <- jsonlite::read_json(data, simplifyVector = TRUE)
+    } else if (grepl("\\.csv$", data)) {
+      data <- read.csv(data)
+    } else if (grepl("\\.xlsx$", data)) {
+      data <- openxlsx::read.xlsx(data)
+    } else if (grepl("\\.parquet$", data)) {
+      data <- arrow::open_dataset(data)
+    }
+  }
+
   column_names <- names(data)
   dictionary <- check_metadata_structure(metadata)
 
