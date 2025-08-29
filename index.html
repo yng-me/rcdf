@@ -51,33 +51,39 @@
   <main id="main" class="col-md-9"><div class="section level1">
 <div class="page-header"><h1 id="the-rcdf-package">The <code>rcdf</code> Package<a class="anchor" aria-label="anchor" href="#the-rcdf-package"></a>
 </h1></div>
-<p>A Comprehensive Toolkit for Working with RCDF (Encrypted Parquet) Files in R</p>
 <!-- badges: start -->
 
-<p><code>rcdf</code> provides functions to easily create, read, and manipulate RCDF files (encrypted Parquet format) in R. The package supports robust encryption and decryption workflows, integrates with Arrow for efficient data access, and provides utilities for managing metadata, generating AES keys, and more.</p>
+<p>The <code>rcdf</code> package is a comprehensive toolkit for securely working with RCDF (encrypted Parquet) files in R. RCDF is a custom data format designed to provide strong encryption and metadata management for sensitive datasets. With <code>rcdf</code>, users can easily handle encrypted data, including reading, writing, and exporting data stored in this secure format.</p>
 <p>Key features include:</p>
 <ul>
 <li>
-<strong>Secure Data Handling</strong>: Functions for reading and writing encrypted Parquet files using AES and RSA encryption.</li>
+<strong>Secure data handling</strong>: Functions for reading and writing encrypted Parquet files using AES and RSA encryption.</li>
 <li>
-<strong>Metadata Management</strong>: Tools for handling and storing metadata in RCDF files, including automated key generation and decryption.</li>
+<strong>Metadata management</strong>: Tools for handling and storing metadata in RCDF files, including automated key generation and decryption.</li>
 <li>
-<strong>Parquet Integration</strong>: Full integration with the <code>arrow</code> package to read and write Parquet files seamlessly.</li>
+<strong>Parquet integration</strong>: Full integration with the <code>arrow</code> package to read and write Parquet files seamlessly.</li>
 <li>
-<strong>Cross-Platform Support</strong>: Compatible with Linux, macOS, and Windows environments.</li>
+<strong>Cross-platform support</strong>: Compatible with Linux, macOS, and Windows environments.</li>
 </ul>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>You can install the development version of rcdf from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
+<p>Install from CRAN with:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"rcdf"</span><span class="op">)</span></span></code></pre></div>
+<p>You can also install the development version of <code>rcdf</code> from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"yng-me/rcdf"</span><span class="op">)</span></span></code></pre></div>
+<p>Once installed, you can load the package and start working with RCDF files.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://yng-me.github.io/rcdf/">rcdf</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
 <h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
+<li><a href="https://cloud.r-project.org/package=rcdf" class="external-link">View on CRAN</a></li>
 <li><a href="https://github.com/yng-me/rcdf/" class="external-link">Browse source code</a></li>
 <li><a href="https://github.com/yng-me/rcdf/issues" class="external-link">Report a bug</a></li>
 </ul>

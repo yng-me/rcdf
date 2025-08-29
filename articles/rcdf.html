@@ -61,34 +61,10 @@
 
     
     
-<div class="section level2">
-<h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
-</h2>
-<p>The <code>rcdf</code> package is a powerful toolkit for securely
-working with RCDF (Encrypted Parquet) files in R. RCDF is a custom data
-format designed to provide strong encryption and metadata management for
-sensitive datasets. With <code>rcdf</code>, users can easily handle
-encrypted data, including reading, writing, and exporting data stored in
-this secure format.</p>
 <p>This vignette will walk you through the key features of the package,
 including how to encrypt and save your data in RCDF format, how to
 decrypt and read RCDF files, and how to export data to other common
 formats.</p>
-</div>
-<div class="section level2">
-<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
-</h2>
-<p>To use the <code>rcdf</code> package, you’ll need to install it
-first. You can install the package directly from GitHub using the
-<code>devtools</code> package:</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Install the package from GitHub</span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"yng-me/rcdf"</span><span class="op">)</span></span></code></pre></div>
-<p>Once installed, you can load the package and start working with RCDF
-files.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://yng-me.github.io/rcdf/">rcdf</a></span><span class="op">)</span></span></code></pre></div>
-</div>
 <div class="section level2">
 <h2 id="writing-data-to-rcdf-format">Writing data to RCDF format<a class="anchor" aria-label="anchor" href="#writing-data-to-rcdf-format"></a>
 </h2>
@@ -99,7 +75,7 @@ encryption, and saves the data as encrypted Parquet files inside a zip
 archive. This ensures that the data is stored securely and can only be
 decrypted using the correct key.</p>
 <p><br><strong>Usage</strong>:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/write_rcdf.html">write_rcdf</a></span><span class="op">(</span><span class="va">data</span>, <span class="va">path</span>, <span class="va">pub_key</span>, <span class="va">...</span>, metadata <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><strong>Parameters</strong>:</p>
 <ul>
@@ -120,7 +96,7 @@ needed.</li>
 <code>metadata</code>: A list of metadata to be included in the RCDF
 file. Can contain system information or other relevant details.</li>
 </ul>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Sample data (list of data frames)</span></span>
 <span><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/rcdf_list.html">rcdf_list</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">data</span><span class="op">$</span><span class="va">table1</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>x <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, y <span class="op">=</span> <span class="va">letters</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span><span class="op">)</span></span>
@@ -153,7 +129,7 @@ path.</p>
 Parquet files from the RCDF archive, decrypts them using the provided
 decryption key, and loads the data back into R as an RCDF object.</p>
 <p><br><strong>Usage</strong>:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/read_rcdf.html">read_rcdf</a></span><span class="op">(</span><span class="va">path</span>, <span class="va">decryption_key</span>, <span class="va">...</span>, password <span class="op">=</span> <span class="cn">NULL</span>, metadata <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
 <p><strong>Parameters</strong>:</p>
 <ul>
@@ -175,7 +151,7 @@ if needed.</li>
 dictionaries and value sets. This metadata is applied to the data if
 provided.</li>
 </ul>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Using sample RCDF data</span></span>
 <span><span class="va">dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, package <span class="op">=</span> <span class="st">"rcdf"</span><span class="op">)</span></span>
 <span><span class="va">rcdf_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">dir</span>, <span class="st">'mtcars.rcdf'</span><span class="op">)</span></span>
@@ -224,7 +200,7 @@ Stata, SPSS, and SQLite.</p>
 stored in an RCDF object to CSV files. This is useful when you need to
 share or process the data in a non-encrypted, readable format.</p>
 <p><br><strong>Usage</strong>:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/write_rcdf_csv.html">write_rcdf_csv</a></span><span class="op">(</span><span class="va">data</span>, <span class="va">path</span>, <span class="va">...</span>, parent_dir <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
 <p><strong>Parameters</strong>:</p>
 <ul>
@@ -243,7 +219,7 @@ setting delimiters, row names, etc.).</li>
 <code>parent_dir</code>: An optional parent directory to be included
 in the path where the files will be written.</li>
 </ul>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/write_rcdf_csv.html">write_rcdf_csv</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">rcdf_data</span>, path <span class="op">=</span> <span class="st">"path/to/output"</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p>This will save each table in the RCDF object as a separate CSV file
 in the specified directory.</p>
@@ -255,7 +231,7 @@ in the specified directory.</p>
 export function but writes the data as tab-separated values (TSV)
 files.</p>
 <p><br><strong>Usage</strong>:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/write_rcdf_tsv.html">write_rcdf_tsv</a></span><span class="op">(</span><span class="va">data</span>, <span class="va">path</span>, <span class="va">...</span>, parent_dir <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
 <p><strong>Parameters</strong>:</p>
 <ul>
@@ -273,7 +249,7 @@ delimiters, handling row names).</li>
 <code>parent_dir</code>: An optional parent directory to be included
 in the path where the files will be written.</li>
 </ul>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/write_rcdf_tsv.html">write_rcdf_tsv</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">rcdf_data</span>, path <span class="op">=</span> <span class="st">"path/to/output"</span>, row.names <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
 <p>This function will save each data frame in the RCDF object as a
 separate TSV file in the target location.</p>
@@ -285,7 +261,7 @@ separate TSV file in the target location.</p>
 decrypted RCDF data to JSON format. This is useful when working with
 APIs or other systems that require data in JSON.</p>
 <p><br><strong>Usage</strong>:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/write_rcdf_json.html">write_rcdf_json</a></span><span class="op">(</span><span class="va">data</span>, <span class="va">path</span>, <span class="va">...</span>, parent_dir <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
 <p><strong>Parameters</strong>:</p>
 <ul>
@@ -302,7 +278,7 @@ indentation or compactness of the JSON output).</li>
 <code>parent_dir</code>: An optional parent directory to be included
 in the path where the files will be written.</li>
 </ul>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/write_rcdf_json.html">write_rcdf_json</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">rcdf_data</span>, path <span class="op">=</span> <span class="st">"path/to/output"</span>, pretty <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>This will convert each data frame in the RCDF object into a separate
 JSON file and save them in the specified directory. The
@@ -316,7 +292,7 @@ human-readable with proper indentation.</p>
 data back into the Parquet format. Parquet is a columnar storage format
 that is highly efficient for big data processing.</p>
 <p><br><strong>Usage</strong>:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/write_rcdf_parquet.html">write_rcdf_parquet</a></span><span class="op">(</span><span class="va">data</span>, <span class="va">path</span>, <span class="va">...</span>, parent_dir <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
 <p><strong>Parameters</strong>:</p>
 <ul>
@@ -333,7 +309,7 @@ specifying compression type.</li>
 <code>parent_dir</code>: An optional parent directory to be included
 in the path where the files will be written.</li>
 </ul>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/write_rcdf_parquet.html">write_rcdf_parquet</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">rcdf_data</span>, path <span class="op">=</span> <span class="st">"path/to/output"</span><span class="op">)</span></span></code></pre></div>
 <p>This function will write each data frame in the RCDF object into
 separate Parquet files, storing them in the specified directory.</p>
@@ -345,7 +321,7 @@ separate Parquet files, storing them in the specified directory.</p>
 decrypted RCDF data to Excel (.xlsx) format. It’s helpful when sharing
 data with users who prefer spreadsheet software.</p>
 <p><br><strong>Usage</strong>:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/write_rcdf_xlsx.html">write_rcdf_xlsx</a></span><span class="op">(</span><span class="va">data</span>, <span class="va">path</span>, <span class="va">...</span>, parent_dir <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
 <p><strong>Parameters</strong>:</p>
 <ul>
@@ -361,7 +337,7 @@ export in the <code>openxlsx</code> package.</li>
 <code>parent_dir</code>: An optional parent directory to be included
 in the path where the files will be written.</li>
 </ul>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">write_rcdf_excel</span><span class="op">(</span>data <span class="op">=</span> <span class="va">rcdf_data</span>, path <span class="op">=</span> <span class="st">"path/to/output.xlsx"</span>, sheetName <span class="op">=</span> <span class="st">"Sheet1"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -371,7 +347,7 @@ in the path where the files will be written.</li>
 data to Stata’s .dta file format. This is useful for users who need to
 work with the data in Stata.</p>
 <p><br><strong>Usage</strong>:</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/write_rcdf_dta.html">write_rcdf_dta</a></span><span class="op">(</span><span class="va">data</span>, <span class="va">path</span>, <span class="va">...</span>, parent_dir <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
 <p><strong>Parameters</strong>:</p>
 <ul>
@@ -388,7 +364,7 @@ Stata).</li>
 <code>parent_dir</code>: An optional parent directory to be included
 in the path where the files will be written.</li>
 </ul>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/write_rcdf_dta.html">write_rcdf_dta</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">rcdf_data</span>, path <span class="op">=</span> <span class="st">"path/to/output"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -397,7 +373,7 @@ in the path where the files will be written.</li>
 <p>The <code><a href="../reference/write_rcdf_sav.html">write_rcdf_sav()</a></code> function is for exporting the
 decrypted RCDF data to SPSS’s .sav file format.</p>
 <p><br><strong>Usage</strong>:</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/write_rcdf_sav.html">write_rcdf_sav</a></span><span class="op">(</span><span class="va">data</span>, <span class="va">path</span>, <span class="va">...</span>, parent_dir <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
 <p><strong>Parameters</strong>:</p>
 <ul>
@@ -412,7 +388,7 @@ export.</li>
 <code>parent_dir</code>: An optional parent directory to be included
 in the path where the files will be written.</li>
 </ul>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/write_rcdf_sav.html">write_rcdf_sav</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">rcdf_data</span>, path <span class="op">=</span> <span class="st">"path/to/output"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -422,7 +398,7 @@ in the path where the files will be written.</li>
 the decrypted RCDF data to an SQLite database (with .db extension). Each
 data frame is saved as a table within the SQLite database.</p>
 <p><br><strong>Usage</strong>:</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/write_rcdf_sqlite.html">write_rcdf_sqlite</a></span><span class="op">(</span><span class="va">data</span>, <span class="va">path</span>, <span class="va">...</span>, parent_dir <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
 <p><strong>Parameters</strong>:</p>
 <ul>
@@ -438,7 +414,7 @@ export.</li>
 <code>parent_dir</code>: An optional parent directory to be included
 in the path where the files will be written.</li>
 </ul>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/write_rcdf_sqlite.html">write_rcdf_sqlite</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">rcdf_data</span>, path <span class="op">=</span> <span class="st">"path/to/output"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -447,7 +423,7 @@ in the path where the files will be written.</li>
 <p>The <code><a href="../reference/write_rcdf_as.html">write_rcdf_as()</a></code> function allows you to export
 decrypted RCDF data into multiple file formats simultaneously.</p>
 <p><br><strong>Usage</strong>:</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/write_rcdf_as.html">write_rcdf_as</a></span><span class="op">(</span><span class="va">data</span>, <span class="va">path</span>, <span class="va">formats</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
 <p><strong>Parameters</strong>:</p>
 <ul>
