@@ -3,6 +3,9 @@
 #' Initializes and returns an empty `rcdf` object. This is a convenient constructor
 #' for creating a new `rcdf`-class list structure.
 #'
+#' @param ... Optional elements to include in the list. These will be passed to
+#'   the internal list constructor and included in the resulting `rcdf` object.
+#'
 #' @return A list object of class `"rcdf"`.
 #' @export
 #'
