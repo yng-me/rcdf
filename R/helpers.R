@@ -53,3 +53,8 @@ read_env <- function(path) {
 
   return(env)
 }
+
+
+rcdf_collect <- function(data) {
+  return(data)
+}

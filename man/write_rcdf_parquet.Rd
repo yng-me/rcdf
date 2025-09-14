@@ -4,7 +4,14 @@
 \alias{write_rcdf_parquet}
 \title{Write RCDF data to Parquet files}
 \usage{
-write_rcdf_parquet(data, path, ..., parent_dir = NULL)
+write_rcdf_parquet(
+  data,
+  path,
+  ...,
+  parent_dir = NULL,
+  primary_key = NULL,
+  ignore_duplicates = TRUE
+)
 }
 \arguments{
 \item{data}{A list where each element is a data frame or tibble that will be written to a Parquet file.}
@@ -14,6 +21,10 @@ write_rcdf_parquet(data, path, ..., parent_dir = NULL)
 \item{...}{Additional arguments passed to `rcdf::write_parquet()` while writing each Parquet file.}
 
 \item{parent_dir}{An optional parent directory to be included in the path where the files will be written.}
+
+\item{primary_key}{A \code{data.frame} or \code{tibble} that includes at least two columns: \code{file} and \code{pk_field_name}.}
+
+\item{ignore_duplicates}{A \code{logical} flag. If \code{TRUE}, a warning is issued when duplicates are found. If \code{FALSE}, the function stops with an error.}
 }
 \value{
 A character vector of file paths to the written Parquet files.

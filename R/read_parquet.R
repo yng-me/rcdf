@@ -6,6 +6,7 @@
 #' @param ... Additional arguments passed to `arrow::open_dataset()` when no decryption key is provided.
 #' @param decryption_key A list containing `aes_key` and `aes_iv`. If provided, the Parquet file will be decrypted using these keys. Default is `NULL`.
 #' @param as_arrow_table Logical. If `TRUE`, the function will return the result as an Arrow table. If `FALSE`, a regular data frame will be returned. Default is `TRUE`.
+#' @param metadata Optional metadata (e.g., a data dictionary) to be applied to the resulting data.
 #'
 #' @return An Arrow table or a data frame, depending on the value of `as_arrow_table`.
 #' @export
@@ -30,7 +31,7 @@
 #'  )
 #' df_with_encryption
 
-read_parquet <- function(path, ..., decryption_key = NULL, as_arrow_table = TRUE) {
+read_parquet <- function(path, ..., decryption_key = NULL, as_arrow_table = TRUE, metadata = NULL) {
 
   aes_key <- decryption_key$aes_key
   aes_iv <- decryption_key$aes_iv
@@ -40,18 +41,19 @@ read_parquet <- function(path, ..., decryption_key = NULL, as_arrow_table = TRUE
   }
 
   pq_conn <- DBI::dbConnect(drv = duckdb::duckdb())
-  pq_encrypt <- glue::glue("PRAGMA add_parquet_key('{aes_key}', '{aes_iv}')")
+  pq_decrypt <- glue::glue("PRAGMA add_parquet_key('{aes_key}', '{aes_iv}')")
   pq_query <- glue::glue("SELECT * FROM read_parquet('{path}', encryption_config = {{ footer_key: '{aes_key}' }});")
 
-  DBI::dbExecute(conn = pq_conn, statement = pq_encrypt)
-  df <- DBI::dbGetQuery(conn = pq_conn, statement = pq_query)
-
-  if(as_arrow_table) {
-    df <- arrow::arrow_table(df)
-  }
-
+  DBI::dbExecute(conn = pq_conn, statement = pq_decrypt)
+  data <- DBI::dbGetQuery(conn = pq_conn, statement = pq_query)
   suppressWarnings(DBI::dbDisconnect(conn = pq_conn, shutdown = TRUE))
 
-  return(df)
+  if(!is.null(metadata)) { data <- add_metadata(data, metadata) }
+
+  if(as_arrow_table) {
+    data <- arrow::arrow_table(data)
+  }
+
+  return(data)
 
 }

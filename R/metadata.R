@@ -51,17 +51,7 @@
 
 add_metadata <- function(data, metadata, ..., set_data_types = FALSE) {
 
-  if(is.character(data)) {
-    if(grepl("\\.json$", data)) {
-      data <- jsonlite::read_json(data, simplifyVector = TRUE)
-    } else if (grepl("\\.csv$", data)) {
-      data <- utils::read.csv(data)
-    } else if (grepl("\\.xlsx$", data)) {
-      data <- openxlsx::read.xlsx(data)
-    } else if (grepl("\\.parquet$", data)) {
-      data <- arrow::open_dataset(data)
-    }
-  }
+  if(is.character(data)) { data <- read_metadata(data) }
 
   column_names <- names(data)
   dictionary <- check_metadata_structure(metadata)
@@ -136,4 +126,23 @@ convert_to_na <- function(data) {
       is.character,
       ~ dplyr::if_else(. == '', NA_character_, stringr::str_squish(.))
     )
+}
+
+
+read_metadata <- function(path) {
+
+  data <- NULL
+
+  if(grepl("\\.json$", path)) {
+    data <- jsonlite::read_json(path, simplifyVector = TRUE)
+  } else if (grepl("\\.csv$", path)) {
+    data <- utils::read.csv(path)
+  } else if (grepl("\\.xlsx$", path)) {
+    data <- openxlsx::read.xlsx(path)
+  } else if (grepl("\\.parquet$", path)) {
+    data <- arrow::open_dataset(path)
+  }
+
+  data
+
 }

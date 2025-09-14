@@ -4,7 +4,13 @@
 \alias{read_parquet}
 \title{Read Parquet file with optional decryption}
 \usage{
-read_parquet(path, ..., decryption_key = NULL, as_arrow_table = TRUE)
+read_parquet(
+  path,
+  ...,
+  decryption_key = NULL,
+  as_arrow_table = TRUE,
+  metadata = NULL
+)
 }
 \arguments{
 \item{path}{The file path to the Parquet file.}
@@ -14,6 +20,8 @@ read_parquet(path, ..., decryption_key = NULL, as_arrow_table = TRUE)
 \item{decryption_key}{A list containing `aes_key` and `aes_iv`. If provided, the Parquet file will be decrypted using these keys. Default is `NULL`.}
 
 \item{as_arrow_table}{Logical. If `TRUE`, the function will return the result as an Arrow table. If `FALSE`, a regular data frame will be returned. Default is `TRUE`.}
+
+\item{metadata}{Optional metadata (e.g., a data dictionary) to be applied to the resulting data.}
 }
 \value{
 An Arrow table or a data frame, depending on the value of `as_arrow_table`.

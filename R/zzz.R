@@ -2,9 +2,11 @@ utils::globalVariables(
   c(
     ".",
     ":=",
+    "pk_field_name",
     "variable_name",
     "label",
-    "type"
+    "type",
+    "n"
   )
 )
 
