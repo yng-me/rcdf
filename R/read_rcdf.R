@@ -107,9 +107,10 @@ read_rcdf <- function(
 
       pk_q <- NULL
       if(!is.null(pk)) {
-        pk_i <- dplyr::pull(dplyr::filter(pk, file == record), pk_field_name)
-        if(length(pk) > 0) {
-          pq_q <- paste0(pk_i, collapse = ", ")
+        pk_i <- dplyr::filter(pk, file == record)
+
+        if(nrow(pk_i) > 0) {
+          pk_q <- pk_i$pk_field_name[1]
         }
       }
 
@@ -138,7 +139,7 @@ read_rcdf <- function(
 
     if(as_arrow_table) {
 
-      pq_i <- dplyr::collect(dplyr::tbl(conn_duckdb, record))
+      pq_i <- dplyr::collect(dplyr::tbl(conn_duckdb, record_i))
 
       if(!is.null(data_dictionary)) {
         pq_i <- add_metadata(pq_i, data_dictionary)
@@ -150,7 +151,7 @@ read_rcdf <- function(
 
     } else {
 
-      pq[[record_i]] <- dplyr::tbl(conn_duckdb, record)
+      pq[[record_i]] <- dplyr::tbl(conn_duckdb, record_i)
 
     }
   }
