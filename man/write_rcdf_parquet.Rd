@@ -18,7 +18,7 @@ write_rcdf_parquet(
 
 \item{path}{The directory path where the Parquet files will be written.}
 
-\item{...}{Additional arguments passed to `rcdf::write_parquet()` while writing each Parquet file.}
+\item{...}{Additional arguments passed to \code{rcdf::write_parquet()} while writing each Parquet file.}
 
 \item{parent_dir}{An optional parent directory to be included in the path where the files will be written.}
 

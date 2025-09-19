@@ -2,20 +2,20 @@
 % Please edit documentation in R/utils.R
 \name{rcdf_list}
 \alias{rcdf_list}
-\title{Create an empty `rcdf` object}
+\title{Create an empty \code{rcdf} object}
 \usage{
 rcdf_list(...)
 }
 \arguments{
 \item{...}{Optional elements to include in the list. These will be passed to
-the internal list constructor and included in the resulting `rcdf` object.}
+the internal list constructor and included in the resulting \code{rcdf} object.}
 }
 \value{
-A list object of class `"rcdf"`.
+A list object of class \code{rcdf}.
 }
 \description{
-Initializes and returns an empty `rcdf` object. This is a convenient constructor
-for creating a new `rcdf`-class list structure.
+Initializes and returns an empty \code{rcdf} object. This is a convenient constructor
+for creating a new \code{rcdf}-class list structure.
 }
 \examples{
 rcdf <- rcdf_list()

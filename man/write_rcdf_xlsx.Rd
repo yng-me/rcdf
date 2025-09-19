@@ -11,15 +11,15 @@ write_rcdf_xlsx(data, path, ..., parent_dir = NULL)
 
 \item{path}{The output directory.}
 
-\item{...}{Additional arguments passed to `openxlsx::write.xlsx()`.}
+\item{...}{Additional arguments passed to \code{openxlsx::write.xlsx()}.}
 
-\item{parent_dir}{Optional subdirectory under `path` to group Excel files.}
+\item{parent_dir}{Optional subdirectory under \code{path} to group Excel files.}
 }
 \value{
-Invisibly returns `NULL`. Files are written to disk.
+Invisibly returns \code{NULL}. Files are written to disk.
 }
 \description{
-Writes each table in the RCDF object as a separate `.xlsx` file using the `openxlsx` package.
+Writes each table in the RCDF object as a separate \code{.xlsx} file using the \code{openxlsx} package.
 }
 \examples{
 dir <- system.file("extdata", package = "rcdf")

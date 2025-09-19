@@ -11,15 +11,15 @@ write_rcdf_tsv(data, path, ..., parent_dir = NULL)
 
 \item{path}{The base output directory.}
 
-\item{...}{Additional arguments passed to `write.table()`.}
+\item{...}{Additional arguments passed to \code{write.table()}.}
 
-\item{parent_dir}{Optional subdirectory under `path` to group TSV files.}
+\item{parent_dir}{Optional subdirectory under \code{path} to group TSV files.}
 }
 \value{
-Invisibly returns `NULL`. Files are written to disk.
+Invisibly returns \code{NULL}. Files are written to disk.
 }
 \description{
-Writes each table in the RCDF object as a separate tab-separated `.txt` file.
+Writes each table in the RCDF object as a separate tab-separated \code{.txt} file.
 }
 \examples{
 dir <- system.file("extdata", package = "rcdf")

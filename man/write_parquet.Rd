@@ -11,12 +11,12 @@ write_parquet(data, path, ..., encryption_key = NULL)
 
 \item{path}{The file path where the Parquet file will be written.}
 
-\item{...}{Additional arguments passed to `arrow::write_parquet()` if no encryption key is provided.}
+\item{...}{Additional arguments passed to \code{arrow::write_parquet()} if no encryption key is provided.}
 
-\item{encryption_key}{A list containing `aes_key` and `aes_iv`. If provided, the data will be encrypted using AES before writing to Parquet.}
+\item{encryption_key}{A list containing \code{aes_key} and \code{aes_iv}. If provided, the data will be encrypted using AES before writing to Parquet.}
 }
 \value{
-None. The function writes the data to a Parquet file at the specified `path`.
+None. The function writes the data to a Parquet file at the specified \code{path}.
 }
 \description{
 This function writes a dataset to a Parquet file. If an encryption key is provided, the data will be encrypted before writing.

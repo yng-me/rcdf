@@ -16,7 +16,7 @@ write_rcdf(
 \arguments{
 \item{data}{A list of data frames or tables to be written to RCDF format. Each element of the list represents a record.}
 
-\item{path}{The path where the RCDF file will be written. The file will be saved with a `.rcdf` extension if not already specified.}
+\item{path}{The path where the RCDF file will be written. The file will be saved with a \code{.rcdf} extension if not already specified.}
 
 \item{pub_key}{The public RSA key used to encrypt the AES encryption keys.}
 
@@ -27,7 +27,7 @@ write_rcdf(
 \item{ignore_duplicates}{A \code{logical} flag. If \code{TRUE}, a warning is issued when duplicates are found. If \code{FALSE}, the function stops with an error.}
 }
 \value{
-NULL. The function writes the data to a `.rcdf` file at the specified path.
+NULL. The function writes the data to a \code{.rcdf} file at the specified path.
 }
 \description{
 This function writes data to an RCDF (Reusable Data Container Format) archive. It encrypts the data using AES, generates metadata,
