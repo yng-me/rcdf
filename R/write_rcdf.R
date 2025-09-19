@@ -5,13 +5,13 @@
 #' metadata such as system information and encryption keys.
 #'
 #' @param data A list of data frames or tables to be written to RCDF format. Each element of the list represents a record.
-#' @param path The path where the RCDF file will be written. The file will be saved with a `.rcdf` extension if not already specified.
+#' @param path The path where the RCDF file will be written. The file will be saved with a \code{.rcdf} extension if not already specified.
 #' @param pub_key The public RSA key used to encrypt the AES encryption keys.
 #' @param ... Additional arguments passed to helper functions if needed.
 #' @param metadata A list of metadata to be included in the RCDF file.
 #' @param ignore_duplicates A \code{logical} flag. If \code{TRUE}, a warning is issued when duplicates are found. If \code{FALSE}, the function stops with an error.
 #'
-#' @return NULL. The function writes the data to a `.rcdf` file at the specified path.
+#' @return NULL. The function writes the data to a \code{.rcdf} file at the specified path.
 #' @export
 #'
 #' @examples
@@ -72,12 +72,14 @@ write_rcdf <- function(data, path, pub_key, ..., metadata = list(), ignore_dupli
 
     if(is.character(metadata$dictionary)) {
       dictionary <- read_metadata(metadata$dictionary)
+    } else {
+      dictionary <- metadata$dictionary
     }
 
     required_cols <- c("variable_name", "label", "type")
-    required_cols_which <- which(required_cols %in% names(dictionary))
+    required_cols_which <- which(required_cols %in% names(metadata$dictionary))
 
-    if (length(required_cols_which) < length(required_cols)) {
+    if (length(required_cols_which) != length(required_cols)) {
       dictionary <- NULL
     }
   }
