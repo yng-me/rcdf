@@ -5,10 +5,10 @@
 #'
 #' @param data A data frame or tibble to write to a Parquet file.
 #' @param path The file path where the Parquet file will be written.
-#' @param ... Additional arguments passed to `arrow::write_parquet()` if no encryption key is provided.
-#' @param encryption_key A list containing `aes_key` and `aes_iv`. If provided, the data will be encrypted using AES before writing to Parquet.
+#' @param ... Additional arguments passed to \code{arrow::write_parquet()} if no encryption key is provided.
+#' @param encryption_key A list containing \code{aes_key} and \code{aes_iv}. If provided, the data will be encrypted using AES before writing to Parquet.
 #'
-#' @return None. The function writes the data to a Parquet file at the specified `path`.
+#' @return None. The function writes the data to a Parquet file at the specified \code{path}.
 #' @export
 #'
 #' @examples
@@ -65,7 +65,7 @@ write_parquet <- function(data, path, ..., encryption_key = NULL) {
 #'
 #' @param data A list where each element is a data frame or tibble that will be written to a Parquet file.
 #' @param path The directory path where the Parquet files will be written.
-#' @param ... Additional arguments passed to `rcdf::write_parquet()` while writing each Parquet file.
+#' @param ... Additional arguments passed to \code{rcdf::write_parquet()} while writing each Parquet file.
 #' @param parent_dir An optional parent directory to be included in the path where the files will be written.
 #' @param primary_key A \code{data.frame} or \code{tibble} that includes at least two columns: \code{file} and \code{pk_field_name}.
 #' @param ignore_duplicates A \code{logical} flag. If \code{TRUE}, a warning is issued when duplicates are found. If \code{FALSE}, the function stops with an error.

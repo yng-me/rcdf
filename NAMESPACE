@@ -2,6 +2,7 @@
 
 export(add_metadata)
 export(as_rcdf)
+export(get_data_dictionary)
 export(rcdf_list)
 export(read_env)
 export(read_parquet)

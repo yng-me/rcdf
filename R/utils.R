@@ -1,12 +1,12 @@
-#' Create an empty `rcdf` object
+#' Create an empty \code{rcdf} object
 #'
-#' Initializes and returns an empty `rcdf` object. This is a convenient constructor
-#' for creating a new `rcdf`-class list structure.
+#' Initializes and returns an empty \code{rcdf} object. This is a convenient constructor
+#' for creating a new \code{rcdf}-class list structure.
 #'
 #' @param ... Optional elements to include in the list. These will be passed to
-#'   the internal list constructor and included in the resulting `rcdf` object.
+#'   the internal list constructor and included in the resulting \code{rcdf} object.
 #'
-#' @return A list object of class `"rcdf"`.
+#' @return A list object of class \code{rcdf}.
 #' @export
 #'
 #' @examples
@@ -19,13 +19,13 @@ rcdf_list <- function(...) {
 }
 
 
-#' Convert to `rcdf` class
+#' Convert to \code{rcdf} class
 #'
-#' Converts an existing list or compatible object into an object of class `"rcdf"`.
+#' Converts an existing list or compatible object into an object of class \code{rcdf}.
 #'
-#' @param data A list or object to be converted to class `"rcdf"`.
+#' @param data A list or object to be converted to class \code{rcdf}.
 #'
-#' @return The input object with class set to `"rcdf"`.
+#' @return The input object with class set to \code{rcdf}.
 #' @export
 #'
 #' @examples
@@ -205,3 +205,5 @@ get_pc_metadata <- function(which) {
   values[[which]]
 
 }
+
+

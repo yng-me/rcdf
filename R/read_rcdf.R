@@ -161,7 +161,7 @@ read_rcdf <- function(
   }
 
   if(return_meta) {
-    meta$dictionary <- NULL
+    # meta$dictionary <- NULL
     meta$dir <- NULL
     attr(pq, 'metadata') <- meta
   }

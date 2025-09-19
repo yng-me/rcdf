@@ -1,13 +1,13 @@
 #' Write RCDF data to multiple formats
 #'
-#' Exports RCDF-formatted data to one or more supported open data formats. The function automatically dispatches to the appropriate writer function based on the `formats` provided.
+#' Exports RCDF-formatted data to one or more supported open data formats. The function automatically dispatches to the appropriate writer function based on the \code{formats} provided.
 #'
-#' @param data A named list or RCDF object. Each element should be a table or tibble-like object (typically a `dbplyr` or `dplyr` table).
+#' @param data A named list or RCDF object. Each element should be a table or tibble-like object (typically a \code{dbplyr} or \code{dplyr} table).
 #' @param path The target directory where output files should be saved.
-#' @param formats A character vector of file formats to export to. Supported formats include: `"csv"`, `"tsv"`, `"json"`, `"parquet"`, `"xlsx"`, `"dta"`, `"sav"`, and `"sqlite"`.
+#' @param formats A character vector of file formats to export to. Supported formats include: \code{"csv"}, \code{"tsv"}, \code{"json"}, \code{"parquet"}, \code{"xlsx"}, \code{"dta"}, \code{"sav"}, and \code{"sqlite"}.
 #' @param ... Additional arguments passed to the respective writer functions.
 #'
-#' @return Invisibly returns `NULL`. Files are written to disk.
+#' @return Invisibly returns \code{NULL}. Files are written to disk.
 #' @export
 #'
 #' @seealso \link[rcdf]{write_rcdf_csv}  \link[rcdf]{write_rcdf_tsv}  \link[rcdf]{write_rcdf_json}  \link[rcdf]{write_rcdf_xlsx}  \link[rcdf]{write_rcdf_dta}  \link[rcdf]{write_rcdf_sav}  \link[rcdf]{write_rcdf_sqlite}
@@ -65,14 +65,14 @@ write_rcdf_as <- function(data, path, formats, ...) {
 
 #' Write RCDF data to CSV files
 #'
-#' Writes each table in the RCDF object as a separate `.csv` file.
+#' Writes each table in the RCDF object as a separate \code{.csv} file.
 #'
 #' @param data A valid RCDF object.
 #' @param path The base output directory.
-#' @param ... Additional arguments passed to `write.csv()`.
-#' @param parent_dir Optional subdirectory under `path` to group CSV files.
+#' @param ... Additional arguments passed to \code{write.csv()}.
+#' @param parent_dir Optional subdirectory under \code{path} to group CSV files.
 #'
-#' @return Invisibly returns `NULL`. Files are written to disk.
+#' @return Invisibly returns \code{NULL}. Files are written to disk.
 #' @export
 #'
 #' @seealso \link[rcdf]{write_rcdf_as}
@@ -111,14 +111,14 @@ write_rcdf_csv <- function(data, path, ..., parent_dir = NULL) {
 
 #' Write RCDF data to TSV files
 #'
-#' Writes each table in the RCDF object as a separate tab-separated `.txt` file.
+#' Writes each table in the RCDF object as a separate tab-separated \code{.txt} file.
 #'
 #' @param data A valid RCDF object.
 #' @param path The base output directory.
-#' @param ... Additional arguments passed to `write.table()`.
-#' @param parent_dir Optional subdirectory under `path` to group TSV files.
+#' @param ... Additional arguments passed to \code{write.table()}.
+#' @param parent_dir Optional subdirectory under \code{path} to group TSV files.
 #'
-#' @return Invisibly returns `NULL`. Files are written to disk.
+#' @return Invisibly returns \code{NULL}. Files are written to disk.
 #' @export
 #'
 #' @seealso \link[rcdf]{write_rcdf_as}
@@ -158,14 +158,14 @@ write_rcdf_tsv <- function(data, path, ..., parent_dir = NULL) {
 
 #' Write RCDF data to JSON files
 #'
-#' Writes each table in the RCDF object as a separate `.json` file.
+#' Writes each table in the RCDF object as a separate \code{.json} file.
 #'
 #' @param data A valid RCDF object.
 #' @param path The output directory for files.
-#' @param ... Additional arguments passed to `jsonlite::write_json()`.
-#' @param parent_dir Optional subdirectory under `path` to group JSON files.
+#' @param ... Additional arguments passed to \code{jsonlite::write_json()}.
+#' @param parent_dir Optional subdirectory under \code{path} to group JSON files.
 #'
-#' @return Invisibly returns `NULL`. Files are written to disk.
+#' @return Invisibly returns \code{NULL}. Files are written to disk.
 #' @export
 #'
 #' @seealso \link[rcdf]{write_rcdf_as}
@@ -207,14 +207,14 @@ write_rcdf_json <- function(data, path, ..., parent_dir = NULL) {
 
 #' Write RCDF data to Excel files
 #'
-#' Writes each table in the RCDF object as a separate `.xlsx` file using the `openxlsx` package.
+#' Writes each table in the RCDF object as a separate \code{.xlsx} file using the \code{openxlsx} package.
 #'
 #' @param data A valid RCDF object.
 #' @param path The output directory.
-#' @param ... Additional arguments passed to `openxlsx::write.xlsx()`.
-#' @param parent_dir Optional subdirectory under `path` to group Excel files.
+#' @param ... Additional arguments passed to \code{openxlsx::write.xlsx()}.
+#' @param parent_dir Optional subdirectory under \code{path} to group Excel files.
 #'
-#' @return Invisibly returns `NULL`. Files are written to disk.
+#' @return Invisibly returns \code{NULL}. Files are written to disk.
 #' @export
 #'
 #' @seealso \link[rcdf]{write_rcdf_as}
@@ -252,16 +252,16 @@ write_rcdf_xlsx <- function(data, path, ..., parent_dir = NULL) {
 }
 
 
-#' Write RCDF data to Stata `.dta` files
+#' Write RCDF data to Stata \code{.dta} files
 #'
-#' Writes each table in the RCDF object to a `.dta` file for use in Stata.
+#' Writes each table in the RCDF object to a \code{.dta} file for use in Stata.
 #'
 #' @param data A valid RCDF object.
 #' @param path Output directory for files.
-#' @param ... Additional arguments passed to `foreign::write.dta()`.
-#' @param parent_dir Optional subdirectory under `path` to group Stata files.
+#' @param ... Additional arguments passed to \code{foreign::write.dta()}.
+#' @param parent_dir Optional subdirectory under \code{path} to group Stata files.
 #'
-#' @return Invisibly returns `NULL`. Files are written to disk.
+#' @return Invisibly returns \code{NULL}. Files are written to disk.
 #' @export
 #'
 #' @seealso \link[rcdf]{write_rcdf_as}
@@ -299,16 +299,16 @@ write_rcdf_dta <- function(data, path, ..., parent_dir = NULL) {
 }
 
 
-#' Write RCDF data to SPSS `.sav` files
+#' Write RCDF data to SPSS \code{.sav} files
 #'
-#' Writes each table in the RCDF object to a `.sav` file using the `haven` package for compatibility with SPSS.
+#' Writes each table in the RCDF object to a \code{.sav} file using the \code{haven} package for compatibility with SPSS.
 #'
 #' @param data A valid RCDF object.
 #' @param path Output directory for files.
-#' @param ... Additional arguments passed to `haven::write_sav()`.
-#' @param parent_dir Optional subdirectory under `path` to group SPSS files.
+#' @param ... Additional arguments passed to \code{haven::write_sav()}.
+#' @param parent_dir Optional subdirectory under \code{path} to group SPSS files.
 #'
-#' @return Invisibly returns `NULL`. Files are written to disk.
+#' @return Invisibly returns \code{NULL}. Files are written to disk.
 #' @export
 #'
 #' @seealso \link[rcdf]{write_rcdf_as}
@@ -354,10 +354,10 @@ write_rcdf_sav <- function(data, path, ..., parent_dir = NULL) {
 #' @param data A valid RCDF object.
 #' @param path Output directory for the database file.
 #' @param db_name Name of the SQLite database file (without extension).
-#' @param ... Additional arguments passed to `DBI::dbWriteTable()`.
+#' @param ... Additional arguments passed to \code{DBI::dbWriteTable()}.
 #' @param parent_dir Optional subdirectory under `path` to store the SQLite file.
 #'
-#' @return Invisibly returns `NULL`. A `.db` file is written to disk.
+#' @return Invisibly returns \code{NULL}. A \code{.db} file is written to disk.
 #' @export
 #'
 #' @seealso \link[rcdf]{write_rcdf_as}
