@@ -11,7 +11,7 @@ read_rcdf(
   password = NULL,
   metadata = list(),
   ignore_duplicates = TRUE,
-  as_arrow_table = FALSE,
+  as_arrow_table = TRUE,
   recursive = FALSE,
   return_meta = FALSE
 )

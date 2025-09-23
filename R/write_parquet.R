@@ -125,7 +125,7 @@ check_duplicates <- function(data, record, primary_key, ignore_duplicates) {
   if(length(pk) == 0) return(NULL)
 
   dup_records <- data |>
-    dplyr::group_by(dplyr::pick(dplyr::any_of(pk))) |>
+    dplyr::group_by(dplyr::pick(dplyr::any_of(unlist(stringr::str_split(pk, ', '))))) |>
     dplyr::count() |>
     dplyr::filter(n > 1)
 

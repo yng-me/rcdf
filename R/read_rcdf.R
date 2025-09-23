@@ -46,7 +46,7 @@ read_rcdf <- function(
   password = NULL,
   metadata = list(),
   ignore_duplicates = TRUE,
-  as_arrow_table = FALSE,
+  as_arrow_table = TRUE,
   recursive = FALSE,
   return_meta = FALSE
 ) {
@@ -140,14 +140,13 @@ read_rcdf <- function(
     if(as_arrow_table) {
 
       pq_i <- dplyr::collect(dplyr::tbl(conn_duckdb, record_i))
+      if(nrow(pq_i) == 0) next
 
       if(!is.null(data_dictionary)) {
         pq_i <- add_metadata(pq_i, data_dictionary)
       }
 
       pq[[record_i]] <- arrow::as_arrow_table(pq_i)
-
-      DBI::dbDisconnect(conn_duckdb, shutdown = TRUE)
 
     } else {
 
@@ -156,7 +155,11 @@ read_rcdf <- function(
     }
   }
 
-  if(!is.null(data_dictionary) & !as_arrow_table) {
+  if(as_arrow_table) {
+    DBI::dbDisconnect(conn_duckdb, shutdown = TRUE)
+  }
+
+  if(!is.null(data_dictionary) & !as_arrow_table & return_meta) {
     pq[['__data_dictionary']] <- data_dictionary
   }
 

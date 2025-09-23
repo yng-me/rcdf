@@ -54,7 +54,7 @@ add_metadata <- function(data, metadata, ..., set_data_types = FALSE) {
   if(is.character(data)) { data <- read_metadata(data) }
 
   column_names <- names(data)
-  dictionary <- check_metadata_structure(metadata)
+  dictionary <- check_metadata_structure(metadata, column_names)
 
   with_valueset_col <- "valueset" %in% names(dictionary)
 
@@ -71,7 +71,7 @@ add_metadata <- function(data, metadata, ..., set_data_types = FALSE) {
     if(!with_valueset_col) next
     valueset <- dictionary$valueset[i][[1]]
 
-    if(is.null(valueset)) next
+    if(length(valueset) == 0) next
 
     labels <- valueset$value
 
@@ -124,7 +124,7 @@ get_data_dictionary <- function(data) {
 }
 
 
-check_metadata_structure <- function(data) {
+check_metadata_structure <- function(data, cols) {
 
   required_cols <- c("variable_name", "label", "type")
   required_cols_which <- which(required_cols %in% names(data))
@@ -142,7 +142,8 @@ check_metadata_structure <- function(data) {
       label,
       type,
       dplyr::any_of(c("input_data", "valueset", "labels"))
-    )
+    ) |>
+    dplyr::filter(variable_name %in% cols)
 }
 
 
@@ -173,3 +174,36 @@ read_metadata <- function(path) {
   data
 
 }
+
+
+#' Extract metadata from an RCDF file
+#'
+#' Retrieves a specific metadata value from a \code{.rcdf} file.
+#'
+#' @param path Character string. The file path to the \code{.rcdf} file.
+#' @param key Character string. The metadata key to extract from the file.
+
+#' @return The value associated with the specified metadata key, or \code{NULL} if the key does not exist.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' # Assuming "example.rcdf" is a valid RCDF file in the working directory:
+#' get_rcdf_metadata("example.rcdf", "creation_date")
+#' }
+
+get_rcdf_metadata <- function(path, key) {
+
+  if(!fs::file_exists(path)) {
+    stop(glue::glue("Specified RCDF file does not exist: {path}"))
+  }
+
+  if(!grepl("\\.rcdf$", path)) {
+    stop(glue::glue("Not a valid RCDF file: {path}"))
+  }
+
+  meta <- extract_rcdf(path)
+  meta[[key]]
+
+}
+
