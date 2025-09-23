@@ -11,15 +11,15 @@ write_rcdf_json(data, path, ..., parent_dir = NULL)
 
 \item{path}{The output directory for files.}
 
-\item{...}{Additional arguments passed to `jsonlite::write_json()`.}
+\item{...}{Additional arguments passed to \code{jsonlite::write_json()}.}
 
-\item{parent_dir}{Optional subdirectory under `path` to group JSON files.}
+\item{parent_dir}{Optional subdirectory under \code{path} to group JSON files.}
 }
 \value{
-Invisibly returns `NULL`. Files are written to disk.
+Invisibly returns \code{NULL}. Files are written to disk.
 }
 \description{
-Writes each table in the RCDF object as a separate `.json` file.
+Writes each table in the RCDF object as a separate \code{.json} file.
 }
 \examples{
 dir <- system.file("extdata", package = "rcdf")

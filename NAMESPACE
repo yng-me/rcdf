@@ -2,6 +2,10 @@
 
 export(add_metadata)
 export(as_rcdf)
+export(generate_pw)
+export(generate_rsa_keys)
+export(get_data_dictionary)
+export(get_rcdf_metadata)
 export(rcdf_list)
 export(read_env)
 export(read_parquet)

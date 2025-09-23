@@ -5,10 +5,10 @@
 #'
 #' @param data A data frame or tibble to write to a Parquet file.
 #' @param path The file path where the Parquet file will be written.
-#' @param ... Additional arguments passed to `arrow::write_parquet()` if no encryption key is provided.
-#' @param encryption_key A list containing `aes_key` and `aes_iv`. If provided, the data will be encrypted using AES before writing to Parquet.
+#' @param ... Additional arguments passed to \code{arrow::write_parquet()} if no encryption key is provided.
+#' @param encryption_key A list containing \code{aes_key} and \code{aes_iv}. If provided, the data will be encrypted using AES before writing to Parquet.
 #'
-#' @return None. The function writes the data to a Parquet file at the specified `path`.
+#' @return None. The function writes the data to a Parquet file at the specified \code{path}.
 #' @export
 #'
 #' @examples
@@ -47,14 +47,13 @@ write_parquet <- function(data, path, ..., encryption_key = NULL) {
     DBI::dbWriteTable(
       conn = pq_conn,
       name = pq_name,
-      value = dplyr::collect(data),
+      value = data,
       overwrite = TRUE
     )
 
     DBI::dbExecute(conn = pq_conn, statement = pq_query)
     suppressWarnings(DBI::dbDisconnect(conn = pq_conn, shutdown = TRUE))
   }
-
 
 }
 
@@ -66,8 +65,10 @@ write_parquet <- function(data, path, ..., encryption_key = NULL) {
 #'
 #' @param data A list where each element is a data frame or tibble that will be written to a Parquet file.
 #' @param path The directory path where the Parquet files will be written.
-#' @param ... Additional arguments passed to `rcdf::write_parquet()` while writing each Parquet file.
+#' @param ... Additional arguments passed to \code{rcdf::write_parquet()} while writing each Parquet file.
 #' @param parent_dir An optional parent directory to be included in the path where the files will be written.
+#' @param primary_key A \code{data.frame} or \code{tibble} that includes at least two columns: \code{file} and \code{pk_field_name}.
+#' @param ignore_duplicates A \code{logical} flag. If \code{TRUE}, a warning is issued when duplicates are found. If \code{FALSE}, the function stops with an error.
 #'
 #' @return A character vector of file paths to the written Parquet files.
 #' @export
@@ -84,20 +85,31 @@ write_parquet <- function(data, path, ..., encryption_key = NULL) {
 #'
 #' unlink(temp_dir, force = TRUE)
 
-write_rcdf_parquet <- function(data, path, ..., parent_dir = NULL) {
+write_rcdf_parquet <- function(data, path, ..., parent_dir = NULL, primary_key = NULL, ignore_duplicates = TRUE) {
 
   check_if_rcdf(data)
   path <- dir_create_new(path, parent_dir)
 
   records <- names(data)
+  records <- records[!grepl('__data_dictionary', records)]
 
   for(i in seq_along(records)) {
 
-    record <- records[i]
+    record_i <- records[i]
+    data_i <- data[[record_i]]
+
+    if(!is.null(primary_key)) {
+      check_duplicates(
+        data = dplyr::collect(data_i),
+        record = record_i,
+        primary_key = primary_key,
+        ignore_duplicates = ignore_duplicates
+      )
+    }
 
     rcdf::write_parquet(
-      data = data[[record]],
-      path = file.path(path, glue::glue("{record}.parquet")),
+      data = dplyr::collect(data_i),
+      path = file.path(path, glue::glue("{record_i}.parquet")),
       ...
     )
   }
@@ -105,3 +117,31 @@ write_rcdf_parquet <- function(data, path, ..., parent_dir = NULL) {
   list.files(path, pattern = '.parquet', full.names = TRUE)
 
 }
+
+
+check_duplicates <- function(data, record, primary_key, ignore_duplicates) {
+
+  pk <- dplyr::pull(dplyr::filter(primary_key, file == record), pk_field_name)
+  if(length(pk) == 0) return(NULL)
+
+  dup_records <- data |>
+    dplyr::group_by(dplyr::pick(dplyr::any_of(unlist(stringr::str_split(pk, ', '))))) |>
+    dplyr::count() |>
+    dplyr::filter(n > 1)
+
+  dup_n <- nrow(dup_records)
+
+  if(dup_n == 0) return(NULL)
+
+  if_plural <- ""
+  if(dup_n > 1) { if_plural <- "s" }
+
+  if(ignore_duplicates) {
+    cli::cli_warn("Detected potential duplicates in `{record}` based on provided `primary_key`: {dup_n} row{if_plural}")
+  } else {
+    stop(cli::cli_warn("Detected potential duplicates in `{record}` based on provided `primary_keys`: {dup_n} row{if_plural}"))
+  }
+
+}
+
+

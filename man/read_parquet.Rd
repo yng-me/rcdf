@@ -4,22 +4,30 @@
 \alias{read_parquet}
 \title{Read Parquet file with optional decryption}
 \usage{
-read_parquet(path, ..., decryption_key = NULL, as_arrow_table = TRUE)
+read_parquet(
+  path,
+  ...,
+  decryption_key = NULL,
+  as_arrow_table = TRUE,
+  metadata = NULL
+)
 }
 \arguments{
 \item{path}{The file path to the Parquet file.}
 
-\item{...}{Additional arguments passed to `arrow::open_dataset()` when no decryption key is provided.}
+\item{...}{Additional arguments passed to \code{arrow::open_dataset()} when no decryption key is provided.}
 
-\item{decryption_key}{A list containing `aes_key` and `aes_iv`. If provided, the Parquet file will be decrypted using these keys. Default is `NULL`.}
+\item{decryption_key}{A list containing \code{aes_key} and \code{aes_iv}. If provided, the Parquet file will be decrypted using these keys. Default is `NULL`.}
 
-\item{as_arrow_table}{Logical. If `TRUE`, the function will return the result as an Arrow table. If `FALSE`, a regular data frame will be returned. Default is `TRUE`.}
+\item{as_arrow_table}{Logical. If \code{TRUE}, the function will return the result as an Arrow table. If \code{FALSE}, a regular data frame will be returned. Default is \code{TRUE}.}
+
+\item{metadata}{Optional metadata (e.g., a data dictionary) to be applied to the resulting data.}
 }
 \value{
-An Arrow table or a data frame, depending on the value of `as_arrow_table`.
+An Arrow table or a data frame, depending on the value of \code{as_arrow_table}.
 }
 \description{
-This function reads a Parquet file, optionally decrypting it using the provided decryption key. If no decryption key is provided, it reads the file normally without decryption. It supports reading Parquet files as Arrow tables or regular data frames, depending on the `as_arrow_table` argument.
+This function reads a Parquet file, optionally decrypting it using the provided decryption key. If no decryption key is provided, it reads the file normally without decryption. It supports reading Parquet files as Arrow tables or regular data frames, depending on the \code{as_arrow_table} argument.
 }
 \examples{
 # Using sample Parquet files from `mtcars` dataset

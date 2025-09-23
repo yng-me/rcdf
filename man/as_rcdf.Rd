@@ -2,18 +2,18 @@
 % Please edit documentation in R/utils.R
 \name{as_rcdf}
 \alias{as_rcdf}
-\title{Convert to `rcdf` class}
+\title{Convert to \code{rcdf} class}
 \usage{
 as_rcdf(data)
 }
 \arguments{
-\item{data}{A list or object to be converted to class `"rcdf"`.}
+\item{data}{A list or object to be converted to class \code{rcdf}.}
 }
 \value{
-The input object with class set to `"rcdf"`.
+The input object with class set to \code{rcdf}.
 }
 \description{
-Converts an existing list or compatible object into an object of class `"rcdf"`.
+Converts an existing list or compatible object into an object of class \code{rcdf}.
 }
 \examples{
 my_list <- list(a = 1, b = 2)

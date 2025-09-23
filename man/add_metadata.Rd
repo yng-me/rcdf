@@ -10,30 +10,30 @@ add_metadata(data, metadata, ..., set_data_types = FALSE)
 \item{data}{A data frame containing the raw dataset.}
 
 \item{metadata}{A data frame that serves as a metadata dictionary. It must contain
-at least the columns: `"variable_name"`, `"label"`, and `"type"`. Optionally,
-it may include a `"valueset"` column for categorical variables, which should be
-a list column with data frames containing `"value"` and `"label"` columns.}
+at least the columns: \code{variable_name}, \code{label}, and \code{type}. Optionally,
+it may include a \code{valueset} column for categorical variables, which should be
+a list column with data frames containing \code{value} and \code{label} columns.}
 
 \item{...}{Additional arguments (currently unused).}
 
-\item{set_data_types}{Logical; if `TRUE`, attempts to coerce column data types
+\item{set_data_types}{Logical; if \code{TRUE}, attempts to coerce column data types
 to match those implied by the metadata. (Note: currently not fully implemented.)}
 }
 \value{
-A `tibble` with the same data as `data`, but with added attributes:
-  - Variable labels (via the `"label"` attribute)
-  - Value labels (as a `haven::labelled` class, if applicable)
+A `tibble` with the same data as \code{data}, but with added attributes:
+  - Variable labels (via the \code{label} attribute)
+  - Value labels (as a \code{haven::labelled} class, if applicable)
 }
 \description{
 Adds variable labels and value labels to a data frame based on a metadata
 dictionary. This is particularly useful for preparing datasets for use with
-packages like `haven` or for exporting to formats like SPSS or Stata.
+packages like \code{haven} or for exporting to formats like SPSS or Stata.
 }
 \details{
-The function first checks the structure of the `metadata` using an internal helper.
-Then, for each variable listed in `metadata`, it:
-- Adds a label using the `"label"` attribute
-- Converts values to labelled vectors using `haven::labelled()` if a `valueset` is provided
+The function first checks the structure of the \code{metadata} using an internal helper.
+Then, for each variable listed in \code{metadata}, it:
+- Adds a label using the \code{label} attribute
+- Converts values to labelled vectors using \code{haven::labelled()} if a \code{valueset} is provided
 
 If value labels are present, the function tries to align data types between the data
 and the valueset (e.g., converting character codes to integers if necessary).

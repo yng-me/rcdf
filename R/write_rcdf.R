@@ -5,12 +5,13 @@
 #' metadata such as system information and encryption keys.
 #'
 #' @param data A list of data frames or tables to be written to RCDF format. Each element of the list represents a record.
-#' @param path The path where the RCDF file will be written. The file will be saved with a `.rcdf` extension if not already specified.
+#' @param path The path where the RCDF file will be written. The file will be saved with a \code{.rcdf} extension if not already specified.
 #' @param pub_key The public RSA key used to encrypt the AES encryption keys.
 #' @param ... Additional arguments passed to helper functions if needed.
-#' @param metadata A list of metadata to be included in the RCDF file. Can contain system information or other relevant details.
+#' @param metadata A list of metadata to be included in the RCDF file.
+#' @param ignore_duplicates A \code{logical} flag. If \code{TRUE}, a warning is issued when duplicates are found. If \code{FALSE}, the function stops with an error.
 #'
-#' @return NULL. The function writes the data to a `.rcdf` file at the specified path.
+#' @return NULL. The function writes the data to a \code{.rcdf} file at the specified path.
 #' @export
 #'
 #' @examples
@@ -39,7 +40,7 @@
 #' unlink(file.path(temp_dir, "mtcars-pw.rcdf"), force = TRUE)
 
 
-write_rcdf <- function(data, path, pub_key, ..., metadata = list()) {
+write_rcdf <- function(data, path, pub_key, ..., metadata = list(), ignore_duplicates = TRUE) {
 
   dir_temp <- tempdir()
 
@@ -51,8 +52,37 @@ write_rcdf <- function(data, path, pub_key, ..., metadata = list()) {
     data = data,
     path = dir_temp,
     encryption_key = key,
-    parent_dir = 'lineage'
+    parent_dir = 'lineage',
+    primary_key = metadata$primary_key,
+    ignore_duplicates = ignore_duplicates
   )
+
+  checksum <- pq_files |>
+    tools::md5sum() |>
+    dplyr::as_tibble(rownames = 'file') |>
+    dplyr::mutate(file = basename(file))
+
+  if(!is.null(metadata$primary_key)) {
+    checksum <- dplyr::left_join(checksum, metadata$primary_key, by = "file")
+  }
+
+  dictionary <- NULL
+
+  if(!is.null(metadata$dictionary)) {
+
+    if(is.character(metadata$dictionary)) {
+      dictionary <- read_metadata(metadata$dictionary)
+    } else {
+      dictionary <- metadata$dictionary
+    }
+
+    required_cols <- c("variable_name", "label", "type")
+    required_cols_which <- which(required_cols %in% names(metadata$dictionary))
+
+    if (length(required_cols_which) != length(required_cols)) {
+      dictionary <- NULL
+    }
+  }
 
   meta <- list(
     log_id = key_uuid,
@@ -65,13 +95,11 @@ write_rcdf <- function(data, path, pub_key, ..., metadata = list()) {
     pc_os_version = get_pc_metadata('pc_os_version'),
     pc_hardware = get_pc_metadata('pc_hardware'),
     created_at = stringr::str_sub(Sys.time(), 1, 19),
+    dictionary = dictionary,
     version = 1,
-    checksum = pq_files |>
-      tools::md5sum() |>
-      dplyr::as_tibble(rownames = 'file') |>
-      dplyr::mutate(file = basename(file))
+    ignore_duplicates = ignore_duplicates,
+    checksum = checksum
   )
-
 
   dir_zip <- fs::dir_create(dir_temp, key_uuid)
 

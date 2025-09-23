@@ -13,12 +13,12 @@ write_rcdf_sqlite(data, path, db_name = "cbms_data", ..., parent_dir = NULL)
 
 \item{db_name}{Name of the SQLite database file (without extension).}
 
-\item{...}{Additional arguments passed to `DBI::dbWriteTable()`.}
+\item{...}{Additional arguments passed to \code{DBI::dbWriteTable()}.}
 
 \item{parent_dir}{Optional subdirectory under `path` to store the SQLite file.}
 }
 \value{
-Invisibly returns `NULL`. A `.db` file is written to disk.
+Invisibly returns \code{NULL}. A \code{.db} file is written to disk.
 }
 \description{
 Writes all tables in the RCDF object to a single SQLite database file.

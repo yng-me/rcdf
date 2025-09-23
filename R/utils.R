@@ -1,12 +1,12 @@
-#' Create an empty `rcdf` object
+#' Create an empty \code{rcdf} object
 #'
-#' Initializes and returns an empty `rcdf` object. This is a convenient constructor
-#' for creating a new `rcdf`-class list structure.
+#' Initializes and returns an empty \code{rcdf} object. This is a convenient constructor
+#' for creating a new \code{rcdf}-class list structure.
 #'
 #' @param ... Optional elements to include in the list. These will be passed to
-#'   the internal list constructor and included in the resulting `rcdf` object.
+#'   the internal list constructor and included in the resulting \code{rcdf} object.
 #'
-#' @return A list object of class `"rcdf"`.
+#' @return A list object of class \code{rcdf}.
 #' @export
 #'
 #' @examples
@@ -19,13 +19,13 @@ rcdf_list <- function(...) {
 }
 
 
-#' Convert to `rcdf` class
+#' Convert to \code{rcdf} class
 #'
-#' Converts an existing list or compatible object into an object of class `"rcdf"`.
+#' Converts an existing list or compatible object into an object of class \code{rcdf}.
 #'
-#' @param data A list or object to be converted to class `"rcdf"`.
+#' @param data A list or object to be converted to class \code{rcdf}.
 #'
-#' @return The input object with class set to `"rcdf"`.
+#' @return The input object with class set to \code{rcdf}.
 #' @export
 #'
 #' @examples
@@ -205,3 +205,71 @@ get_pc_metadata <- function(which) {
   values[[which]]
 
 }
+
+
+#' Generate RSA key pair and save to files
+#'
+#' This function generates an RSA key pair (public and private) and saves them to specified files.
+#'
+#' @param path A character string specifying the directory path where the key files in \code{.pem} format should be saved.
+#' @param ... Additional arguments passed to the \code{openssl::rsa_keygen()} function, such as key size.
+#' @param password A character string specifying the password for the private key. If \code{NULL}, the private key will not be encrypted.
+#' @param which A character string specifying which key to return. Can be either \code{"public"} or \code{"private"}. Default is \code{"public"}.
+#' @param prefix A character string used as a prefix for the key file names. Defaults to \code{NULL}, which will result in no prefix.
+#'
+#' @return A character string representing the file path of the generated key (either public or private, based on the \code{which} argument).
+#'
+#' @export
+#'
+#' @examples
+#' # Generate both public and private RSA keys and save them to the temp directory
+#' path_to <- tempdir()
+#' generate_rsa_keys(path = path_to, password = "securepassword")
+#'
+
+generate_rsa_keys <- function(path, ..., password = NULL, which = "public", prefix = NULL) {
+  key <- openssl::rsa_keygen(...)
+  path_to <- list(
+    public = file.path(path, paste0(c(prefix, "public-key.pem"), collapse = "-")),
+    private = file.path(path, paste0(c(prefix, "private-key.pem"), collapse = "-"))
+  )
+  openssl::write_pem(key$pubkey, path = path_to$public)
+  openssl::write_pem(key, path = path_to$private, password = password)
+
+  return(path_to[[which]])
+}
+
+
+
+#' Generate a random password
+#'
+#' This function generates a random password of a specified length. It includes
+#' alphanumeric characters by default and can optionally include special characters.
+#'
+#' @param length Integer. The length of the password to generate. Default is \code{16}.
+#' @param special_chr Logical. Whether to include special characters
+#'   (e.g., `!`, `@`, `#`, etc.) in the password. Default is \code{TRUE}.
+#'
+#' @return A character string representing the generated password.
+#' @export
+#'
+#' @examples
+#' generate_pw()
+#' generate_pw(32)
+#' generate_pw(12, special_chr = FALSE)
+
+generate_pw <- function(length = 16, special_chr = TRUE) {
+
+  pw <-c(0:9, rep(letters, 2), rep(LETTERS, 2))
+
+  if(special_chr) {
+    pw <- c(pw, "!", "#", "@", "$", "%", "&", "^", "-", "_", "=", "(", ")", "*", "+", "?", "<", ">")
+  }
+
+  paste0(sample(pw, length), collapse = "")
+
+}
+
+
+
+
