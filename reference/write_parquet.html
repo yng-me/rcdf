@@ -9,7 +9,7 @@ Otherwise, the function writes the data as a regular Parquet file without encryp
 
     <a class="navbar-brand me-2" href="../index.html">rcdf</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -58,16 +58,16 @@ Otherwise, the function writes the data as a regular Parquet file without encryp
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Additional arguments passed to `arrow::write_parquet()` if no encryption key is provided.</p></dd>
+<dd><p>Additional arguments passed to <code><a href="https://arrow.apache.org/docs/r/reference/write_parquet.html" class="external-link">arrow::write_parquet()</a></code> if no encryption key is provided.</p></dd>
 
 
 <dt id="arg-encryption-key">encryption_key<a class="anchor" aria-label="anchor" href="#arg-encryption-key"></a></dt>
-<dd><p>A list containing `aes_key` and `aes_iv`. If provided, the data will be encrypted using AES before writing to Parquet.</p></dd>
+<dd><p>A list containing <code>aes_key</code> and <code>aes_iv</code>. If provided, the data will be encrypted using AES before writing to Parquet.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>None. The function writes the data to a Parquet file at the specified `path`.</p>
+    <p>None. The function writes the data to a Parquet file at the specified <code>path</code>.</p>
     </div>
 
     <div class="section level2">

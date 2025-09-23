@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">rcdf</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -39,7 +39,14 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">write_rcdf_parquet</span><span class="op">(</span><span class="va">data</span>, <span class="va">path</span>, <span class="va">...</span>, parent_dir <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">write_rcdf_parquet</span><span class="op">(</span></span>
+<span>  <span class="va">data</span>,</span>
+<span>  <span class="va">path</span>,</span>
+<span>  <span class="va">...</span>,</span>
+<span>  parent_dir <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  primary_key <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  ignore_duplicates <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -55,11 +62,19 @@
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Additional arguments passed to `rcdf::write_parquet()` while writing each Parquet file.</p></dd>
+<dd><p>Additional arguments passed to <code><a href="write_parquet.html">rcdf::write_parquet()</a></code> while writing each Parquet file.</p></dd>
 
 
 <dt id="arg-parent-dir">parent_dir<a class="anchor" aria-label="anchor" href="#arg-parent-dir"></a></dt>
 <dd><p>An optional parent directory to be included in the path where the files will be written.</p></dd>
+
+
+<dt id="arg-primary-key">primary_key<a class="anchor" aria-label="anchor" href="#arg-primary-key"></a></dt>
+<dd><p>A <code>data.frame</code> or <code>tibble</code> that includes at least two columns: <code>file</code> and <code>pk_field_name</code>.</p></dd>
+
+
+<dt id="arg-ignore-duplicates">ignore_duplicates<a class="anchor" aria-label="anchor" href="#arg-ignore-duplicates"></a></dt>
+<dd><p>A <code>logical</code> flag. If <code>TRUE</code>, a warning is issued when duplicates are found. If <code>FALSE</code>, the function stops with an error.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -74,10 +89,11 @@
 <span class="r-in"><span><span class="va">private_key</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">dir</span>, <span class="st">'sample-private-key.pem'</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">rcdf_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="read_rcdf.html">read_rcdf</a></span><span class="op">(</span>path <span class="op">=</span> <span class="va">rcdf_path</span>, decryption_key <span class="op">=</span> <span class="va">private_key</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in check_dbplyr():</span> The package "dbplyr" is required to communicate with database backends.</span>
 <span class="r-in"><span><span class="va">temp_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">write_rcdf_parquet</span><span class="op">(</span>data <span class="op">=</span> <span class="va">rcdf_data</span>, path <span class="op">=</span> <span class="va">temp_dir</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpWGXC1Q/mtcars.parquet"</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'rcdf_data' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="va">temp_dir</span>, force <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 </code></pre></div>

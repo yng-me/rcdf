@@ -11,7 +11,7 @@ metadata such as system information and encryption keys."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">rcdf</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,7 +45,14 @@ metadata such as system information and encryption keys.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">write_rcdf</span><span class="op">(</span><span class="va">data</span>, <span class="va">path</span>, <span class="va">pub_key</span>, <span class="va">...</span>, metadata <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">write_rcdf</span><span class="op">(</span></span>
+<span>  <span class="va">data</span>,</span>
+<span>  <span class="va">path</span>,</span>
+<span>  <span class="va">pub_key</span>,</span>
+<span>  <span class="va">...</span>,</span>
+<span>  metadata <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  ignore_duplicates <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -57,7 +64,7 @@ metadata such as system information and encryption keys.</p>
 
 
 <dt id="arg-path">path<a class="anchor" aria-label="anchor" href="#arg-path"></a></dt>
-<dd><p>The path where the RCDF file will be written. The file will be saved with a `.rcdf` extension if not already specified.</p></dd>
+<dd><p>The path where the RCDF file will be written. The file will be saved with a <code>.rcdf</code> extension if not already specified.</p></dd>
 
 
 <dt id="arg-pub-key">pub_key<a class="anchor" aria-label="anchor" href="#arg-pub-key"></a></dt>
@@ -69,12 +76,16 @@ metadata such as system information and encryption keys.</p>
 
 
 <dt id="arg-metadata">metadata<a class="anchor" aria-label="anchor" href="#arg-metadata"></a></dt>
-<dd><p>A list of metadata to be included in the RCDF file. Can contain system information or other relevant details.</p></dd>
+<dd><p>A list of metadata to be included in the RCDF file.</p></dd>
+
+
+<dt id="arg-ignore-duplicates">ignore_duplicates<a class="anchor" aria-label="anchor" href="#arg-ignore-duplicates"></a></dt>
+<dd><p>A <code>logical</code> flag. If <code>TRUE</code>, a warning is issued when duplicates are found. If <code>FALSE</code>, the function stops with an error.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>NULL. The function writes the data to a `.rcdf` file at the specified path.</p>
+    <p>NULL. The function writes the data to a <code>.rcdf</code> file at the specified path.</p>
     </div>
 
     <div class="section level2">

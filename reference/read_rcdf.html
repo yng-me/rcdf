@@ -11,7 +11,7 @@ metadata (such as data dictionary and value sets) are applied to the data."></he
 
     <a class="navbar-brand me-2" href="../index.html">rcdf</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,7 +45,17 @@ metadata (such as data dictionary and value sets) are applied to the data.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">read_rcdf</span><span class="op">(</span><span class="va">path</span>, <span class="va">decryption_key</span>, <span class="va">...</span>, password <span class="op">=</span> <span class="cn">NULL</span>, metadata <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">read_rcdf</span><span class="op">(</span></span>
+<span>  <span class="va">path</span>,</span>
+<span>  <span class="va">decryption_key</span>,</span>
+<span>  <span class="va">...</span>,</span>
+<span>  password <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  metadata <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  ignore_duplicates <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  as_arrow_table <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  recursive <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  return_meta <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -69,7 +79,23 @@ metadata (such as data dictionary and value sets) are applied to the data.</p>
 
 
 <dt id="arg-metadata">metadata<a class="anchor" aria-label="anchor" href="#arg-metadata"></a></dt>
-<dd><p>An optional metadata object containing data dictionaries and value sets. This metadata is applied to the data if provided.</p></dd>
+<dd><p>An optional list of metadata object containing data dictionaries, value sets, and primary key constraints for data integrity measure (a <code>data.frame</code> or <code>tibble</code> that includes at least two columns: <code>file</code> and <code>pk_field_name</code>. This metadata is applied to the data if provided.</p></dd>
+
+
+<dt id="arg-ignore-duplicates">ignore_duplicates<a class="anchor" aria-label="anchor" href="#arg-ignore-duplicates"></a></dt>
+<dd><p>A <code>logical</code> flag. If <code>TRUE</code>, a warning is issued when duplicates are found. If <code>FALSE</code>, the function stops with an error.</p></dd>
+
+
+<dt id="arg-as-arrow-table">as_arrow_table<a class="anchor" aria-label="anchor" href="#arg-as-arrow-table"></a></dt>
+<dd><p>Logical. If <code>TRUE</code>, the function will return the result as an Arrow table. If <code>FALSE</code>, a regular data frame will be returned. Default is <code>FALSE</code>.</p></dd>
+
+
+<dt id="arg-recursive">recursive<a class="anchor" aria-label="anchor" href="#arg-recursive"></a></dt>
+<dd><p>Logical. If <code>TRUE</code> and <code>path</code> is a directory, the function will search recursively for <code>.rcdf</code> files.</p></dd>
+
+
+<dt id="arg-return-meta">return_meta<a class="anchor" aria-label="anchor" href="#arg-return-meta"></a></dt>
+<dd><p>Logical. If <code>TRUE</code>, metadata extracted from the RCDF (excluding sensitive parts like encryption keys)</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -84,67 +110,9 @@ metadata (such as data dictionary and value sets) are applied to the data.</p>
 <span class="r-in"><span><span class="va">private_key</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">dir</span>, <span class="st">'sample-private-key.pem'</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">rcdf_data</span> <span class="op">&lt;-</span> <span class="fu">read_rcdf</span><span class="op">(</span>path <span class="op">=</span> <span class="va">rcdf_path</span>, decryption_key <span class="op">=</span> <span class="va">private_key</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in check_dbplyr():</span> The package "dbplyr" is required to communicate with database backends.</span>
 <span class="r-in"><span><span class="va">rcdf_data</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $mtcars</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Table</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 32 rows x 11 columns</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $mpg &lt;double&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $cyl &lt;double&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $disp &lt;double&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $hp &lt;double&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $drat &lt;double&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $wt &lt;double&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $qsec &lt;double&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $vs &lt;double&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $am &lt;double&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $gear &lt;double&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $carb &lt;double&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> See $metadata for additional Schema metadata</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"metadata")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"metadata")$log_id</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "cd2c7923-b59a-45d4-a229-ece2a7d08b39"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"metadata")$key_app</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "QnNixka1a8HbTUS7/rUfPWpFMj5/Dqw7WuDbJ2Fdzko6kKQEtFArJB+KqJ+slZb14cXhstc8Qjt9tUuS5IxTS5rq3JAlei6wInB05Jv1qqp6jtv+/soVxid7oiUxRfOLbguk9WSigoAecJn6qQHwhRYrN4vLs/FvOHYO6h0SfKJBvZekil9mVJLayY7AusN09LQIm36ZOdi4mNpvmvaZwmLwBUdIocd/c57smGCZODU0R4byT6OjHkNP9QesvuNVpyuDEALoA7tzNdDiKjVTBRbEeTkXRb6lnM6PybL0FYaQiBoDPItiWTmjQEiZSzDZo5DREqoymq0LFN4MrxJ+dA=="</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"metadata")$iv_app</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "TWKANaldZMAFL4XyvekGKLnE9+oNLloN0DR5BBqCG3r4fVF/Y1as5/TX4yWJt2iwwEgCrrsntjqzeyeBskX2Q9Xcwgao2IGDVklg1q4jhsaC5YnlaZ0NekZe7qLpVWzJJjAFwc5PxIZnXu1z7XPfvBzDeriR40eRHY+IZZAa+iji+BAZ9DBK8cztuTp7F2fggrReji8vG0AC8QA/aBSOI/NwScMAdivlhF+26BCoX6ua+J0G5diCW3MyBRe5iR+6KYA/ZtEL8/gdo7VjMvL6+08rl3ikfPPE8hVKw0iIGHdm7yQanwVEDpgFBJ+nX5rw8quOVhNoqCESvOyfkaA+5w=="</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"metadata")$key_admin</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "kuuwMAN7OD0ryQ+6o490KEpcw78ZFaChkXbRrZK9MzBFc0LhcXFDIx3zvYCxnqScNOJ6t4MMCg0jIEkEOl7V4xPnDeuHqFpdcjZB8u3W1A5LB8O/NIjf8Oj6DWnyxKhbhU8DYGGRCnRVsPJuLKv2/wxio0o+VAH7QYRCjCfuJDyzqXW3orLCUeTCd1pfrdh5x0hITvSLnHIysGihWMT29E+VLeEuALb3cNMutGpr0V86boBT+RIeyNkSphatC8N22K6J/+SsKJtnu/3P5pg3pMouJzgxqHieE9Li9oAgkMIxc0Xam5nqh2MYEt7HRI9vyoWMCOmCnCgIM8mmh0/cLQ=="</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"metadata")$iv_admin</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "LB+hdBdak78G+oMmsw6IrVy10VsUDCox/HngWJ2qGPr2BR6sHNHugQh7dGiRxD3j9MAsyx4l0oTpczSMrKPJC5bnESnlOYZgBST4kaSF0m7crIQ0iRcjzWg8DEyDEPjI3XUif951UnjZY+tzxQAsCDc8BjMOTaoe/T99P8ViIdXDS/MQKFKmUgQEK607FrIf4DLtHDqn/QPj3JWrEc/CQgL52QyOMNsDD2thOBfrNZslVBRTx/n+EWV2L9Ga3MaDPjXxTkbStz8hc3IMWZ8MVGSgGoOpqjAU5zAkUpqo1Y03/MSZa3Z5M0XBD+w1PtIqmh3jsY5oxW6hG7ug+ZaXHQ=="</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"metadata")$pc_os</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "darwin"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"metadata")$pc_os_release_date</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Tue Apr 22 19:54:49 PDT 2025"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"metadata")$pc_os_version</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "24.5.0"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"metadata")$pc_hardware</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "arm64"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"metadata")$created_at</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2025-08-23 13:03:40"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"metadata")$version</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"metadata")$checksum</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             file                            value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 mtcars.parquet e89abe4f7eab505621a99fda1eb8cc2f</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"metadata")$dir</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpWGXC1Q/__rcdf_temp__/mtcars"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "list" "rcdf"</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'rcdf_data' not found</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Using encrypted/password protected private key</span></span></span>
 <span class="r-in"><span><span class="va">rcdf_path_pw</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">dir</span>, <span class="st">'mtcars-pw.rcdf'</span><span class="op">)</span></span></span>
@@ -156,68 +124,10 @@ metadata (such as data dictionary and value sets) are applied to the data.</p>
 <span class="r-in"><span>  decryption_key <span class="op">=</span> <span class="va">private_key_pw</span>,</span></span>
 <span class="r-in"><span>  password <span class="op">=</span> <span class="va">pw</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in check_dbplyr():</span> The package "dbplyr" is required to communicate with database backends.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">rcdf_data_with_pw</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $mtcars</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Table</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 32 rows x 11 columns</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $mpg &lt;double&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $cyl &lt;double&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $disp &lt;double&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $hp &lt;double&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $drat &lt;double&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $wt &lt;double&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $qsec &lt;double&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $vs &lt;double&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $am &lt;double&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $gear &lt;double&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $carb &lt;double&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> See $metadata for additional Schema metadata</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"metadata")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"metadata")$log_id</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "8c20de9d-3bd8-4f34-8548-7081a769ff57"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"metadata")$key_app</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "JkcnTsjt/qp0W+5SESZVDS0qZdsGWiQTFc9v/RgcnuEbHCfyRx22WbeYsSPlAczXvN5NcIOWT0ZXEolBlW5EGfCUn8NkHOrzH3qXD7x/bJKHDGx5fv8imYKyeZYgndIA1BiEU04jiOcYeUsVIJmPvpjp3fNvbmWyBnaw1iYQh/Kr19Gvye+8dgpALswXdhXSq7mfs+dZo546MhxSWiH1LCvMJ+OINz4DCC98ZHRukO/EXcYVYVcgMxyNm/Rc/YfAOxYUqWukAgqYEoTqkgz8E8IzSxXNPlfbC4X7ONgw2bOW37cuvKdhrrsw1Oes5TTpgCv9aazFKhl5kEDfzEJlPQ=="</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"metadata")$iv_app</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Oz5finlVo1deTRKH+8ZuDECAwSP6fxmeIhwXSbtvxX2qMgDSyrCpChnCJQgVMsrjQnuhHZzQ3xc7mdJabO5S/JaugUjOzgMDg/HH5/5b5CKbuVsLfnPPWpyj37RhVIquNbS5hFas15MTnyk3ASNqMn3VQW3xjC9xvXceJ6FPhonILFlCYy0vd5D+bEMl7bLrpUhczFWZfZFQOhxv6SguuK3KgK5WdRtiq3CUyvpTmgjpX7n+ka9SkH/o/2KyHgjiC6niSdzAkcIGk205sWdsoigcz9pTZ+WKLNbvxWasD5NFB/xKuldOjdmo4+qQ/UWgzmq4xY7JPyez4obQneRHjw=="</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"metadata")$key_admin</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "T9p8Aok+lF+CpfDP7iTp1eeY7UzqFqGD9Bg2LkA1Ge1+f5qr+2nKaR29HajZiSaQharElT9lvrsZ+eNej114d+4yVOS7zqNsy0w3ffTgUeUc1sHIHow4bX89+mleuKuofQxe5TcG/wFAZ0qYcaP3RtBkarnqf1ZdRBjhxWi/gHBu8Y+GD20lyd+49eCBvOPkrr/OaL7o+Cj9C9dV5hh2wweiCEMp95cWrK6gnvuB6K1wnJWSv83ql3Hhl7EqNV4oHY8RQNib3JFeHEJ3jxaouFhDEP2i49bigq1RUFnV1bDO/YeWTjkXzB6KT/mPvgZmnGnOexnUpPiOlEOT+ImYng=="</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"metadata")$iv_admin</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "RYewhhMVXOXQpvb7kx7vSrmkSQGjVoy0x6+gg2bY3osKtbAEs+yNouWTjd+tIp8/gTmB2Eucfz+FOwQxhbmx3KMg7v4MTWqVFMm71MUmiVAQESax2TSI//aEefW+wkg1/l3AMhrhG5xEgSa2jMg3oRW4r8CmH21BeUvtPjBP7yk1x0h5tvCcHuGIlLeFxEIeGldl4I64mlADX9lEZ+VbmIMbye0DrqbA13YfvGnmYhuRFWOo32odBqZ+4dkCdzClRc5gWlQTP3YftEKKOWg00L88fEpiZUCK7Jv29D5+yAPZTnAtI0JvAH3TAuWYUa9fmxKL/bTKBUBuF8naInQl1A=="</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"metadata")$pc_os</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "darwin"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"metadata")$pc_os_release_date</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Tue Apr 22 19:54:49 PDT 2025"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"metadata")$pc_os_version</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "24.5.0"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"metadata")$pc_hardware</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "arm64"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"metadata")$created_at</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "2025-08-23 13:03:48"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"metadata")$version</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"metadata")$checksum</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             file                            value</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 mtcars.parquet 9534342a18251e405704905deed9ba0f</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"metadata")$dir</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpWGXC1Q/__rcdf_temp__/mtcars-pw"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"class")</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "list" "rcdf"</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'rcdf_data_with_pw' not found</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
