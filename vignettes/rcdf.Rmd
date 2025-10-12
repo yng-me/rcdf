@@ -24,7 +24,14 @@ The core function for writing data to the RCDF format is `write_rcdf()`. This fu
 **Usage**: 
 
 ```{r, eval=FALSE}
-write_rcdf(data, path, pub_key, ..., metadata = list())
+write_rcdf(
+  data,
+  path,
+  pub_key,
+  ...,
+  metadata = list(),
+  ignore_duplicates = TRUE
+)
 ```
 
 **Parameters**:
@@ -34,19 +41,24 @@ write_rcdf(data, path, pub_key, ..., metadata = list())
 - `pub_key`: The public RSA key used to encrypt the AES encryption keys.
 - `...`: Additional arguments passed to helper functions if needed.
 - `metadata`: A list of metadata to be included in the RCDF file. Can contain system information or other relevant details.
+- `ignore_duplicates`: A logical flag. If `TRUE`, a warning is issued when duplicates are found. If `FALSE`, the function stops with an error.
 
 
 ```{r, eval=FALSE}
+library(rcdf)
 # Sample data (list of data frames)
 data <- rcdf_list()
 data$table1 = data.frame(x = 1:10, y = letters[1:10])
 data$table2 = data.frame(a = rnorm(10), b = rnorm(10))
 
-# Sample public RSA key (for encryption)
-pub_key <- file.path(system.file("extdata", package = "rcdf"), "sample-public-key.pem")
+# You can generate a new RSA key pair using the following function:
+key <- generate_rsa_keys(
+  path = "path/to/rsa-keys", 
+  password = "1234" # this is optional
+)
 
 # Write the data to an RCDF file
-write_rcdf(data = data, path = "path/to/rcdf_file.rcdf", pub_key = pub_key)
+write_rcdf(data = data, path = "path/to/rcdf_file.rcdf", pub_key = key)
 ```
 
 
@@ -66,27 +78,56 @@ To read and decrypt an RCDF file, you can use the `read_rcdf()` function. This f
 **Usage**: 
 
 ```{r, eval=FALSE}
-read_rcdf(path, decryption_key, ..., password = NULL, metadata = NULL)
+read_rcdf(
+  path, 
+  decryption_key, 
+  ..., 
+  password = NULL,
+  metadata = list(),
+  ignore_duplicates = TRUE,
+  recursive = FALSE,
+  return_meta = FALSE
+)
 ```
 
 **Parameters**:
 
-- `path`: A string specifying the path to the RCDF archive (zip file).
+- `path`: A string specifying the path to the RCDF archive (zip file). If a directory is provided, all `.rcdf` files within that directory will be processed.
 - `decryption_key`: The key used to decrypt the RCDF contents. This can be an RSA or AES key, depending on how the RCDF was encrypted.
 - `...`: Additional parameters passed to other functions, if needed.
 - `password`: A password used for RSA decryption (optional).
-- `metadata`: An optional metadata object containing data dictionaries and value sets. This metadata is applied to the data if provided.
+- `metadata`: An optional metadata object containing data dictionaries and value sets. This metadata is applied to the data if provided. If `NULL`, the metadata from the RCDF file (added during write), if available, is used.
+- `ignore_duplicates`: A logical flag. If `TRUE`, a warning is issued when duplicates are found, based on the primary key/s defined during creation of RCDF file. If `FALSE`, the function stops with an error.
+- `recursive`: A logical flag. If `TRUE`, the function will recursively look for RCDF files in subdirectories of the specified path.
+- `return_meta`: Logical. If `TRUE`, the metadata will be returned as an attribute of the RCDF object.
 
 
 ```{r, eval=FALSE}
 # Using sample RCDF data
 dir <- system.file("extdata", package = "rcdf")
+
+# mtcars.rcdf is a sample RCDF file included in the package for demonstration purposes only.  
 rcdf_path <- file.path(dir, 'mtcars.rcdf')
+
+# This is also a sample key built into the package.
 private_key <- file.path(dir, 'sample-private-key.pem')
 
 rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key)
 rcdf_data
 
+```
+
+In this example:
+
+- `path` is the path to the RCDF file that contains the encrypted data.
+- `decryption_key` is the key used to decrypt the AES keys and Parquet files. If the RCDF was encrypted using RSA, you’ll need the private RSA key to decrypt it.
+
+The `read_rcdf()` function returns an RCDF object, which is essentially a list of decrypted Parquet files (one for each data frame in the original data) along with metadata about the file.
+
+
+When creating an RSA key pair, you can choose to protect the private key with a password. If your RCDF file was encrypted using RSA and the private key is password-protected, you will need to provide the password when reading the RCDF file.
+
+```{r, eval=FALSE}
 # Using encrypted/password protected private key
 rcdf_path_pw <- file.path(dir, 'mtcars-pw.rcdf')
 private_key_pw <- file.path(dir, 'sample-private-key-pw.pem')
@@ -101,17 +142,9 @@ rcdf_data_with_pw
 
 ```
 
-In this example:
-
-- `path` is the path to the RCDF file that contains the encrypted data.
-- `decryption_key` is the key used to decrypt the AES keys and Parquet files. If the RCDF was encrypted using RSA, you’ll need the private RSA key to decrypt it.
-
-The `read_rcdf()` function returns an RCDF object, which is essentially a list of decrypted Parquet files (one for each data frame in the original data) along with metadata about the file.
-
-
 ## Exporting data to other formats
 
-Once the data has been decrypted and read into R, you can export it to other formats using the `write_rcdf_as()` or `write_rcdf_*()` family of functions. These function support a wide variety of common formats, including CSV, TSV, JSON, Excel, Stata, SPSS, and SQLite.
+Once the data has been decrypted and read into R, you can export it to other formats using the `write_rcdf_as()` or `write_rcdf_*()` family of functions. These functions support a wide variety of common formats, including CSV, TSV, JSON, Excel, Stata, SPSS, and SQLite.
 
 ### Exporting data to CSV format
 
