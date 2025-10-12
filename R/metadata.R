@@ -54,6 +54,9 @@ add_metadata <- function(data, metadata, ..., set_data_types = FALSE) {
   if(is.character(data)) { data <- read_metadata(data) }
 
   column_names <- names(data)
+
+  print(metadata)
+
   dictionary <- check_metadata_structure(metadata, column_names)
 
   with_valueset_col <- "valueset" %in% names(dictionary)

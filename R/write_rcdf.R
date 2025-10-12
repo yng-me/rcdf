@@ -84,8 +84,26 @@ write_rcdf <- function(data, path, pub_key, ..., metadata = list(), ignore_dupli
     }
   }
 
+  meta <- NULL
+  area_names <- NULL
+  if(!is.null(metadata$meta)) {
+    meta <- metadata$meta
+    area_names <- metadata$area_names
+  }
+
+  summary_statistics <- NULL
+  if(!is.null(metadata$summary_statistics)) {
+    summary_statistics <- metadata$summary_statistics
+  }
+
   meta <- list(
     log_id = key_uuid,
+    created_at = stringr::str_sub(Sys.time(), 1, 19),
+    meta = meta,
+    area_names = area_names,
+    summary_statistics = summary_statistics,
+    dictionary = dictionary,
+    ignore_duplicates = ignore_duplicates,
     key_app = encrypt_info_rsa(key$aes_key, pub_key = pub_key),
     iv_app = encrypt_info_rsa(key$aes_iv, pub_key = pub_key),
     key_admin = encrypt_info_rsa(key$aes_key, pub_key = pub_key),
@@ -94,10 +112,7 @@ write_rcdf <- function(data, path, pub_key, ..., metadata = list(), ignore_dupli
     pc_os_release_date = get_pc_metadata('pc_os_release_date'),
     pc_os_version = get_pc_metadata('pc_os_version'),
     pc_hardware = get_pc_metadata('pc_hardware'),
-    created_at = stringr::str_sub(Sys.time(), 1, 19),
-    dictionary = dictionary,
     version = 1,
-    ignore_duplicates = ignore_duplicates,
     checksum = checksum
   )
 
