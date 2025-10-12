@@ -4,15 +4,14 @@
 #' and loads it into R as an RCDF object. The data files within the archive (usually Parquet files) are decrypted and, if provided,
 #' metadata (such as data dictionary and value sets) are applied to the data.
 #'
-#' @param path A string specifying the path to the RCDF archive (zip file).
+#' @param path A string specifying the path to the RCDF archive (zip file). If a directory is provided, all \code{.rcdf} files within that directory will be processed.
 #' @param decryption_key The key used to decrypt the RCDF contents. This can be an RSA or AES key, depending on how the RCDF was encrypted.
 #' @param ... Additional parameters passed to other functions, if needed.
 #' @param password A password used for RSA decryption (optional).
 #' @param metadata An optional list of metadata object containing data dictionaries, value sets, and primary key constraints for data integrity measure (a \code{data.frame} or \code{tibble} that includes at least two columns: \code{file} and \code{pk_field_name}. This metadata is applied to the data if provided.
-#' @param as_arrow_table Logical. If \code{TRUE}, the function will return the result as an Arrow table. If \code{FALSE}, a regular data frame will be returned. Default is \code{FALSE}.
-#' @param ignore_duplicates A \code{logical} flag. If \code{TRUE}, a warning is issued when duplicates are found. If \code{FALSE}, the function stops with an error.
+#' @param ignore_duplicates A \code{logical} flag. If \code{TRUE}, a warning is issued when duplicates are found, based on the primary key/s defined during creation of RCDF file. If \code{FALSE}, the function stops with an error.
 #' @param recursive Logical. If \code{TRUE} and \code{path} is a directory, the function will search recursively for \code{.rcdf} files.
-#' @param return_meta Logical. If \code{TRUE}, metadata extracted from the RCDF (excluding sensitive parts like encryption keys)
+#' @param return_meta Logical. If \code{TRUE}, the metadata will be returned as an attribute of the RCDF object.
 #'
 #' @return An RCDF object, which is a list of Parquet files (one for each record) along with attached metadata.
 #' @export
@@ -46,7 +45,6 @@ read_rcdf <- function(
   password = NULL,
   metadata = list(),
   ignore_duplicates = TRUE,
-  as_arrow_table = TRUE,
   recursive = FALSE,
   return_meta = FALSE
 ) {
@@ -135,36 +133,28 @@ read_rcdf <- function(
   records <- DBI::dbListTables(conn_duckdb)
 
   for(i in seq_along(records)) {
+
     record_i <- records[i]
 
-    if(as_arrow_table) {
+    pq_i <- dplyr::collect(dplyr::tbl(conn_duckdb, record_i))
+    if(nrow(pq_i) == 0) next
 
-      pq_i <- dplyr::collect(dplyr::tbl(conn_duckdb, record_i))
-      if(nrow(pq_i) == 0) next
-
-      if(!is.null(data_dictionary)) {
-        pq_i <- add_metadata(pq_i, data_dictionary)
-      }
-
-      pq[[record_i]] <- arrow::as_arrow_table(pq_i)
-
-    } else {
-
-      pq[[record_i]] <- dplyr::tbl(conn_duckdb, record_i)
-
+    if(length(data_dictionary) > 0) {
+      pq_i <- add_metadata(pq_i, data_dictionary)
     }
+
+    pq[[record_i]] <- pq_i
+
   }
 
-  if(as_arrow_table) {
-    DBI::dbDisconnect(conn_duckdb, shutdown = TRUE)
-  }
+  DBI::dbDisconnect(conn_duckdb, shutdown = TRUE)
 
-  if(!is.null(data_dictionary) & !as_arrow_table & return_meta) {
+  if(!is.null(data_dictionary) & return_meta) {
     pq[['__data_dictionary']] <- data_dictionary
   }
 
   if(return_meta) {
-    # meta$dictionary <- NULL
+    meta$dictionary <- NULL
     meta$dir <- NULL
     attr(pq, 'metadata') <- meta
   }
