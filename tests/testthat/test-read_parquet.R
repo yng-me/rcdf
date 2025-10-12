@@ -63,6 +63,6 @@ test_that("read_parquet throws error with invalid decryption key", {
 
   expect_error(
     read_parquet(temp_file, decryption_key = invalid_decryption_key),
-    "rapi_execute: Failed to run query"
+    "Invalid AES key"
   )
 })
