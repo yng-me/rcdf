@@ -52,7 +52,6 @@ metadata (such as data dictionary and value sets) are applied to the data.</p>
 <span>  password <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  metadata <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  ignore_duplicates <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  as_arrow_table <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  recursive <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  return_meta <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -63,7 +62,7 @@ metadata (such as data dictionary and value sets) are applied to the data.</p>
 
 
 <dl><dt id="arg-path">path<a class="anchor" aria-label="anchor" href="#arg-path"></a></dt>
-<dd><p>A string specifying the path to the RCDF archive (zip file).</p></dd>
+<dd><p>A string specifying the path to the RCDF archive (zip file). If a directory is provided, all <code>.rcdf</code> files within that directory will be processed.</p></dd>
 
 
 <dt id="arg-decryption-key">decryption_key<a class="anchor" aria-label="anchor" href="#arg-decryption-key"></a></dt>
@@ -83,11 +82,7 @@ metadata (such as data dictionary and value sets) are applied to the data.</p>
 
 
 <dt id="arg-ignore-duplicates">ignore_duplicates<a class="anchor" aria-label="anchor" href="#arg-ignore-duplicates"></a></dt>
-<dd><p>A <code>logical</code> flag. If <code>TRUE</code>, a warning is issued when duplicates are found. If <code>FALSE</code>, the function stops with an error.</p></dd>
-
-
-<dt id="arg-as-arrow-table">as_arrow_table<a class="anchor" aria-label="anchor" href="#arg-as-arrow-table"></a></dt>
-<dd><p>Logical. If <code>TRUE</code>, the function will return the result as an Arrow table. If <code>FALSE</code>, a regular data frame will be returned. Default is <code>FALSE</code>.</p></dd>
+<dd><p>A <code>logical</code> flag. If <code>TRUE</code>, a warning is issued when duplicates are found, based on the primary key/s defined during creation of RCDF file. If <code>FALSE</code>, the function stops with an error.</p></dd>
 
 
 <dt id="arg-recursive">recursive<a class="anchor" aria-label="anchor" href="#arg-recursive"></a></dt>
@@ -95,7 +90,7 @@ metadata (such as data dictionary and value sets) are applied to the data.</p>
 
 
 <dt id="arg-return-meta">return_meta<a class="anchor" aria-label="anchor" href="#arg-return-meta"></a></dt>
-<dd><p>Logical. If <code>TRUE</code>, metadata extracted from the RCDF (excluding sensitive parts like encryption keys)</p></dd>
+<dd><p>Logical. If <code>TRUE</code>, the metadata will be returned as an attribute of the RCDF object.</p></dd>
 
 </dl></div>
     <div class="section level2">
