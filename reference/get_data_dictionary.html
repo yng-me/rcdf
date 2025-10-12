@@ -65,11 +65,9 @@
 <span class="r-in"><span><span class="va">private_key</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">dir</span>, <span class="st">'sample-private-key.pem'</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">rcdf_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="read_rcdf.html">read_rcdf</a></span><span class="op">(</span>path <span class="op">=</span> <span class="va">rcdf_path</span>, decryption_key <span class="op">=</span> <span class="va">private_key</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in check_dbplyr():</span> The package "dbplyr" is required to communicate with database backends.</span>
 <span class="r-in"><span><span class="va">data_dictionary</span> <span class="op">&lt;-</span> <span class="fu">get_data_dictionary</span><span class="op">(</span><span class="va">rcdf_data</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'rcdf_data' not found</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">data_dictionary</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> object 'data_dictionary' not found</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
