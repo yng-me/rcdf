@@ -14,7 +14,7 @@ A named list of environment variables. Each element is a key-value pair extracte
 }
 \description{
 Reads a \code{.env} file containing environment variables in the format \code{KEY=VALUE}, and returns them as a named list.
-Lines starting with code{#} are considered comments and ignored.
+Lines starting with \code{#} are considered comments and ignored.
 }
 \examples{
 \dontrun{

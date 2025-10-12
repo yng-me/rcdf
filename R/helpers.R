@@ -1,7 +1,7 @@
 #' Read environment variables from a file
 #'
 #' Reads a \code{.env} file containing environment variables in the format \code{KEY=VALUE}, and returns them as a named list.
-#' Lines starting with code{#} are considered comments and ignored.
+#' Lines starting with \code{#} are considered comments and ignored.
 #'
 #' @param path A string specifying the path to the \code{.env} file. If not provided, defaults to \code{.env} in the current working directory.
 #'
@@ -27,7 +27,7 @@
 
 read_env <- function(path) {
 
-  if(methods::missingArg(path)) {  path <- '.env' }
+  if(methods::missingArg(path)) { path <- '.env' }
 
   if(!file.exists(path)) {
     stop('Path to environment file is required.')
@@ -52,9 +52,4 @@ read_env <- function(path) {
   }
 
   return(env)
-}
-
-
-rcdf_collect <- function(data) {
-  return(data)
 }
