@@ -127,8 +127,6 @@ read_rcdf <- function(
     }
   }
 
-  unlink(meta$dir_base, recursive = TRUE, force = TRUE)
-
   pq <- rcdf_list()
   records <- DBI::dbListTables(conn_duckdb)
 
@@ -148,6 +146,7 @@ read_rcdf <- function(
   }
 
   DBI::dbDisconnect(conn_duckdb, shutdown = TRUE)
+  unlink(meta$dir_base, recursive = TRUE, force = TRUE)
 
   if(!is.null(data_dictionary) & return_meta) {
     pq[['__data_dictionary']] <- data_dictionary
