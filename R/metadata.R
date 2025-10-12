@@ -51,8 +51,6 @@
 
 add_metadata <- function(data, metadata, ..., set_data_types = FALSE) {
 
-  if(length(metadata) == 0) { return(data) }
-
   if(is.character(data)) { data <- read_metadata(data) }
 
   column_names <- names(data)
