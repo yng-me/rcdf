@@ -42,12 +42,11 @@ Suggests:
   devtools,
   knitr,
   rmarkdown,
-  mockery,
   tibble,
   withr,
   gt (>= 0.10.0)
 Config/testthat/edition: 3
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.3
 BugReports: https://github.com/yng-me/rcdf/issues
 VignetteBuilder: knitr
 Depends: 
