@@ -9,7 +9,9 @@
 .csv
 .txt
 .pem
+.env
 
 playground
 inst/doc
 docs
+

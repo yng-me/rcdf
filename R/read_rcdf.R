@@ -1,8 +1,7 @@
 #' Read and decrypt RCDF data
 #'
-#' This function reads an RCDF (Reusable Data Container Format) archive, decrypts its contents using the specified decryption key,
-#' and loads it into R as an RCDF object. The data files within the archive (usually Parquet files) are decrypted and, if provided,
-#' metadata (such as data dictionary and value sets) are applied to the data.
+#' This function reads an RCDF file, decrypts its contents using the specified decryption key,
+#' and loads it into R as an RCDF object.
 #'
 #' @param path A string specifying the path to the RCDF archive (zip file). If a directory is provided, all \code{.rcdf} files within that directory will be processed.
 #' @param decryption_key The key used to decrypt the RCDF contents. This can be an RSA or AES key, depending on how the RCDF was encrypted.
@@ -112,17 +111,45 @@ read_rcdf <- function(
         }
       }
 
-      DBI::dbExecute(conn_duckdb, glue::glue("PRAGMA add_parquet_key('{key$aes_key}', '{key$aes_iv}')"))
+      DBI::dbExecute(
+        conn_duckdb,
+        glue::glue("PRAGMA add_parquet_key('{key$aes_key}', '{key$aes_iv}')")
+      )
 
       if(DBI::dbExistsTable(conn_duckdb, record)) {
 
-        DBI::dbExecute(conn_duckdb, glue::glue("CREATE TABLE {record}_temp AS SELECT * FROM read_parquet('{pq_file}', encryption_config = {{ footer_key: '{key$aes_key}' }});"))
-        if(!is.null(pk_q)) { DBI::dbExecute(conn_duckdb, "ALTER TABLE {record}_temp ADD PRIMARY KEY ({pk_q})") }
-        DBI::dbExecute(conn_duckdb, glue::glue("INSERT INTO {record} (SELECT * FROM {record}_temp);"))
+        DBI::dbExecute(
+          conn_duckdb,
+          glue::glue(
+            "CREATE TABLE {record}_temp
+            AS SELECT * FROM read_parquet('{pq_file}',
+            encryption_config = {{ footer_key: '{key$aes_key}' }});"
+          )
+        )
+        if(!is.null(pk_q)) {
+          DBI::dbExecute(conn_duckdb, "ALTER TABLE {record}_temp ADD PRIMARY KEY ({pk_q})")
+        }
+
+        DBI::dbExecute(
+          conn_duckdb,
+          glue::glue("INSERT INTO {record} (SELECT * FROM {record}_temp);")
+        )
+
         DBI::dbExecute(conn_duckdb, glue::glue("DROP TABLE IF EXISTS {record}_temp;"))
+
       } else {
-        DBI::dbExecute(conn_duckdb, glue::glue("CREATE TABLE {record} AS SELECT * FROM read_parquet('{pq_file}', encryption_config = {{ footer_key: '{key$aes_key}' }});"))
-        if(!is.null(pk_q)) { DBI::dbExecute(conn_duckdb, "ALTER TABLE {record} ADD PRIMARY KEY ({pk_q})") }
+        DBI::dbExecute(
+          conn_duckdb,
+          glue::glue(
+            "CREATE TABLE {record}
+            AS SELECT * FROM read_parquet('{pq_file}',
+            encryption_config = {{ footer_key: '{key$aes_key}' }});"
+          )
+        )
+
+        if(!is.null(pk_q)) {
+          DBI::dbExecute(conn_duckdb, "ALTER TABLE {record} ADD PRIMARY KEY ({pk_q})")
+        }
       }
     }
   }
@@ -166,7 +193,10 @@ read_rcdf <- function(
 extract_rcdf <- function(path, meta_only = FALSE) {
 
   temp_dir <-  tempdir()
-  temp_dir_extract <- stringr::str_split_1(temp_dir, '\\/')[1:(length(stringr::str_split_1(temp_dir, '\\/')) - 1)]
+  temp_dir_split <- (length(stringr::str_split_1(temp_dir, '\\/')) - 1)
+
+  # Extract the base part of the temp directory
+  temp_dir_extract <- stringr::str_split_1(temp_dir, '\\/')[1:temp_dir_split]
 
   temp_dir_rcdf <- paste0(paste0(temp_dir_extract, collapse = '/'), '/')
 
