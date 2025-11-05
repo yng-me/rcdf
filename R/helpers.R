@@ -33,7 +33,7 @@ read_env <- function(path) {
     stop('Path to environment file is required.')
   }
 
-  env_file <- readLines(path)
+  env_file <- readLines(path, warn = FALSE)
   env_values <- unlist(stringr::str_split(env_file, '\n'))
   env_values <- env_values[env_values != '']
   env_values <- env_values[!grepl('^#', env_values)]
