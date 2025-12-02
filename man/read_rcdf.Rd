@@ -36,9 +36,8 @@ read_rcdf(
 An RCDF object, which is a list of Parquet files (one for each record) along with attached metadata.
 }
 \description{
-This function reads an RCDF (Reusable Data Container Format) archive, decrypts its contents using the specified decryption key,
-and loads it into R as an RCDF object. The data files within the archive (usually Parquet files) are decrypted and, if provided,
-metadata (such as data dictionary and value sets) are applied to the data.
+This function reads an RCDF file, decrypts its contents using the specified decryption key,
+and loads it into R as an RCDF object.
 }
 \examples{
 dir <- system.file("extdata", package = "rcdf")

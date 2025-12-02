@@ -72,3 +72,4 @@ test_that("read_env throws an error when the file doesn't exist", {
   # Expect error due to missing file
   expect_error(read_env(non_existent_file), "Path to environment file is required.")
 })
+

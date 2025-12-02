@@ -42,6 +42,8 @@ write_parquet <- function(data, path, ..., encryption_key = NULL) {
     pq_encrypt <- glue::glue("PRAGMA add_parquet_key('{aes_key}', '{aes_iv}')")
     pq_query <- glue::glue("COPY {pq_name} TO '{path}' (ENCRYPTION_CONFIG {{ footer_key: '{aes_key}' }});")
 
+    DBI::dbExecute(conn = pq_conn, statement = "INSTALL httpfs")
+    DBI::dbExecute(conn = pq_conn, statement = "LOAD httpfs")
     DBI::dbExecute(conn = pq_conn, statement = pq_encrypt)
 
     DBI::dbWriteTable(
@@ -141,7 +143,6 @@ check_duplicates <- function(data, record, primary_key, ignore_duplicates) {
   } else {
     stop(cli::cli_warn("Detected potential duplicates in `{record}` based on provided `primary_keys`: {dup_n} row{if_plural}"))
   }
-
 }
 
 
