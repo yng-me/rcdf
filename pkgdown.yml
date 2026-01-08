@@ -3,7 +3,7 @@ pkgdown: 2.2.0
 pkgdown_sha: ~
 articles:
   rcdf: rcdf.html
-last_built: 2025-12-02T19:10Z
+last_built: 2026-01-08T17:01Z
 urls:
   reference: https://yng-me.github.io/rcdf/reference
   article: https://yng-me.github.io/rcdf/articles
