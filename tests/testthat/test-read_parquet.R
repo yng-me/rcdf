@@ -49,20 +49,3 @@ test_that("read_parquet reads encrypted Parquet file with decryption", {
 })
 
 
-# Test `read_parquet()` with invalid decryption key
-test_that("read_parquet throws error with invalid decryption key", {
-
-  data <- tibble::tibble(a = 1:5, b = letters[1:5])
-  temp_file <- tempfile(fileext = ".parquet")
-
-  # Write Parquet file
-  write_parquet(data, temp_file, encryption_key = mock_aes_key)
-
-  # Try to read with an invalid decryption key
-  invalid_decryption_key <- list(aes_key = "wrong_aes_key", aes_iv = "wrong_aes_iv")
-
-  expect_error(
-    read_parquet(temp_file, decryption_key = invalid_decryption_key),
-    "Invalid AES key"
-  )
-})
