@@ -293,7 +293,7 @@ normalize_key_value <- function(value) {
         )
       )
 
-    } else if (grepl("\\d{16}|\\d{24}|\\d{32}", value)) {
+    } else if (grepl("^(?:[A-Fa-f0-9]{32}|[A-Fa-f0-9]{48}|[A-Fa-f0-9]{64})$", value, ignore.case = TRUE)) {
 
       key_length <- 8 * nchar(value)
 

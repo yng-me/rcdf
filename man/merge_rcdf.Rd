@@ -24,7 +24,7 @@ merge_rcdf(
 \item{pub_key}{Public key to encrypt the merged file. If \code{NULL}, a new RSA key pair will be generated.}
 }
 \value{
-Merged RCDF data set
+\code{NULL} (void)
 }
 \description{
 Merge multiple RCDF files

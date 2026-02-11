@@ -6,7 +6,7 @@
 #' @param merged_file_path File path or name of the merged RCDF file.
 #' @param pub_key Public key to encrypt the merged file. If \code{NULL}, a new RSA key pair will be generated.
 #'
-#' @returns Merged RCDF data set
+#' @returns \code{NULL} (void)
 #' @export
 #'
 #' @examples
@@ -48,9 +48,9 @@ merge_rcdf <- function(rcdf_files, decryption_keys, passwords, merged_file_path,
 
     pw <- generate_pw(32)
 
-    path_up <- fs::path_norm(path)
+    path_up <- fs::path_norm(merged_file_path)
     path_up <- stringr::str_remove(path_up, paste0('/', basename(path_up)))
-    pub_key_name <- fs::path_ext_remove(basename(path))
+    pub_key_name <- fs::path_ext_remove(basename(merged_file_path))
     pub_key <- generate_rsa_keys(
       path = path_up,
       prefix = pub_key_name,
@@ -77,5 +77,7 @@ merge_rcdf <- function(rcdf_files, decryption_keys, passwords, merged_file_path,
       area_names = meta$area_names
     )
   )
+
+  return(invisible(NULL))
 
 }
