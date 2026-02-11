@@ -12,13 +12,14 @@ read_rcdf(
   metadata = list(),
   ignore_duplicates = TRUE,
   recursive = FALSE,
+  pre_collect = TRUE,
   return_meta = FALSE
 )
 }
 \arguments{
 \item{path}{A string specifying the path to the RCDF archive (zip file). If a directory is provided, all \code{.rcdf} files within that directory will be processed.}
 
-\item{decryption_key}{The key used to decrypt the RCDF contents. This can be an RSA or AES key, depending on how the RCDF was encrypted.}
+\item{decryption_key}{The key used to decrypt the RCDF. This can be an RSA or AES key, depending on how the RCDF was encrypted.}
 
 \item{...}{Additional parameters passed to other functions, if needed.}
 
@@ -29,6 +30,8 @@ read_rcdf(
 \item{ignore_duplicates}{A \code{logical} flag. If \code{TRUE}, a warning is issued when duplicates are found, based on the primary key/s defined during creation of RCDF file. If \code{FALSE}, the function stops with an error.}
 
 \item{recursive}{Logical. If \code{TRUE} and \code{path} is a directory, the function will search recursively for \code{.rcdf} files.}
+
+\item{pre_collect}{Logical. Whether to load the data in the environment as data frame or a lazy data frame (e.g. from dbplyr or dtplyr) from database connection.}
 
 \item{return_meta}{Logical. If \code{TRUE}, the metadata will be returned as an attribute of the RCDF object.}
 }

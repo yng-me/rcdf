@@ -53,3 +53,20 @@ read_env <- function(path) {
 
   return(env)
 }
+
+
+
+#' @importFrom dplyr collect
+NULL
+
+collect <- function(data, ...) UseMethod('collect')
+
+
+#' @export
+collect.rcdf_tbl_db <- function(data, ...) {
+
+  metadata <- attributes(data)$metadata
+  attr(data, 'metadata') <- NULL
+
+  add_metadata(dplyr::collect(data), metadata)
+}

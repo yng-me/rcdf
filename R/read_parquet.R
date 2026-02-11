@@ -33,16 +33,15 @@
 
 read_parquet <- function(path, ..., decryption_key = NULL, as_arrow_table = TRUE, metadata = NULL) {
 
-  aes_key <- decryption_key$aes_key
-  aes_iv <- decryption_key$aes_iv
+  secret <- normalize_key_value(decryption_key)
 
-  if(is.null(aes_key) | is.null(aes_iv)) {
+  if(is.null(secret)) {
     return(arrow::open_dataset(sources = path, ...))
   }
 
   pq_conn <- DBI::dbConnect(drv = duckdb::duckdb())
-  pq_decrypt <- glue::glue("PRAGMA add_parquet_key('{aes_key}', '{aes_iv}')")
-  pq_query <- glue::glue("SELECT * FROM read_parquet('{path}', encryption_config = {{ footer_key: '{aes_key}' }});")
+  pq_decrypt <- glue::glue("PRAGMA add_parquet_key('{secret$key}', '{secret$value}')")
+  pq_query <- glue::glue("SELECT * FROM read_parquet('{path}', encryption_config = {{ footer_key: '{secret$key}' }});")
 
   DBI::dbExecute(conn = pq_conn, statement = pq_decrypt)
   data <- DBI::dbGetQuery(conn = pq_conn, statement = pq_query)
@@ -57,3 +56,10 @@ read_parquet <- function(path, ..., decryption_key = NULL, as_arrow_table = TRUE
   return(data)
 
 }
+
+
+
+
+
+
+

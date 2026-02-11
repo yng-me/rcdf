@@ -51,50 +51,58 @@
 
 add_metadata <- function(data, metadata, ..., set_data_types = FALSE) {
 
-  if(is.character(data)) { data <- read_metadata(data) }
+  if(is.character(metadata)) { metadata <- read_metadata(metadata) }
 
-  column_names <- names(data)
-
+  column_names <- colnames(data)
   dictionary <- check_metadata_structure(metadata, column_names)
 
-  with_valueset_col <- "valueset" %in% names(dictionary)
 
-  variable_names <- dictionary$variable_name
+  if(inherits(data, 'rcdf_tbl_db')) {
 
-  for(i in seq_along(variable_names)) {
+    attr(data, "metadata") <- metadata
 
-    variable_name_i <- variable_names[i]
+  } else {
 
-    if(!(variable_name_i %in% column_names)) next
+    with_valueset_col <- "valueset" %in% names(dictionary)
 
-    attr(data[[variable_name_i]], "label") <- dictionary$label[i]
+    variable_names <- dictionary$variable_name
 
-    if(!with_valueset_col) next
-    valueset <- dictionary$valueset[i][[1]]
+    for(i in seq_along(variable_names)) {
 
-    if(length(valueset) == 0) next
+      variable_name_i <- variable_names[i]
 
-    labels <- valueset$value
+      if(!(variable_name_i %in% column_names)) next
 
-    is_int <- rlang::is_integer(data[[variable_name_i]])
-    if(is_int & !rlang::is_integer(labels) & grepl("^\\d{1,}$", labels[1])) {
-      labels <- as.integer(labels)
+      attr(data[[variable_name_i]], "label") <- dictionary$label[i]
+
+      if(!with_valueset_col) next
+      valueset <- dictionary$valueset[i][[1]]
+
+      if(length(valueset) == 0) next
+
+      labels <- valueset$value
+
+      is_int <- rlang::is_integer(data[[variable_name_i]])
+      if(is_int & !rlang::is_integer(labels) & grepl("^\\d{1,}$", labels[1])) {
+        labels <- as.integer(labels)
+      }
+
+      if(!is_int & grepl("^\\d{1,}$", data[[variable_name_i]][1]) & rlang::is_integer(labels)) {
+        data[[variable_name_i]] <- as.integer(data[[variable_name_i]])
+      }
+
+      names(labels) <- valueset$label
+
+      data[[variable_name_i]] <- haven::labelled(
+        x = data[[variable_name_i]],
+        labels = labels,
+        label = dictionary$label[i]
+      )
     }
-
-    if(!is_int & grepl("^\\d{1,}$", data[[variable_name_i]][1]) & rlang::is_integer(labels)) {
-      data[[variable_name_i]] <- as.integer(data[[variable_name_i]])
-    }
-
-    names(labels) <- valueset$label
-
-    data[[variable_name_i]] <- haven::labelled(
-      x = data[[variable_name_i]],
-      labels = labels,
-      label = dictionary$label[i]
-    )
   }
 
-  return(dplyr::tibble(data))
+  return(data)
+
 }
 
 
@@ -130,7 +138,7 @@ check_metadata_structure <- function(data, cols) {
   required_cols <- c("variable_name", "label", "type")
   required_cols_which <- which(required_cols %in% names(data))
 
-  if (length(required_cols_which) < length(required_cols)) {
+  if (length(required_cols_which) > length(required_cols)) {
     stop("Invalid column names specified.")
   }
 

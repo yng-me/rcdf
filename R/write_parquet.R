@@ -30,17 +30,16 @@
 
 write_parquet <- function(data, path, ..., encryption_key = NULL) {
 
-  aes_key <- encryption_key$aes_key
-  aes_iv <- encryption_key$aes_iv
+  secret <- normalize_key_value(encryption_key)
 
-  if(is.null(aes_key) | is.null(aes_iv)) {
+  if(is.null(secret)) {
     arrow::write_parquet(x = data, sink = path, ...)
   } else {
 
     pq_name <- "__TEMP_DATA__"
     pq_conn <- DBI::dbConnect(drv = duckdb::duckdb())
-    pq_encrypt <- glue::glue("PRAGMA add_parquet_key('{aes_key}', '{aes_iv}')")
-    pq_query <- glue::glue("COPY {pq_name} TO '{path}' (ENCRYPTION_CONFIG {{ footer_key: '{aes_key}' }});")
+    pq_encrypt <- glue::glue("PRAGMA add_parquet_key('{secret$key}', '{secret$value}')")
+    pq_query <- glue::glue("COPY {pq_name} TO '{path}' (ENCRYPTION_CONFIG {{ footer_key: '{secret$key}' }});")
 
     DBI::dbExecute(conn = pq_conn, statement = "INSTALL httpfs")
     DBI::dbExecute(conn = pq_conn, statement = "LOAD httpfs")

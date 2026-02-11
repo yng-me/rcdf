@@ -223,8 +223,6 @@ extract_key <- function(meta) {
 }
 
 
-
-
 encrypt_info_rsa <- function(data, pub_key) {
   data |>
     serialize(connection = NULL) |>
@@ -270,6 +268,52 @@ get_pc_metadata <- function(which) {
   values[[which]]
 
 }
+
+
+normalize_key_value <- function(value) {
+
+  # Legacy support
+  if(inherits(value, 'list') & !is.null(value$aes_key) & !is.null(value$aes_iv)) {
+
+    return(
+      list(
+        key = value$aes_key,
+        value = value$aes_iv
+      )
+    )
+
+  } else if (typeof(value) == 'character') {
+
+    if(grepl('^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$', value)) {
+
+      return(
+        list(
+          key = "key256base64",
+          value = value
+        )
+      )
+
+    } else if (grepl("\\d{16}|\\d{24}|\\d{32}", value)) {
+
+      key_length <- 8 * nchar(value)
+
+      return(
+        list(
+          key = glue::glue("key{key_length}"),
+          value = value
+        )
+      )
+
+    } else {
+      stop('Invalid `decryption_key` provided.')
+    }
+
+  } else {
+    return(NULL)
+  }
+
+}
+
 
 
 

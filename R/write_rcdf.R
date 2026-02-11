@@ -112,7 +112,7 @@ write_rcdf <- function(data, path, pub_key, ..., metadata = list(), ignore_dupli
     pc_os_release_date = get_pc_metadata('pc_os_release_date'),
     pc_os_version = get_pc_metadata('pc_os_version'),
     pc_hardware = get_pc_metadata('pc_hardware'),
-    version = 1,
+    version = as.character(utils::packageVersion('rcdf')),
     checksum = checksum
   )
 
@@ -143,5 +143,7 @@ write_rcdf <- function(data, path, pub_key, ..., metadata = list(), ignore_dupli
 
   unlink(dir_zip, force = TRUE, recursive = TRUE)
   unlink(file.path(dir_temp, '__rcdf_temp__'), force = TRUE, recursive = TRUE)
+
+  return(data)
 
 }
