@@ -209,8 +209,6 @@ read_rcdf <- function(
       pq_i <- dplyr::collect(dplyr::tbl(conn_duckdb, record_i))
       if(nrow(pq_i) == 0) next
 
-      class(pq_i) <- c(class(pq_i), "rcdf_tbl")
-
     } else {
 
       pq_i <- dplyr::tbl(conn_duckdb, record_i)
