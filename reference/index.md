@@ -21,6 +21,9 @@
 - [`get_rcdf_metadata()`](https://yng-me.github.io/rcdf/reference/get_rcdf_metadata.md)
   : Extract metadata from an RCDF file
 
+- [`merge_rcdf()`](https://yng-me.github.io/rcdf/reference/merge_rcdf.md)
+  : Merge multiple RCDF files
+
 - [`rcdf_list()`](https://yng-me.github.io/rcdf/reference/rcdf_list.md)
   :
 

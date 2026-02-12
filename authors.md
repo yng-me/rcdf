@@ -11,13 +11,13 @@ Source:
 [`DESCRIPTION`](https://github.com/yng-me/rcdf/blob/main/DESCRIPTION)
 
 Abdulsamad B (2026). *rcdf: A Comprehensive Toolkit for Working with
-Encrypted Parquet Files*. R package version 0.1.2,
+Encrypted Parquet Files*. R package version 0.1.3,
 <https://yng-me.github.io/rcdf/>.
 
     @Manual{,
       title = {rcdf: A Comprehensive Toolkit for Working with Encrypted Parquet Files},
       author = {Bhas Abdulsamad},
       year = {2026},
-      note = {R package version 0.1.2},
+      note = {R package version 0.1.3},
       url = {https://yng-me.github.io/rcdf/},
     }

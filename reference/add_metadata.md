@@ -75,11 +75,11 @@ metadata <- data.frame(
 
 labelled_data <- add_metadata(data, metadata)
 str(labelled_data)
-#> tibble [3 × 2] (S3: tbl_df/tbl/data.frame)
+#> 'data.frame':    3 obs. of  2 variables:
 #>  $ sex: dbl+lbl [1:3] 1, 2, 1
-#>    ..@ labels: Named num [1:2] 1 2
+#>    ..@ labels: Named num  1 2
 #>    .. ..- attr(*, "names")= chr [1:2] "Male" "Female"
 #>    ..@ label : chr "Gender"
-#>  $ age: num [1:3] 23 45 34
+#>  $ age: num  23 45 34
 #>   ..- attr(*, "label")= chr "Age in years"
 ```
