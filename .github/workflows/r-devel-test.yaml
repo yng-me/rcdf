@@ -2,19 +2,6 @@ on:
   push:
     branches: [main]
   pull_request:
-    branches: [cran]
-  workflow_dispatch:
-    inputs:
-      pak-version:
-        required: true
-        type: choice
-        options:
-        - 'stable'
-        - 'rc'
-        - 'devel'
-        - 'repo'
-        - 'none'
-        default: 'stable'
 
 name: R-devel test
 
