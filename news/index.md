@@ -5,7 +5,7 @@
 - Added
   [`merge_rcdf()`](https://yng-me.github.io/rcdf/reference/merge_rcdf.md)
   function to combine multiple RCDF files with different encryption keys
-  in to once.
+  into one.
 - Updated
   [`read_rcdf()`](https://yng-me.github.io/rcdf/reference/read_rcdf.md)
   to allow reading of multiple RCDF file with different encryption keys.

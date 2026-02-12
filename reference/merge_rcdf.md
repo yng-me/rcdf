@@ -60,7 +60,7 @@ data <- merge_rcdf(
   passwords = pw,
   merged_file_path = file.path(temp_dir, "merged.rcdf")
 )
-#> ℹ Generatd new RSA keys in: /tmp/Rtmp2CaxW6
+#> ℹ Generatd new RSA keys in: /tmp/RtmpbWMoch
 #> ℹ Password for decryption key: 1BdCrIIbrefDNOTpxd4$NMgc%)wOTvGs
 
 unlink(temp_dir, force = TRUE)
