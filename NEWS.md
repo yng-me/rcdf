@@ -1,6 +1,6 @@
 # rcdf 0.1.3
 
-* Added `merge_rcdf()` function to combine multiple RCDF files with different encryption keys in to once.
+* Added `merge_rcdf()` function to combine multiple RCDF files with different encryption keys into one.
 * Updated `read_rcdf()` to allow reading of multiple RCDF file with different encryption keys.
 * Added `pre_collect` argument to `read_rcdf()` to allow lazy loading the RCDF object.
 
