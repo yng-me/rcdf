@@ -6,7 +6,8 @@ utils::globalVariables(
     "variable_name",
     "label",
     "type",
-    "n"
+    "n",
+    "path"
   )
 )
 

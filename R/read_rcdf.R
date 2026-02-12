@@ -4,13 +4,14 @@
 #' and loads it into R as an RCDF object.
 #'
 #' @param path A string specifying the path to the RCDF archive (zip file). If a directory is provided, all \code{.rcdf} files within that directory will be processed.
-#' @param decryption_key The key used to decrypt the RCDF contents. This can be an RSA or AES key, depending on how the RCDF was encrypted.
+#' @param decryption_key The key used to decrypt the RCDF. This can be an RSA or AES key, depending on how the RCDF was encrypted.
 #' @param ... Additional parameters passed to other functions, if needed.
 #' @param password A password used for RSA decryption (optional).
 #' @param metadata An optional list of metadata object containing data dictionaries, value sets, and primary key constraints for data integrity measure (a \code{data.frame} or \code{tibble} that includes at least two columns: \code{file} and \code{pk_field_name}. This metadata is applied to the data if provided.
 #' @param ignore_duplicates A \code{logical} flag. If \code{TRUE}, a warning is issued when duplicates are found, based on the primary key/s defined during creation of RCDF file. If \code{FALSE}, the function stops with an error.
 #' @param recursive Logical. If \code{TRUE} and \code{path} is a directory, the function will search recursively for \code{.rcdf} files.
 #' @param return_meta Logical. If \code{TRUE}, the metadata will be returned as an attribute of the RCDF object.
+#' @param pre_collect Logical. Whether to load the data in the environment as data frame or a lazy data frame (e.g. from dbplyr or dtplyr) from database connection.
 #'
 #' @return An RCDF object, which is a list of Parquet files (one for each record) along with attached metadata.
 #' @export
@@ -45,35 +46,57 @@ read_rcdf <- function(
   metadata = list(),
   ignore_duplicates = TRUE,
   recursive = FALSE,
+  pre_collect = TRUE,
   return_meta = FALSE
 ) {
 
-  if(!fs::file_exists(path)) {
-    stop(glue::glue("Specified RCDF file does not exist: {path}"))
+  if(any(!fs::file_exists(path))) {
+    stop(glue::glue("Specified RCDF file does not exist: {paste0(path, collapse = ', ')}"))
   }
 
-  if(fs::is_dir(path)) {
+  if(length(path) == 1 & fs::is_dir(path[1])) {
     rcdf_files <- list.files(path, pattern = "\\.rcdf$", full.names = TRUE, recursive = recursive)
 
     if(length(rcdf_files) == 0) {
       stop(glue::glue("No valid RCDF files in the path specified: {path}"))
     }
   } else {
-    if(!grepl("\\.rcdf$", path)) {
-      stop(glue::glue("Not a valid RCDF file: {path}"))
+    if(all(!grepl("\\.rcdf$", path))) {
+      stop(glue::glue("Not a valid RCDF file: {paste0(path, collapse = ', ')}"))
     }
     rcdf_files <- path
+  }
+
+  lf <- length(rcdf_files)
+  ld <- length(decryption_key)
+  lp <- length(password)
+
+  if((ld > 1 & lp > 1) & (lf != ld | lf != lp | ld != lp)) {
+    stop('Mismatched number of decryption keys provided.')
+  }
+
+  dk <- decryption_key
+  pw <- password
+
+  if(ld == 1 & lf > 1) {
+    dk <- rep(decryption_key, lf)
+  }
+
+  if(lp == 1 & lf > 1) {
+    pw <- rep(password, lf)
   }
 
   data_dictionary <- metadata$dictionary
 
   conn_duckdb <- DBI::dbConnect(duckdb::duckdb())
 
+  meta_list <- list()
+
   for(i in seq_along(rcdf_files)) {
 
     rcdf_file <- rcdf_files[i]
     meta <- extract_rcdf(rcdf_file)
-    key <- decrypt_key(data = meta, key = decryption_key, password = password)
+    key <- decrypt_key(data = meta, key = dk[i], password = pw[i])
 
     pq_files <- list.files(
       path = file.path(meta$dir, 'lineage'),
@@ -152,6 +175,26 @@ read_rcdf <- function(
         }
       }
     }
+
+    meta_list$log_id <- c(meta_list$log_id, meta$log_id)
+    meta_list$created_at <- c(meta_list$created_at, meta$created_at)
+    meta_list$version <- c(meta_list$version, meta$version)
+
+    if(!is.null(meta$area_name)) {
+
+      if(is.null(meta_list$area_names)) {
+
+        meta_list$area_names <- meta$area_name
+
+      } else {
+
+        meta_list$area_names <- dplyr::bind_rows(
+          meta_list$area_names,
+          meta$area_name
+        )
+      }
+    }
+
   }
 
   pq <- rcdf_list()
@@ -161,8 +204,21 @@ read_rcdf <- function(
 
     record_i <- records[i]
 
-    pq_i <- dplyr::collect(dplyr::tbl(conn_duckdb, record_i))
-    if(nrow(pq_i) == 0) next
+    if(pre_collect) {
+
+      pq_i <- dplyr::collect(dplyr::tbl(conn_duckdb, record_i))
+      if(nrow(pq_i) == 0) next
+
+    } else {
+
+      pq_i <- dplyr::tbl(conn_duckdb, record_i)
+
+      pq_n <- dplyr::collect(dplyr::count(pq_i))
+      if(pq_n[1] == 0) next
+
+      class(pq_i) <- c(class(pq_i), "rcdf_tbl_db")
+
+    }
 
     if(length(data_dictionary) > 0) {
       pq_i <- add_metadata(pq_i, data_dictionary)
@@ -172,7 +228,10 @@ read_rcdf <- function(
 
   }
 
-  DBI::dbDisconnect(conn_duckdb, shutdown = TRUE)
+  if(pre_collect) {
+    DBI::dbDisconnect(conn_duckdb, shutdown = TRUE)
+  }
+
   unlink(meta$dir_base, recursive = TRUE, force = TRUE)
 
   if(!is.null(data_dictionary) & return_meta) {
@@ -180,9 +239,8 @@ read_rcdf <- function(
   }
 
   if(return_meta) {
-    meta$dictionary <- NULL
-    meta$dir <- NULL
-    attr(pq, 'metadata') <- meta
+    meta_list$meta <- meta$meta
+    attr(pq, 'metadata') <- meta_list
   }
 
   return(pq)
