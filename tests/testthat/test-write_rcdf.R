@@ -34,8 +34,8 @@ test_that("write_rcdf creates a valid RCDF file", {
   expect_true(file.exists(file.path(meta$dir, 'lineage')))
 
   # Clean up the mock public key
-  unlink(pub_key, force = T)
-  unlink(file.path(dir_temp, 'prv.pem'), force = T)
+  unlink(pub_key, force = TRUE)
+  unlink(file.path(dir_temp, 'prv.pem'), force = TRUE)
 
 })
 
@@ -63,10 +63,9 @@ test_that("write_rcdf creates RCDF file with correct encryption", {
 
   meta <- extract_rcdf(rcdf_path)
 
-  metadata_file <- jsonlite::fromJSON(file.path(meta$dir, 'metadata.json'), simplifyVector = T)
+  metadata_file <- jsonlite::fromJSON(file.path(meta$dir, 'metadata.json'), simplifyVector = TRUE)
 
-  expect_true("key_app" %in% names(metadata_file))
-  expect_true("iv_app" %in% names(metadata_file))
+  expect_true("key" %in% names(metadata_file))
 
   unlink(dir_temp, recursive = TRUE)
 

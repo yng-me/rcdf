@@ -15,9 +15,9 @@
 #' @examples
 #' dir <- system.file("extdata", package = "rcdf")
 #' rcdf_path <- file.path(dir, 'mtcars.rcdf')
-#' private_key <- file.path(dir, 'sample-private-key.pem')
+#' private_key <- file.path(dir, 'sample-private-key-pw.pem')
 #'
-#' rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key)
+#' rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key, password = '1234')
 #' temp_dir <- tempdir()
 #'
 #' write_rcdf_as(data = rcdf_data, path = temp_dir, formats = c("csv", "xlsx"))
@@ -80,9 +80,9 @@ write_rcdf_as <- function(data, path, formats, ...) {
 #' @examples
 #' dir <- system.file("extdata", package = "rcdf")
 #' rcdf_path <- file.path(dir, 'mtcars.rcdf')
-#' private_key <- file.path(dir, 'sample-private-key.pem')
+#' private_key <- file.path(dir, 'sample-private-key-pw.pem')
 #'
-#' rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key)
+#' rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key, password = '1234')
 #' temp_dir <- tempdir()
 #'
 #' write_rcdf_csv(data = rcdf_data, path = temp_dir)
@@ -126,9 +126,9 @@ write_rcdf_csv <- function(data, path, ..., parent_dir = NULL) {
 #' @examples
 #' dir <- system.file("extdata", package = "rcdf")
 #' rcdf_path <- file.path(dir, 'mtcars.rcdf')
-#' private_key <- file.path(dir, 'sample-private-key.pem')
+#' private_key <- file.path(dir, 'sample-private-key-pw.pem')
 #'
-#' rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key)
+#' rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key, password = '1234')
 #' temp_dir <- tempdir()
 #'
 #' write_rcdf_tsv(data = rcdf_data, path = temp_dir)
@@ -173,9 +173,9 @@ write_rcdf_tsv <- function(data, path, ..., parent_dir = NULL) {
 #' @examples
 #' dir <- system.file("extdata", package = "rcdf")
 #' rcdf_path <- file.path(dir, 'mtcars.rcdf')
-#' private_key <- file.path(dir, 'sample-private-key.pem')
+#' private_key <- file.path(dir, 'sample-private-key-pw.pem')
 #'
-#' rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key)
+#' rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key, password = '1234')
 #' temp_dir <- tempdir()
 #'
 #' write_rcdf_json(data = rcdf_data, path = temp_dir)
@@ -222,9 +222,9 @@ write_rcdf_json <- function(data, path, ..., parent_dir = NULL) {
 #' @examples
 #' dir <- system.file("extdata", package = "rcdf")
 #' rcdf_path <- file.path(dir, 'mtcars.rcdf')
-#' private_key <- file.path(dir, 'sample-private-key.pem')
+#' private_key <- file.path(dir, 'sample-private-key-pw.pem')
 #'
-#' rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key)
+#' rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key, password = '1234')
 #' temp_dir <- tempdir()
 #'
 #' write_rcdf_xlsx(data = rcdf_data, path = temp_dir)
@@ -269,9 +269,9 @@ write_rcdf_xlsx <- function(data, path, ..., parent_dir = NULL) {
 #' @examples
 #' dir <- system.file("extdata", package = "rcdf")
 #' rcdf_path <- file.path(dir, 'mtcars.rcdf')
-#' private_key <- file.path(dir, 'sample-private-key.pem')
+#' private_key <- file.path(dir, 'sample-private-key-pw.pem')
 #'
-#' rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key)
+#' rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key, password = '1234')
 #' temp_dir <- tempdir()
 #'
 #' write_rcdf_dta(data = rcdf_data, path = temp_dir)
@@ -316,9 +316,9 @@ write_rcdf_dta <- function(data, path, ..., parent_dir = NULL) {
 #' @examples
 #' dir <- system.file("extdata", package = "rcdf")
 #' rcdf_path <- file.path(dir, 'mtcars.rcdf')
-#' private_key <- file.path(dir, 'sample-private-key.pem')
+#' private_key <- file.path(dir, 'sample-private-key-pw.pem')
 #'
-#' rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key)
+#' rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key, password = '1234')
 #' temp_dir <- tempdir()
 #'
 #' write_rcdf_sav(data = rcdf_data, path = temp_dir)
@@ -365,9 +365,9 @@ write_rcdf_sav <- function(data, path, ..., parent_dir = NULL) {
 #' @examples
 #' dir <- system.file("extdata", package = "rcdf")
 #' rcdf_path <- file.path(dir, 'mtcars.rcdf')
-#' private_key <- file.path(dir, 'sample-private-key.pem')
+#' private_key <- file.path(dir, 'sample-private-key-pw.pem')
 #'
-#' rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key)
+#' rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key, password = '1234')
 #' temp_dir <- tempdir()
 #'
 #' write_rcdf_sqlite(data = rcdf_data, path = temp_dir)

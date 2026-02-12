@@ -117,8 +117,11 @@ is_rcdf <- function(data) {
 
 check_if_rcdf <- function(data) {
   if(!is_rcdf(data)) {
-    stop('Not a valid RCDF data file')
+    data <- rcdf_list(data = data)
   }
+
+  data
+
 }
 
 
@@ -136,23 +139,6 @@ raw_to_hex <- function(x) {
 hex_to_raw <- function(x) {
   digits <- strtoi(strsplit(x, "")[[1]], base = 16L)
   as.raw(bitwShiftL(digits[c(TRUE, FALSE)], 4) + digits[c(FALSE, TRUE)])
-}
-
-
-generate_aes_key <- function(passphrase = "") {
-
-  key <- raw_to_hex(openssl::aes_keygen())
-  if(passphrase == '') { passphrase <- as.character(Sys.Date()) }
-
-  salt <- openssl::sha256(passphrase)
-
-  value <- list(
-    aes_key = as.character(openssl::sha256(paste0(key, salt))),
-    aes_iv = as.character(raw_to_hex(openssl::rand_bytes(16)))
-  )
-
-  return(value)
-
 }
 
 
@@ -204,21 +190,38 @@ decrypt_info_aes <- function(data, key = list()) {
 
 extract_key <- function(meta) {
 
-  key <- meta$key_app
-  key_admin <- meta$key_admin
+  if(!is.null(meta$key)) {
 
-  iv <-  meta$iv_app
-  iv_admin <-  meta$iv_admin
+    secret <- normalize_key_value(meta$key)
 
-  if(!is.null(key_admin)) {
-    key <- key_admin
+    return(
+      list(
+        key = secret$key,
+        value = secret$value,
+        legacy = FALSE
+      )
+    )
+
+  } else {
+
+    # Legacy
+
+    key <- meta$key_app
+    key_admin <- meta$key_admin
+
+    value <-  meta$iv_app
+    value_admin <-  meta$iv_admin
+
+    if(!is.null(key_admin)) {
+      key <- key_admin
+    }
+
+    if(!is.null(value_admin)) {
+      value <- stringr::str_split_i(value_admin, pattern = '>>><<<', i = 1)
+    }
+
+    return(list(key = key, value = value, legacy = TRUE))
   }
-
-  if(!is.null(iv_admin)) {
-    iv <- stringr::str_split_i(iv_admin, pattern = '>>><<<', i = 1)
-  }
-
-  return(list(key = key, iv = iv))
 
 }
 
@@ -273,14 +276,18 @@ get_pc_metadata <- function(which) {
 normalize_key_value <- function(value) {
 
   # Legacy support
-  if(inherits(value, 'list') & !is.null(value$aes_key) & !is.null(value$aes_iv)) {
+  if(inherits(value, 'list')) {
 
-    return(
-      list(
-        key = value$aes_key,
-        value = value$aes_iv
+    if(!is.null(value$aes_key) & !is.null(value$aes_iv)) {
+      return(
+        list(
+          key = value$aes_key,
+          value = value$aes_iv
+        )
       )
-    )
+    } else {
+      return(NULL)
+    }
 
   } else if (typeof(value) == 'character') {
 

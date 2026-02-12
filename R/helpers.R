@@ -59,7 +59,15 @@ read_env <- function(path) {
 #' @importFrom dplyr collect
 NULL
 
-collect <- function(data, ...) UseMethod('collect')
+#' Collect
+#'
+#' @param data A lazy data frame (e.g. from dbplyr or dtplyr) from database connection.
+#' @param ... Optional agruments
+#'
+#' @returns A data frame
+#' @export
+#'
+collect <- function(data, ...) { UseMethod('collect') }
 
 
 #' @export
