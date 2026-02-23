@@ -9,14 +9,14 @@
 
   Convert to `rcdf` class
 
-- [`collect()`](https://yng-me.github.io/rcdf/reference/collect.md) :
-  Collect
-
 - [`generate_pw()`](https://yng-me.github.io/rcdf/reference/generate_pw.md)
   : Generate a random password
 
 - [`generate_rsa_keys()`](https://yng-me.github.io/rcdf/reference/generate_rsa_keys.md)
   : Generate RSA key pair and save to files
+
+- [`get_data_dictionary()`](https://yng-me.github.io/rcdf/reference/get_data_dictionary.md)
+  : Extract data dictionary from RCDF object
 
 - [`get_rcdf_metadata()`](https://yng-me.github.io/rcdf/reference/get_rcdf_metadata.md)
   : Extract metadata from an RCDF file

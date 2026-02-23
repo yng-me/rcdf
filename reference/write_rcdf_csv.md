@@ -40,9 +40,9 @@ Invisibly returns `NULL`. Files are written to disk.
 ``` r
 dir <- system.file("extdata", package = "rcdf")
 rcdf_path <- file.path(dir, 'mtcars.rcdf')
-private_key <- file.path(dir, 'sample-private-key-pw.pem')
+private_key <- file.path(dir, 'sample-private-key.pem')
 
-rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key, password = '1234')
+rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key)
 temp_dir <- tempdir()
 
 write_rcdf_csv(data = rcdf_data, path = temp_dir)
