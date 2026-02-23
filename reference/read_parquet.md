@@ -13,7 +13,7 @@ read_parquet(
   path,
   ...,
   decryption_key = NULL,
-  as_arrow_table = TRUE,
+  as_arrow_table = FALSE,
   metadata = NULL
 )
 ```
@@ -39,7 +39,7 @@ read_parquet(
 
   Logical. If `TRUE`, the function will return the result as an Arrow
   table. If `FALSE`, a regular data frame will be returned. Default is
-  `TRUE`.
+  `FALSE`.
 
 - metadata:
 
@@ -54,52 +54,17 @@ An Arrow table or a data frame, depending on the value of
 ## Examples
 
 ``` r
+if (FALSE) { # \dontrun{
 # Using sample Parquet files from `mtcars` dataset
 dir <- system.file("extdata", package = "rcdf")
 
-# Without decryption
-df <- read_parquet(file.path(dir, "mtcars.parquet"))
-df
-#> FileSystemDataset with 1 Parquet file
-#> 11 columns
-#> mpg: double
-#> cyl: double
-#> disp: double
-#> hp: double
-#> drat: double
-#> wt: double
-#> qsec: double
-#> vs: double
-#> am: double
-#> gear: double
-#> carb: double
-#> 
-#> See $metadata for additional Schema metadata
+# Not encrypted
+read_parquet(file.path(dir, "mtcars.parquet"))
 
-# With decryption
-decryption_key <- list(
-  aes_key = "5bddd0ea4ab48ed5e33b1406180d68158aa255cf3f368bdd4744abc1a7909ead",
-  aes_iv = "7D3EF463F4CCD81B11B6EC3230327B2D"
-)
-
-df_with_encryption <- read_parquet(
+# Encrypted
+read_parquet(
   file.path(dir, "mtcars-encrypted.parquet"),
-  decryption_key = decryption_key
- )
-df_with_encryption
-#> Table
-#> 32 rows x 11 columns
-#> $mpg <double>
-#> $cyl <double>
-#> $disp <double>
-#> $hp <double>
-#> $drat <double>
-#> $wt <double>
-#> $qsec <double>
-#> $vs <double>
-#> $am <double>
-#> $gear <double>
-#> $carb <double>
-#> 
-#> See $metadata for additional Schema metadata
+  decryption_key = 'rppqM5CuEqotys4wQq/g7xh6wpIjRozcAIbI9sagwKE='
+)
+} # }
 ```

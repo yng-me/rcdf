@@ -48,5 +48,5 @@ A character string representing the file path of the generated key
 # Generate both public and private RSA keys and save them to the temp directory
 path_to <- tempdir()
 generate_rsa_keys(path = path_to, password = "securepassword")
-#> [1] "/tmp/RtmpFEqr1r/public-key.pem"
+#> [1] "/tmp/RtmpU7BBBx/public-key.pem"
 ```

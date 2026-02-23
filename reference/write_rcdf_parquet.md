@@ -58,13 +58,13 @@ A character vector of file paths to the written Parquet files.
 ``` r
 dir <- system.file("extdata", package = "rcdf")
 rcdf_path <- file.path(dir, 'mtcars.rcdf')
-private_key <- file.path(dir, 'sample-private-key.pem')
+private_key <- file.path(dir, 'sample-private-key-pw.pem')
 
-rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key)
+rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key, password = '1234')
 temp_dir <- tempdir()
 
 write_rcdf_parquet(data = rcdf_data, path = temp_dir)
-#> [1] "/tmp/RtmpFEqr1r/mtcars.parquet"
+#> [1] "/tmp/RtmpU7BBBx/data.parquet"
 
 unlink(temp_dir, force = TRUE)
 ```

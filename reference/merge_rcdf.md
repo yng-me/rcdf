@@ -46,22 +46,23 @@ merge_rcdf(
 ## Examples
 
 ``` r
+if (FALSE) { # \dontrun{
 dir <- system.file("extdata", package = "rcdf")
 
-rcdf_path <- file.path(dir, 'mtcars-pw.rcdf')
+rcdf_path <- file.path(dir, 'mtcars.rcdf')
 private_key <- file.path(dir, 'sample-private-key-pw.pem')
 pw <- '1234'
 
 temp_dir <- tempdir()
 
-data <- merge_rcdf(
+merge_rcdf(
   rcdf_files = rcdf_path,
   decryption_keys = private_key,
   passwords = pw,
-  merged_file_path = file.path(temp_dir, "merged.rcdf")
+  merged_file_path = file.path(temp_dir, "merged.rcdf"),
+  pub_key = file.path(dir, 'sample-public-key-pw.pem')
 )
-#> ℹ Generatd new RSA keys in: /tmp/RtmpFEqr1r
-#> ℹ Password for decryption key: 1BdCrIIbrefDNOTpxd4$NMgc%)wOTvGs
 
-unlink(temp_dir, force = TRUE)
+unlink(file.path(temp_dir, "merged.rcdf"), force = TRUE)
+} # }
 ```
