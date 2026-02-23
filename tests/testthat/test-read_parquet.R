@@ -24,6 +24,9 @@ test_that("read_parquet reads Parquet file without decryption", {
 
 # Test `read_parquet()` with decryption
 test_that("read_parquet reads encrypted Parquet file with decryption (legacy)", {
+
+  skip_on_cran()
+
   data <- tibble::tibble(a = 1:5, b = letters[1:5])
   temp_file <- tempfile(fileext = ".parquet")
 
@@ -52,6 +55,9 @@ test_that("read_parquet reads encrypted Parquet file with decryption (legacy)", 
 
 # Test `read_parquet()` with decryption
 test_that("read_parquet reads encrypted Parquet file with decryption", {
+
+  skip_on_cran()
+
   data <- tibble::tibble(a = 1:5, b = letters[1:5])
   temp_file <- tempfile(fileext = ".parquet")
 

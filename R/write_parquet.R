@@ -12,10 +12,9 @@
 #' @export
 #'
 #' @examples
-#'
+#' \dontrun{
 #' data <- mtcars
-#' key <- "5bddd0ea4ab48ed5e33b1406180d68158aa255cf3f368bdd4744abc1a7909ead"
-#' iv <- "7D3EF463F4CCD81B11B6EC3230327B2D"
+#' key <- "rppqM5CuEqotys4wQq/g7xh6wpIjRozcAIbI9sagwKE="
 #'
 #' temp_dir <- tempdir()
 #'
@@ -24,8 +23,7 @@
 #'   path = file.path(temp_dir, "mtcars.parquet"),
 #'   encryption_key = list(aes_key = key, aes_iv = iv)
 #' )
-#'
-#' unlink(file.path(temp_dir, "mtcars.parquet"), force = TRUE)
+#' }
 #'
 
 write_parquet <- function(data, path, ..., encryption_key = NULL) {

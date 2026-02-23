@@ -71,7 +71,6 @@ generate_rsa_keys <- function(path, ..., password = NULL, which = "public", pref
 }
 
 
-
 #' Generate a random password
 #'
 #' This function generates a random password of a specified length. It includes
@@ -102,7 +101,6 @@ generate_pw <- function(length = 16, special_chr = TRUE) {
 }
 
 
-
 set_class <- function(data, class_name) {
   class(data) <- c(class(data), class_name)
   return(data)
@@ -112,7 +110,6 @@ set_class <- function(data, class_name) {
 is_rcdf <- function(data) {
   inherits(data, 'rcdf') & inherits(data, 'list')
 }
-
 
 
 check_if_rcdf <- function(data) {
@@ -142,7 +139,6 @@ hex_to_raw <- function(x) {
 }
 
 
-
 dir_create_new <- function(path, parent_dir = NULL) {
   if(!is.null(parent_dir)) {
     path <- file.path(path, parent_dir)
@@ -150,7 +146,6 @@ dir_create_new <- function(path, parent_dir = NULL) {
   fs::dir_create(path)
   return(path)
 }
-
 
 
 decrypt_info_aes <- function(data, key = list()) {
@@ -185,7 +180,6 @@ decrypt_info_aes <- function(data, key = list()) {
   unserialize(value)
 
 }
-
 
 
 extract_key <- function(meta) {
@@ -225,14 +219,12 @@ extract_key <- function(meta) {
 
 }
 
-
 encrypt_info_rsa <- function(data, pub_key) {
   data |>
     serialize(connection = NULL) |>
     openssl::rsa_encrypt(pubkey = pub_key) |>
     openssl::base64_encode()
 }
-
 
 
 decrypt_info_rsa <- function(data, prv_key, password = NULL) {
@@ -248,8 +240,6 @@ decrypt_info_rsa <- function(data, prv_key, password = NULL) {
     openssl::rsa_decrypt(key) |>
     unserialize()
 }
-
-
 
 get_pc_metadata <- function(which) {
 
@@ -271,7 +261,6 @@ get_pc_metadata <- function(which) {
   values[[which]]
 
 }
-
 
 normalize_key_value <- function(value) {
 
@@ -320,7 +309,5 @@ normalize_key_value <- function(value) {
   }
 
 }
-
-
 
 

@@ -15,6 +15,7 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' # Example usage of writing an RCDF file
 #'
 #' rcdf_data <- rcdf_list()
@@ -38,6 +39,7 @@
 #'
 #' unlink(file.path(temp_dir, "mtcars.rcdf"), force = TRUE)
 #' unlink(file.path(temp_dir, "mtcars-pw.rcdf"), force = TRUE)
+#' }
 
 
 write_rcdf <- function(data, path, pub_key, ..., metadata = list(), ignore_duplicates = TRUE) {

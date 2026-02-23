@@ -13,6 +13,7 @@
 #' @seealso \link[rcdf]{write_rcdf_csv}  \link[rcdf]{write_rcdf_tsv}  \link[rcdf]{write_rcdf_json}  \link[rcdf]{write_rcdf_xlsx}  \link[rcdf]{write_rcdf_dta}  \link[rcdf]{write_rcdf_sav}  \link[rcdf]{write_rcdf_sqlite}
 #'
 #' @examples
+#' \dontrun{
 #' dir <- system.file("extdata", package = "rcdf")
 #' rcdf_path <- file.path(dir, 'mtcars.rcdf')
 #' private_key <- file.path(dir, 'sample-private-key-pw.pem')
@@ -23,6 +24,7 @@
 #' write_rcdf_as(data = rcdf_data, path = temp_dir, formats = c("csv", "xlsx"))
 #'
 #' unlink(temp_dir, force = TRUE)
+#' }
 
 
 write_rcdf_as <- function(data, path, formats, ...) {

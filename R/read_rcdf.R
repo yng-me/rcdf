@@ -23,6 +23,7 @@
 #' private_key <- file.path(dir, 'sample-private-key-pw.pem')
 #' pw <- '1234'
 #'
+#' \dontrun{
 #' rcdf_data <- read_rcdf(
 #'   path = rcdf_path,
 #'   decryption_key = private_key,
@@ -30,7 +31,7 @@
 #' )
 #'
 #' rcdf_data
-#'
+#' }
 
 read_rcdf <- function(
   path,

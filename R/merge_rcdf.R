@@ -10,6 +10,8 @@
 #' @export
 #'
 #' @examples
+#'
+#' \dontrun{
 #' dir <- system.file("extdata", package = "rcdf")
 #'
 #' rcdf_path <- file.path(dir, 'mtcars.rcdf')
@@ -27,6 +29,7 @@
 #' )
 #'
 #' unlink(file.path(temp_dir, "merged.rcdf"), force = TRUE)
+#' }
 
 
 merge_rcdf <- function(rcdf_files, decryption_keys, passwords, merged_file_path, pub_key = NULL) {

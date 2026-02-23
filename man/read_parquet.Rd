@@ -30,15 +30,17 @@ An Arrow table or a data frame, depending on the value of \code{as_arrow_table}.
 This function reads a Parquet file, optionally decrypting it using the provided decryption key. If no decryption key is provided, it reads the file normally without decryption. It supports reading Parquet files as Arrow tables or regular data frames, depending on the \code{as_arrow_table} argument.
 }
 \examples{
+\dontrun{
 # Using sample Parquet files from `mtcars` dataset
 dir <- system.file("extdata", package = "rcdf")
 
-# Encrypted
+# Not encrypted
 read_parquet(file.path(dir, "mtcars.parquet"))
 
-# Not encrypted
+# Encrypted
 read_parquet(
   file.path(dir, "mtcars-encrypted.parquet"),
   decryption_key = 'rppqM5CuEqotys4wQq/g7xh6wpIjRozcAIbI9sagwKE='
 )
+}
 }

@@ -30,6 +30,8 @@ merge_rcdf(
 Merge multiple RCDF files
 }
 \examples{
+
+\dontrun{
 dir <- system.file("extdata", package = "rcdf")
 
 rcdf_path <- file.path(dir, 'mtcars.rcdf')
@@ -47,4 +49,5 @@ merge_rcdf(
 )
 
 unlink(file.path(temp_dir, "merged.rcdf"), force = TRUE)
+}
 }

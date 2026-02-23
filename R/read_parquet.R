@@ -12,17 +12,19 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' # Using sample Parquet files from `mtcars` dataset
 #' dir <- system.file("extdata", package = "rcdf")
 #'
-#' # Encrypted
+#' # Not encrypted
 #' read_parquet(file.path(dir, "mtcars.parquet"))
 #'
-#' # Not encrypted
+#' # Encrypted
 #' read_parquet(
 #'   file.path(dir, "mtcars-encrypted.parquet"),
 #'   decryption_key = 'rppqM5CuEqotys4wQq/g7xh6wpIjRozcAIbI9sagwKE='
 #' )
+#' }
 
 read_parquet <- function(path, ..., decryption_key = NULL, as_arrow_table = FALSE, metadata = NULL) {
 

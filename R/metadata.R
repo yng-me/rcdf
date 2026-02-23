@@ -105,7 +105,6 @@ add_metadata <- function(data, metadata, ..., set_data_types = FALSE) {
 
 }
 
-
 check_metadata_structure <- function(data, cols) {
 
   required_cols <- c("variable_name", "label", "type")
@@ -128,7 +127,6 @@ check_metadata_structure <- function(data, cols) {
     dplyr::filter(variable_name %in% cols)
 }
 
-
 convert_to_na <- function(data) {
   data |>
     dplyr::mutate_if(is.character, stringr::str_trim) |>
@@ -137,7 +135,6 @@ convert_to_na <- function(data) {
       ~ dplyr::if_else(. == '', NA_character_, stringr::str_squish(.))
     )
 }
-
 
 read_metadata <- function(path) {
 
