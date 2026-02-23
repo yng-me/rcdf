@@ -15,6 +15,7 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' # Example usage of writing an RCDF file
 #'
 #' rcdf_data <- rcdf_list()
@@ -38,6 +39,7 @@
 #'
 #' unlink(file.path(temp_dir, "mtcars.rcdf"), force = TRUE)
 #' unlink(file.path(temp_dir, "mtcars-pw.rcdf"), force = TRUE)
+#' }
 
 
 write_rcdf <- function(data, path, pub_key, ..., metadata = list(), ignore_duplicates = TRUE) {
@@ -46,7 +48,7 @@ write_rcdf <- function(data, path, pub_key, ..., metadata = list(), ignore_dupli
 
   key_uuid <- uuid::UUIDgenerate()
   key_pub <-  openssl::read_pubkey(pub_key)
-  key <- generate_aes_key(key_uuid)
+  key <- openssl::base64_encode(openssl::aes_keygen(32))
 
   pq_files <- write_rcdf_parquet(
     data = data,
@@ -98,16 +100,13 @@ write_rcdf <- function(data, path, pub_key, ..., metadata = list(), ignore_dupli
 
   meta <- list(
     log_id = key_uuid,
+    key =  encrypt_info_rsa(key, pub_key = pub_key),
     created_at = stringr::str_sub(Sys.time(), 1, 19),
     meta = meta,
     area_names = area_names,
     summary_statistics = summary_statistics,
     dictionary = dictionary,
     ignore_duplicates = ignore_duplicates,
-    key_app = encrypt_info_rsa(key$aes_key, pub_key = pub_key),
-    iv_app = encrypt_info_rsa(key$aes_iv, pub_key = pub_key),
-    key_admin = encrypt_info_rsa(key$aes_key, pub_key = pub_key),
-    iv_admin = encrypt_info_rsa(key$aes_iv, pub_key = pub_key),
     pc_os = get_pc_metadata('pc_os'),
     pc_os_release_date = get_pc_metadata('pc_os_release_date'),
     pc_os_version = get_pc_metadata('pc_os_version'),

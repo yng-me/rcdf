@@ -22,16 +22,18 @@ Invisibly returns \code{NULL}. Files are written to disk.
 Exports RCDF-formatted data to one or more supported open data formats. The function automatically dispatches to the appropriate writer function based on the \code{formats} provided.
 }
 \examples{
+\dontrun{
 dir <- system.file("extdata", package = "rcdf")
 rcdf_path <- file.path(dir, 'mtcars.rcdf')
-private_key <- file.path(dir, 'sample-private-key.pem')
+private_key <- file.path(dir, 'sample-private-key-pw.pem')
 
-rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key)
+rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key, password = '1234')
 temp_dir <- tempdir()
 
 write_rcdf_as(data = rcdf_data, path = temp_dir, formats = c("csv", "xlsx"))
 
 unlink(temp_dir, force = TRUE)
+}
 }
 \seealso{
 \link[rcdf]{write_rcdf_csv}  \link[rcdf]{write_rcdf_tsv}  \link[rcdf]{write_rcdf_json}  \link[rcdf]{write_rcdf_xlsx}  \link[rcdf]{write_rcdf_dta}  \link[rcdf]{write_rcdf_sav}  \link[rcdf]{write_rcdf_sqlite}

@@ -13,25 +13,12 @@ test_that("as_rcdf adds the 'rcdf' class", {
 })
 
 
-# Test `check_if_rcdf()`
-test_that("check_if_rcdf throws error for non-rcdf", {
-  obj <- data.frame(a = 1:5)
-  expect_error(check_if_rcdf(obj), "Not a valid RCDF data file")
-})
-
 # Test `raw_to_hex()`
 test_that("raw_to_hex converts raw to hex", {
   raw_val <- charToRaw("hello")
   hex_val <- raw_to_hex(raw_val)
   expect_equal(hex_val, "68656C6C6F")
   expect_error(raw_to_hex("not raw"), "Input must be a raw vector.")
-})
-
-# Test `generate_aes_key()`
-test_that("generate_aes_key produces valid key and iv", {
-  aes_key_info <- generate_aes_key()
-  expect_true(is.character(aes_key_info$aes_key))
-  expect_true(is.character(aes_key_info$aes_iv))
 })
 
 # Test `dir_create_new()`

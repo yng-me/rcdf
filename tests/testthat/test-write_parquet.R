@@ -1,21 +1,34 @@
-# Mock key
-mock_aes_key <- list(
-  aes_key = "3e5bdf7031653ddcffca50831f6d9822f73cce44948c5a0861540cfb5620a633",
-  aes_iv = "9A5D8517510F8E26C564C6C8DD39EA68"
-)
-
 # Test `write_parquet()` with encryption
+test_that("write_parquet writes encrypted Parquet files (legacy)", {
+  data <- tibble::tibble(a = 1:5, b = letters[1:5])
+  temp_file <- tempfile(fileext = ".parquet")
+
+  # Writing without encryption
+  mock_key_legacy <- list(
+    aes_key = "3e5bdf7031653ddcffca50831f6d9822f73cce44948c5a0861540cfb5620a633",
+    aes_iv = "9A5D8517510F8E26C564C6C8DD39EA68"
+  )
+  write_parquet(data, temp_file, encryption_key = mock_key_legacy)
+
+  # Check if file is created
+  expect_true(file.exists(temp_file))
+  unlink(temp_file, force = TRUE)
+})
+
+
 test_that("write_parquet writes encrypted Parquet files", {
   data <- tibble::tibble(a = 1:5, b = letters[1:5])
   temp_file <- tempfile(fileext = ".parquet")
 
   # Writing without encryption
-  write_parquet(data, temp_file, encryption_key = mock_aes_key)
+  mock_key <- 'rppqM5CuEqotys4wQq/g7xh6wpIjRozcAIbI9sagwKE='
+  write_parquet(data, temp_file, encryption_key = mock_key)
 
   # Check if file is created
   expect_true(file.exists(temp_file))
-  unlink(temp_file, force = T)
+  unlink(temp_file, force = TRUE)
 })
+
 
 
 # Test `write_parquet()` without encryption
@@ -28,7 +41,7 @@ test_that("write_parquet writes regular Parquet files", {
 
   # Check if file is created
   expect_true(file.exists(temp_file))
-  unlink(temp_file, force = T)
+  unlink(temp_file, force = TRUE)
 })
 
 
@@ -53,7 +66,7 @@ test_that("write_rcdf_parquet writes RCDF data to Parquet files", {
 
   # Check if the files are located in the temp_dir
   expect_true(all(file.exists(written_files)))
-  unlink(written_files, force = T)
+  unlink(written_files, force = TRUE)
 
 })
 

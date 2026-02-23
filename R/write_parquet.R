@@ -12,10 +12,9 @@
 #' @export
 #'
 #' @examples
-#'
+#' \dontrun{
 #' data <- mtcars
-#' key <- "5bddd0ea4ab48ed5e33b1406180d68158aa255cf3f368bdd4744abc1a7909ead"
-#' iv <- "7D3EF463F4CCD81B11B6EC3230327B2D"
+#' key <- "rppqM5CuEqotys4wQq/g7xh6wpIjRozcAIbI9sagwKE="
 #'
 #' temp_dir <- tempdir()
 #'
@@ -24,8 +23,7 @@
 #'   path = file.path(temp_dir, "mtcars.parquet"),
 #'   encryption_key = list(aes_key = key, aes_iv = iv)
 #' )
-#'
-#' unlink(file.path(temp_dir, "mtcars.parquet"), force = TRUE)
+#' }
 #'
 
 write_parquet <- function(data, path, ..., encryption_key = NULL) {
@@ -38,8 +36,8 @@ write_parquet <- function(data, path, ..., encryption_key = NULL) {
 
     pq_name <- "__TEMP_DATA__"
     pq_conn <- DBI::dbConnect(drv = duckdb::duckdb())
-    pq_encrypt <- glue::glue("PRAGMA add_parquet_key('{secret$key}', '{secret$value}')")
-    pq_query <- glue::glue("COPY {pq_name} TO '{path}' (ENCRYPTION_CONFIG {{ footer_key: '{secret$key}' }});")
+    pq_encrypt <- glue::glue("PRAGMA add_parquet_key('key256base64', '{secret$value}')")
+    pq_query <- glue::glue("COPY {pq_name} TO '{path}' (ENCRYPTION_CONFIG {{ footer_key: 'key256base64' }});")
 
     DBI::dbExecute(conn = pq_conn, statement = "INSTALL httpfs")
     DBI::dbExecute(conn = pq_conn, statement = "LOAD httpfs")
@@ -77,9 +75,9 @@ write_parquet <- function(data, path, ..., encryption_key = NULL) {
 #' @examples
 #' dir <- system.file("extdata", package = "rcdf")
 #' rcdf_path <- file.path(dir, 'mtcars.rcdf')
-#' private_key <- file.path(dir, 'sample-private-key.pem')
+#' private_key <- file.path(dir, 'sample-private-key-pw.pem')
 #'
-#' rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key)
+#' rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key, password = '1234')
 #' temp_dir <- tempdir()
 #'
 #' write_rcdf_parquet(data = rcdf_data, path = temp_dir)
@@ -88,7 +86,7 @@ write_parquet <- function(data, path, ..., encryption_key = NULL) {
 
 write_rcdf_parquet <- function(data, path, ..., parent_dir = NULL, primary_key = NULL, ignore_duplicates = TRUE) {
 
-  check_if_rcdf(data)
+  data <- check_if_rcdf(data)
   path <- dir_create_new(path, parent_dir)
 
   records <- names(data)

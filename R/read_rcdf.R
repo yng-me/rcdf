@@ -19,24 +19,19 @@
 #' @examples
 #' dir <- system.file("extdata", package = "rcdf")
 #' rcdf_path <- file.path(dir, 'mtcars.rcdf')
-#' private_key <- file.path(dir, 'sample-private-key.pem')
-#'
-#' rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key)
-#' rcdf_data
-#'
-#' # Using encrypted/password protected private key
-#' rcdf_path_pw <- file.path(dir, 'mtcars-pw.rcdf')
-#' private_key_pw <- file.path(dir, 'sample-private-key-pw.pem')
+
+#' private_key <- file.path(dir, 'sample-private-key-pw.pem')
 #' pw <- '1234'
 #'
-#' rcdf_data_with_pw <- read_rcdf(
-#'   path = rcdf_path_pw,
-#'   decryption_key = private_key_pw,
+#' \dontrun{
+#' rcdf_data <- read_rcdf(
+#'   path = rcdf_path,
+#'   decryption_key = private_key,
 #'   password = pw
 #' )
 #'
-#' rcdf_data_with_pw
-#'
+#' rcdf_data
+#' }
 
 read_rcdf <- function(
   path,
@@ -96,7 +91,7 @@ read_rcdf <- function(
 
     rcdf_file <- rcdf_files[i]
     meta <- extract_rcdf(rcdf_file)
-    key <- decrypt_key(data = meta, key = dk[i], password = pw[i])
+    secret <- decrypt_key(data = meta, prv_key = dk[i], password = pw[i])
 
     pq_files <- list.files(
       path = file.path(meta$dir, 'lineage'),
@@ -136,7 +131,7 @@ read_rcdf <- function(
 
       DBI::dbExecute(
         conn_duckdb,
-        glue::glue("PRAGMA add_parquet_key('{key$aes_key}', '{key$aes_iv}')")
+        glue::glue("PRAGMA add_parquet_key('{secret$key}', '{secret$value}')")
       )
 
       if(DBI::dbExistsTable(conn_duckdb, record)) {
@@ -146,7 +141,7 @@ read_rcdf <- function(
           glue::glue(
             "CREATE TABLE {record}_temp
             AS SELECT * FROM read_parquet('{pq_file}',
-            encryption_config = {{ footer_key: '{key$aes_key}' }});"
+            encryption_config = {{ footer_key: '{secret$key}' }});"
           )
         )
         if(!is.null(pk_q)) {
@@ -161,12 +156,13 @@ read_rcdf <- function(
         DBI::dbExecute(conn_duckdb, glue::glue("DROP TABLE IF EXISTS {record}_temp;"))
 
       } else {
+
         DBI::dbExecute(
           conn_duckdb,
           glue::glue(
             "CREATE TABLE {record}
             AS SELECT * FROM read_parquet('{pq_file}',
-            encryption_config = {{ footer_key: '{key$aes_key}' }});"
+            encryption_config = {{ footer_key: '{secret$key}' }});"
           )
         )
 
@@ -239,6 +235,12 @@ read_rcdf <- function(
   }
 
   if(return_meta) {
+    meta_list$pc_os <- NULL
+    meta_list$pc_os_release_date <- NULL
+    meta_list$pc_os_version <- NULL
+    meta_list$pc_hardware <- NULL
+    meta_list$version <- NULL
+    meta_list$checksum <- NULL
     meta_list$meta <- meta$meta
     attr(pq, 'metadata') <- meta_list
   }
@@ -267,8 +269,8 @@ extract_rcdf <- function(path, meta_only = FALSE) {
   )
 
   if(length(temp_dir_rcdf) > 0) {
-    for(i in seq_along(temp_dir_rcdf)) {
-      unlink(temp_dir_rcdf[i], recursive = TRUE, force = TRUE)
+    for(i in temp_dir_rcdf) {
+      unlink(i, recursive = TRUE, force = TRUE)
     }
   }
 
@@ -289,31 +291,41 @@ extract_rcdf <- function(path, meta_only = FALSE) {
 
 }
 
-decrypt_key <- function(data, key, password = NULL) {
+decrypt_key <- function(data, prv_key, password = NULL) {
 
-  if(inherits(key, 'rsa')) {
+  meta <- extract_key(data)
 
-    meta <- extract_key(data)
+  if(inherits(prv_key, 'rsa')) {
 
-    aes_key <- openssl::base64_decode(meta$key)
+    key <- meta$key
+    value <- openssl::base64_decode(meta$value) |>
       openssl::rsa_decrypt(key, password = password) |>
       unserialize()
 
-    aes_iv <- openssl::base64_decode(meta$iv)
-      openssl::rsa_decrypt(key, password = password) |>
-      unserialize()
+    if(meta$legacy) {
 
-  } else if (inherits(key, 'character')) {
+      key <- openssl::base64_decode(meta$key) |>
+        openssl::rsa_decrypt(key, password = password) |>
+        unserialize()
 
-    if(grepl('.pem$', key)) {
+    }
 
-      aes_key <- decrypt_info_rsa(data$key_admin, prv_key = key, password = password)
-      aes_iv <- decrypt_info_rsa(data$iv_admin, prv_key = key, password = password)
+  } else if (inherits(prv_key, 'character')) {
+
+    if(grepl('.pem$', prv_key)) {
+
+      value <- decrypt_info_rsa(meta$value, prv_key = prv_key, password = password)
+      key <- meta$key
+
+      if(meta$legacy) {
+        key <- decrypt_info_rsa(meta$key, prv_key = prv_key, password = password)
+      }
 
     } else {
 
-      aes_key <- decrypt_info_aes(data$key_app, key = list(aes_key = key))
-      aes_iv <- decrypt_info_aes(data$iv_app, key = list(aes_key = key))
+      # Legacy
+      key <- decrypt_info_aes(meta$key, key = list(aes_key = key))
+      value <- decrypt_info_aes(meta$value, key = list(aes_key = key))
 
     }
 
@@ -321,8 +333,8 @@ decrypt_key <- function(data, key, password = NULL) {
 
   return(
     list(
-      aes_key = aes_key,
-      aes_iv = aes_iv
+      key = key,
+      value = value
     )
   )
 }

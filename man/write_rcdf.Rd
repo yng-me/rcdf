@@ -35,6 +35,7 @@ and then creates a zip archive containing both the encrypted Parquet files and m
 metadata such as system information and encryption keys.
 }
 \examples{
+\dontrun{
 # Example usage of writing an RCDF file
 
 rcdf_data <- rcdf_list()
@@ -58,4 +59,5 @@ write_rcdf(
 
 unlink(file.path(temp_dir, "mtcars.rcdf"), force = TRUE)
 unlink(file.path(temp_dir, "mtcars-pw.rcdf"), force = TRUE)
+}
 }

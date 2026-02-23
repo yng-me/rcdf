@@ -45,22 +45,16 @@ and loads it into R as an RCDF object.
 \examples{
 dir <- system.file("extdata", package = "rcdf")
 rcdf_path <- file.path(dir, 'mtcars.rcdf')
-private_key <- file.path(dir, 'sample-private-key.pem')
-
-rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key)
-rcdf_data
-
-# Using encrypted/password protected private key
-rcdf_path_pw <- file.path(dir, 'mtcars-pw.rcdf')
-private_key_pw <- file.path(dir, 'sample-private-key-pw.pem')
+private_key <- file.path(dir, 'sample-private-key-pw.pem')
 pw <- '1234'
 
-rcdf_data_with_pw <- read_rcdf(
-  path = rcdf_path_pw,
-  decryption_key = private_key_pw,
+\dontrun{
+rcdf_data <- read_rcdf(
+  path = rcdf_path,
+  decryption_key = private_key,
   password = pw
 )
 
-rcdf_data_with_pw
-
+rcdf_data
+}
 }

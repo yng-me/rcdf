@@ -105,34 +105,6 @@ add_metadata <- function(data, metadata, ..., set_data_types = FALSE) {
 
 }
 
-
-#' Extract data dictionary from RCDF object
-#'
-#' This function retrieves the data dictionary embedded in the RCDF object
-#'
-#' @param data Object of class \code{rcdf}.
-#'
-#' @return A data frame that serves as a metadata dictionary. It must contain
-#'   at least the columns: \code{variable_name}, \code{label}, and \code{type}. Optionally,
-#'   it may include a \code{valueset} column for categorical variables, which should be
-#'   a list column with data frames containing \code{value} and \code{label} columns.
-#'
-#' @export
-#'
-#' @examples
-#' dir <- system.file("extdata", package = "rcdf")
-#' rcdf_path <- file.path(dir, 'mtcars.rcdf')
-#' private_key <- file.path(dir, 'sample-private-key.pem')
-#'
-#' rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key)
-#' data_dictionary <- get_data_dictionary(rcdf_data)
-#' names(data_dictionary)
-
-get_data_dictionary <- function(data) {
-  attributes(data)$metadata$dictionary
-}
-
-
 check_metadata_structure <- function(data, cols) {
 
   required_cols <- c("variable_name", "label", "type")
@@ -155,7 +127,6 @@ check_metadata_structure <- function(data, cols) {
     dplyr::filter(variable_name %in% cols)
 }
 
-
 convert_to_na <- function(data) {
   data |>
     dplyr::mutate_if(is.character, stringr::str_trim) |>
@@ -164,7 +135,6 @@ convert_to_na <- function(data) {
       ~ dplyr::if_else(. == '', NA_character_, stringr::str_squish(.))
     )
 }
-
 
 read_metadata <- function(path) {
 

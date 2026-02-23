@@ -5,38 +5,33 @@
 #' @param path The file path to the Parquet file.
 #' @param ... Additional arguments passed to \code{arrow::open_dataset()} when no decryption key is provided.
 #' @param decryption_key A list containing \code{aes_key} and \code{aes_iv}. If provided, the Parquet file will be decrypted using these keys. Default is `NULL`.
-#' @param as_arrow_table Logical. If \code{TRUE}, the function will return the result as an Arrow table. If \code{FALSE}, a regular data frame will be returned. Default is \code{TRUE}.
+#' @param as_arrow_table Logical. If \code{TRUE}, the function will return the result as an Arrow table. If \code{FALSE}, a regular data frame will be returned. Default is \code{FALSE}.
 #' @param metadata Optional metadata (e.g., a data dictionary) to be applied to the resulting data.
 #'
 #' @return An Arrow table or a data frame, depending on the value of \code{as_arrow_table}.
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' # Using sample Parquet files from `mtcars` dataset
 #' dir <- system.file("extdata", package = "rcdf")
 #'
-#' # Without decryption
-#' df <- read_parquet(file.path(dir, "mtcars.parquet"))
-#' df
+#' # Not encrypted
+#' read_parquet(file.path(dir, "mtcars.parquet"))
 #'
-#' # With decryption
-#' decryption_key <- list(
-#'   aes_key = "5bddd0ea4ab48ed5e33b1406180d68158aa255cf3f368bdd4744abc1a7909ead",
-#'   aes_iv = "7D3EF463F4CCD81B11B6EC3230327B2D"
-#' )
-#'
-#' df_with_encryption <- read_parquet(
+#' # Encrypted
+#' read_parquet(
 #'   file.path(dir, "mtcars-encrypted.parquet"),
-#'   decryption_key = decryption_key
-#'  )
-#' df_with_encryption
+#'   decryption_key = 'rppqM5CuEqotys4wQq/g7xh6wpIjRozcAIbI9sagwKE='
+#' )
+#' }
 
-read_parquet <- function(path, ..., decryption_key = NULL, as_arrow_table = TRUE, metadata = NULL) {
+read_parquet <- function(path, ..., decryption_key = NULL, as_arrow_table = FALSE, metadata = NULL) {
 
   secret <- normalize_key_value(decryption_key)
 
   if(is.null(secret)) {
-    return(arrow::open_dataset(sources = path, ...))
+    return(arrow::read_parquet(file = path, ...))
   }
 
   pq_conn <- DBI::dbConnect(drv = duckdb::duckdb())
@@ -56,10 +51,3 @@ read_parquet <- function(path, ..., decryption_key = NULL, as_arrow_table = TRUE
   return(data)
 
 }
-
-
-
-
-
-
-

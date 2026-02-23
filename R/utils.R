@@ -71,7 +71,6 @@ generate_rsa_keys <- function(path, ..., password = NULL, which = "public", pref
 }
 
 
-
 #' Generate a random password
 #'
 #' This function generates a random password of a specified length. It includes
@@ -102,7 +101,6 @@ generate_pw <- function(length = 16, special_chr = TRUE) {
 }
 
 
-
 set_class <- function(data, class_name) {
   class(data) <- c(class(data), class_name)
   return(data)
@@ -114,11 +112,13 @@ is_rcdf <- function(data) {
 }
 
 
-
 check_if_rcdf <- function(data) {
   if(!is_rcdf(data)) {
-    stop('Not a valid RCDF data file')
+    data <- rcdf_list(data = data)
   }
+
+  data
+
 }
 
 
@@ -139,24 +139,6 @@ hex_to_raw <- function(x) {
 }
 
 
-generate_aes_key <- function(passphrase = "") {
-
-  key <- raw_to_hex(openssl::aes_keygen())
-  if(passphrase == '') { passphrase <- as.character(Sys.Date()) }
-
-  salt <- openssl::sha256(passphrase)
-
-  value <- list(
-    aes_key = as.character(openssl::sha256(paste0(key, salt))),
-    aes_iv = as.character(raw_to_hex(openssl::rand_bytes(16)))
-  )
-
-  return(value)
-
-}
-
-
-
 dir_create_new <- function(path, parent_dir = NULL) {
   if(!is.null(parent_dir)) {
     path <- file.path(path, parent_dir)
@@ -164,7 +146,6 @@ dir_create_new <- function(path, parent_dir = NULL) {
   fs::dir_create(path)
   return(path)
 }
-
 
 
 decrypt_info_aes <- function(data, key = list()) {
@@ -201,27 +182,42 @@ decrypt_info_aes <- function(data, key = list()) {
 }
 
 
-
 extract_key <- function(meta) {
 
-  key <- meta$key_app
-  key_admin <- meta$key_admin
+  if(!is.null(meta$key)) {
 
-  iv <-  meta$iv_app
-  iv_admin <-  meta$iv_admin
+    secret <- normalize_key_value(meta$key)
 
-  if(!is.null(key_admin)) {
-    key <- key_admin
+    return(
+      list(
+        key = secret$key,
+        value = secret$value,
+        legacy = FALSE
+      )
+    )
+
+  } else {
+
+    # Legacy
+
+    key <- meta$key_app
+    key_admin <- meta$key_admin
+
+    value <-  meta$iv_app
+    value_admin <-  meta$iv_admin
+
+    if(!is.null(key_admin)) {
+      key <- key_admin
+    }
+
+    if(!is.null(value_admin)) {
+      value <- stringr::str_split_i(value_admin, pattern = '>>><<<', i = 1)
+    }
+
+    return(list(key = key, value = value, legacy = TRUE))
   }
-
-  if(!is.null(iv_admin)) {
-    iv <- stringr::str_split_i(iv_admin, pattern = '>>><<<', i = 1)
-  }
-
-  return(list(key = key, iv = iv))
 
 }
-
 
 encrypt_info_rsa <- function(data, pub_key) {
   data |>
@@ -229,7 +225,6 @@ encrypt_info_rsa <- function(data, pub_key) {
     openssl::rsa_encrypt(pubkey = pub_key) |>
     openssl::base64_encode()
 }
-
 
 
 decrypt_info_rsa <- function(data, prv_key, password = NULL) {
@@ -245,8 +240,6 @@ decrypt_info_rsa <- function(data, prv_key, password = NULL) {
     openssl::rsa_decrypt(key) |>
     unserialize()
 }
-
-
 
 get_pc_metadata <- function(which) {
 
@@ -269,18 +262,21 @@ get_pc_metadata <- function(which) {
 
 }
 
-
 normalize_key_value <- function(value) {
 
   # Legacy support
-  if(inherits(value, 'list') & !is.null(value$aes_key) & !is.null(value$aes_iv)) {
+  if(inherits(value, 'list')) {
 
-    return(
-      list(
-        key = value$aes_key,
-        value = value$aes_iv
+    if(!is.null(value$aes_key) & !is.null(value$aes_iv)) {
+      return(
+        list(
+          key = value$aes_key,
+          value = value$aes_iv
+        )
       )
-    )
+    } else {
+      return(NULL)
+    }
 
   } else if (typeof(value) == 'character') {
 
@@ -313,7 +309,5 @@ normalize_key_value <- function(value) {
   }
 
 }
-
-
 
 
