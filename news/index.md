@@ -2,6 +2,8 @@
 
 ## rcdf 0.1.3
 
+CRAN release: 2026-02-12
+
 - Added
   [`merge_rcdf()`](https://yng-me.github.io/rcdf/reference/merge_rcdf.md)
   function to combine multiple RCDF files with different encryption keys

@@ -44,9 +44,9 @@ Invisibly returns `NULL`. A `.db` file is written to disk.
 ``` r
 dir <- system.file("extdata", package = "rcdf")
 rcdf_path <- file.path(dir, 'mtcars.rcdf')
-private_key <- file.path(dir, 'sample-private-key.pem')
+private_key <- file.path(dir, 'sample-private-key-pw.pem')
 
-rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key)
+rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key, password = '1234')
 temp_dir <- tempdir()
 
 write_rcdf_sqlite(data = rcdf_data, path = temp_dir)

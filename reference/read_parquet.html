@@ -17,6 +17,10 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/rcdf.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/merging-rcdf.html">Working with multiple RCDF files</a></li>
+  </ul></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -43,7 +47,7 @@
 <span>  <span class="va">path</span>,</span>
 <span>  <span class="va">...</span>,</span>
 <span>  decryption_key <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  as_arrow_table <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  as_arrow_table <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  metadata <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -65,7 +69,7 @@
 
 
 <dt id="arg-as-arrow-table">as_arrow_table<a class="anchor" aria-label="anchor" href="#arg-as-arrow-table"></a></dt>
-<dd><p>Logical. If <code>TRUE</code>, the function will return the result as an Arrow table. If <code>FALSE</code>, a regular data frame will be returned. Default is <code>TRUE</code>.</p></dd>
+<dd><p>Logical. If <code>TRUE</code>, the function will return the result as an Arrow table. If <code>FALSE</code>, a regular data frame will be returned. Default is <code>FALSE</code>.</p></dd>
 
 
 <dt id="arg-metadata">metadata<a class="anchor" aria-label="anchor" href="#arg-metadata"></a></dt>
@@ -79,54 +83,19 @@
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Using sample Parquet files from `mtcars` dataset</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+<span class="r-in"><span><span class="co"># Using sample Parquet files from `mtcars` dataset</span></span></span>
 <span class="r-in"><span><span class="va">dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, package <span class="op">=</span> <span class="st">"rcdf"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Without decryption</span></span></span>
-<span class="r-in"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu">read_parquet</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">dir</span>, <span class="st">"mtcars.parquet"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">df</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> FileSystemDataset with 1 Parquet file</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11 columns</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> mpg: double</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> cyl: double</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> disp: double</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> hp: double</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> drat: double</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> wt: double</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> qsec: double</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> vs: double</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> am: double</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> gear: double</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> carb: double</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> See $metadata for additional Schema metadata</span>
+<span class="r-in"><span><span class="co"># Not encrypted</span></span></span>
+<span class="r-in"><span><span class="fu">read_parquet</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">dir</span>, <span class="st">"mtcars.parquet"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># With decryption</span></span></span>
-<span class="r-in"><span><span class="va">decryption_key</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>  aes_key <span class="op">=</span> <span class="st">"5bddd0ea4ab48ed5e33b1406180d68158aa255cf3f368bdd4744abc1a7909ead"</span>,</span></span>
-<span class="r-in"><span>  aes_iv <span class="op">=</span> <span class="st">"7D3EF463F4CCD81B11B6EC3230327B2D"</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">df_with_encryption</span> <span class="op">&lt;-</span> <span class="fu">read_parquet</span><span class="op">(</span></span></span>
+<span class="r-in"><span><span class="co"># Encrypted</span></span></span>
+<span class="r-in"><span><span class="fu">read_parquet</span><span class="op">(</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">dir</span>, <span class="st">"mtcars-encrypted.parquet"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>  decryption_key <span class="op">=</span> <span class="va">decryption_key</span></span></span>
-<span class="r-in"><span> <span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">df_with_encryption</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Table</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 32 rows x 11 columns</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $mpg &lt;double&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $cyl &lt;double&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $disp &lt;double&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $hp &lt;double&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $drat &lt;double&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $wt &lt;double&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $qsec &lt;double&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $vs &lt;double&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $am &lt;double&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $gear &lt;double&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $carb &lt;double&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> See $metadata for additional Schema metadata</span>
+<span class="r-in"><span>  decryption_key <span class="op">=</span> <span class="st">'rppqM5CuEqotys4wQq/g7xh6wpIjRozcAIbI9sagwKE='</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
