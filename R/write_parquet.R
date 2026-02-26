@@ -21,7 +21,7 @@
 #' rcdf::write_parquet(
 #'   data = data,
 #'   path = file.path(temp_dir, "mtcars.parquet"),
-#'   encryption_key = list(aes_key = key, aes_iv = iv)
+#'   encryption_key = key
 #' )
 #' }
 #'
@@ -136,9 +136,15 @@ check_duplicates <- function(data, record, primary_key, ignore_duplicates) {
   if(dup_n > 1) { if_plural <- "s" }
 
   if(ignore_duplicates) {
-    cli::cli_warn("Detected potential duplicates in `{record}` based on provided `primary_key`: {dup_n} row{if_plural}")
+    cli::cli_warn(
+      "Detected potential duplicates in `{record}` based on provided `primary_key`: {dup_n} row{if_plural}"
+    )
   } else {
-    stop(cli::cli_warn("Detected potential duplicates in `{record}` based on provided `primary_keys`: {dup_n} row{if_plural}"))
+    stop(
+      cli::cli_warn(
+        "Detected potential duplicates in `{record}` based on provided `primary_keys`: {dup_n} row{if_plural}"
+      )
+    )
   }
 }
 

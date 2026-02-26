@@ -15,7 +15,7 @@ write_rcdf_sqlite(data, path, db_name = "cbms_data", ..., parent_dir = NULL)
 
 \item{...}{Additional arguments passed to \code{DBI::dbWriteTable()}.}
 
-\item{parent_dir}{Optional subdirectory under `path` to store the SQLite file.}
+\item{parent_dir}{Optional subdirectory under \code{path} to store the SQLite file.}
 }
 \value{
 Invisibly returns \code{NULL}. A \code{.db} file is written to disk.

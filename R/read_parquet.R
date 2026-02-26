@@ -51,3 +51,58 @@ read_parquet <- function(path, ..., decryption_key = NULL, as_arrow_table = FALS
   return(data)
 
 }
+
+
+#' Read Parquet file as database
+#'
+#' This function reads a Parquet file, optionally decrypting it using the provided decryption key. If no decryption key is provided, it reads the file normally without decryption. It supports reading Parquet files as Arrow tables or regular data frames, depending on the \code{as_arrow_table} argument.
+#'
+#' @param path The file path to the Parquet file.
+#' @param decryption_key A list containing \code{aes_key} and \code{aes_iv}. If provided, the Parquet file will be decrypted using these keys. Default is `NULL`.
+#' @param table_name Database table name. If \code{NULL}, file name will be used as table name.
+#' @param columns A character vector matching the column names available in the Parquet file.
+#'
+#' @return Lazy table from DuckDB connection
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' # Using sample Parquet files from `mtcars` dataset
+#' dir <- system.file("extdata", package = "rcdf")
+
+#'
+#' # Encrypted
+#' read_parquet_db(
+#'   file.path(dir, "mtcars-encrypted.parquet"),
+#'   decryption_key = 'rppqM5CuEqotys4wQq/g7xh6wpIjRozcAIbI9sagwKE='
+#' )
+#' }
+
+read_parquet_as_db <- function(path, decryption_key, table_name = NULL, columns = NULL) {
+
+  secret <- normalize_key_value(decryption_key)
+
+  pq_conn <- DBI::dbConnect(drv = duckdb::duckdb())
+
+  col_select <- "*"
+  if(!is.null(columns)) {
+    col_select <- paste0(columns, collapse = ", ")
+  }
+
+  if(is.null(table_name)) {
+    table_name <- fs::path_ext_remove(basename(path))
+  }
+
+  DBI::dbExecute(pq_conn, glue::glue("PRAGMA add_parquet_key('{secret$key}', '{secret$value}')"))
+
+  DBI::dbExecute(
+    pq_conn,
+    glue::glue(
+      "CREATE TABLE {table_name} AS
+        SELECT {col_select} FROM read_parquet('{path}', encryption_config = {{ footer_key: '{secret$key}' }});"
+    )
+  )
+
+  dplyr::tbl(pq_conn, table_name)
+
+}

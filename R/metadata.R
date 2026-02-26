@@ -168,7 +168,7 @@ read_metadata <- function(path) {
 #' @examples
 #' \dontrun{
 #' # Assuming "example.rcdf" is a valid RCDF file in the working directory:
-#' get_rcdf_metadata("example.rcdf", "creation_date")
+#' get_rcdf_metadata("example.rcdf", "log_id")
 #' }
 
 get_rcdf_metadata <- function(path, key) {
@@ -183,6 +183,37 @@ get_rcdf_metadata <- function(path, key) {
 
   meta <- extract_rcdf(path)
   meta[[key]]
+
+}
+
+#' Get metadata attribute from RCDF data
+#'
+#' @param rcdf RCDF data
+#' @param key Valid metadata key.
+#'
+#' @returns RCDF attribute/s or NULL
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' # Assuming `df` is a valid RCDF object
+#'
+#' get_attr(df, "area_names")
+#'
+#' # To get nested attributes
+#' get_attr(df, "meta.source_note")
+#' }
+
+
+get_attr <- function(rcdf, key) {
+
+  attr_key <- stringr::str_split_1(key, "\\.")
+
+  if(length(attr_key) > 1) {
+    attributes(rcdf)$metadata[[attr_key[1]]][[attr_key[2]]]
+  } else {
+    attributes(rcdf)$metadata[[key]]
+  }
 
 }
 

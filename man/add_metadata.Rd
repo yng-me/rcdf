@@ -20,9 +20,11 @@ a list column with data frames containing \code{value} and \code{label} columns.
 to match those implied by the metadata. (Note: currently not fully implemented.)}
 }
 \value{
-A `tibble` with the same data as \code{data}, but with added attributes:
-  - Variable labels (via the \code{label} attribute)
-  - Value labels (as a \code{haven::labelled} class, if applicable)
+A \code{tibble} with the same data as \code{data}, but with added attributes:
+\itemize{
+\item Variable labels (via the \code{label} attribute)
+\item Value labels (as a \code{haven::labelled} class, if applicable)
+}
 }
 \description{
 Adds variable labels and value labels to a data frame based on a metadata
@@ -32,8 +34,10 @@ packages like \code{haven} or for exporting to formats like SPSS or Stata.
 \details{
 The function first checks the structure of the \code{metadata} using an internal helper.
 Then, for each variable listed in \code{metadata}, it:
-- Adds a label using the \code{label} attribute
-- Converts values to labelled vectors using \code{haven::labelled()} if a \code{valueset} is provided
+\itemize{
+\item Adds a label using the \code{label} attribute
+\item Converts values to labelled vectors using \code{haven::labelled()} if a \code{valueset} is provided
+}
 
 If value labels are present, the function tries to align data types between the data
 and the valueset (e.g., converting character codes to integers if necessary).
