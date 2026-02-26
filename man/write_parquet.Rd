@@ -32,7 +32,7 @@ temp_dir <- tempdir()
 rcdf::write_parquet(
   data = data,
   path = file.path(temp_dir, "mtcars.parquet"),
-  encryption_key = list(aes_key = key, aes_iv = iv)
+  encryption_key = key
 )
 }
 

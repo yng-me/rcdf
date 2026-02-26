@@ -1,3 +1,8 @@
+# rcdf 0.1.4
+
+* Added `get_attr()` to retrieve attribute/s from RCDF object
+* Added `read_parquet_as_db()` to read encrypted Parquet file and return as lazy data from DuckDB connection.
+
 # rcdf 0.1.3
 
 * Added `merge_rcdf()` function to combine multiple RCDF files with different encryption keys into one.

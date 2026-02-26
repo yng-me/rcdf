@@ -10,7 +10,7 @@ generate_pw(length = 16, special_chr = TRUE)
 \item{length}{Integer. The length of the password to generate. Default is \code{16}.}
 
 \item{special_chr}{Logical. Whether to include special characters
-(e.g., `!`, `@`, `#`, etc.) in the password. Default is \code{TRUE}.}
+(e.g., \code{!}, \code{@}, \verb{#}, etc.) in the password. Default is \code{TRUE}.}
 }
 \value{
 A character string representing the generated password.
