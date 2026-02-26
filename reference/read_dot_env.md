@@ -1,11 +1,11 @@
 # Read environment variables from a file
 
-**\[deprecated\]**
+Based on https://github.com/gaborcsardi/dotenv
 
 ## Usage
 
 ``` r
-read_env(path = ".env")
+read_dot_env(path = ".env")
 ```
 
 ## Arguments
@@ -35,13 +35,13 @@ if (FALSE) { # \dontrun{
 # DB_USER=root
 # DB_PASS="secret"
 
-env_vars <- read_env(".env")
+env_vars <- read_dot_env(".env")
 print(env_vars)
 # Should output something like:
 # $DB_HOST
 # [1] "localhost"
 
 # If no path is given, it defaults to `.env` in the current directory.
-env_vars <- read_env()
+env_vars <- read_dot_env()
 } # }
 ```

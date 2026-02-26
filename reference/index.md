@@ -18,6 +18,9 @@
 - [`generate_rsa_keys()`](https://yng-me.github.io/rcdf/reference/generate_rsa_keys.md)
   : Generate RSA key pair and save to files
 
+- [`get_attr()`](https://yng-me.github.io/rcdf/reference/get_attr.md) :
+  Get metadata attribute from RCDF data
+
 - [`get_rcdf_metadata()`](https://yng-me.github.io/rcdf/reference/get_rcdf_metadata.md)
   : Extract metadata from an RCDF file
 
@@ -29,11 +32,17 @@
 
   Create an empty `rcdf` object
 
-- [`read_env()`](https://yng-me.github.io/rcdf/reference/read_env.md) :
-  Read environment variables from a file
+- [`read_dot_env()`](https://yng-me.github.io/rcdf/reference/read_dot_env.md)
+  : Read environment variables from a file
+
+- [`read_env()`](https://yng-me.github.io/rcdf/reference/read_env.md)
+  **\[deprecated\]** : Read environment variables from a file
 
 - [`read_parquet()`](https://yng-me.github.io/rcdf/reference/read_parquet.md)
   : Read Parquet file with optional decryption
+
+- [`read_parquet_as_db()`](https://yng-me.github.io/rcdf/reference/read_parquet_as_db.md)
+  : Read Parquet file as database
 
 - [`read_rcdf()`](https://yng-me.github.io/rcdf/reference/read_rcdf.md)
   : Read and decrypt RCDF data

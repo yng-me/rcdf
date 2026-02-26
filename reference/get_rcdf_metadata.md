@@ -28,6 +28,6 @@ key does not exist.
 ``` r
 if (FALSE) { # \dontrun{
 # Assuming "example.rcdf" is a valid RCDF file in the working directory:
-get_rcdf_metadata("example.rcdf", "creation_date")
+get_rcdf_metadata("example.rcdf", "log_id")
 } # }
 ```

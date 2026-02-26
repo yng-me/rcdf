@@ -37,19 +37,24 @@ add_metadata(data, metadata, ..., set_data_types = FALSE)
 
 ## Value
 
-A \`tibble\` with the same data as `data`, but with added attributes: -
-Variable labels (via the `label` attribute) - Value labels (as a
-[`haven::labelled`](https://haven.tidyverse.org/reference/labelled.html)
-class, if applicable)
+A `tibble` with the same data as `data`, but with added attributes:
+
+- Variable labels (via the `label` attribute)
+
+- Value labels (as a
+  [`haven::labelled`](https://haven.tidyverse.org/reference/labelled.html)
+  class, if applicable)
 
 ## Details
 
 The function first checks the structure of the `metadata` using an
-internal helper. Then, for each variable listed in `metadata`, it: -
-Adds a label using the `label` attribute - Converts values to labelled
-vectors using
-[`haven::labelled()`](https://haven.tidyverse.org/reference/labelled.html)
-if a `valueset` is provided
+internal helper. Then, for each variable listed in `metadata`, it:
+
+- Adds a label using the `label` attribute
+
+- Converts values to labelled vectors using
+  [`haven::labelled()`](https://haven.tidyverse.org/reference/labelled.html)
+  if a `valueset` is provided
 
 If value labels are present, the function tries to align data types
 between the data and the valueset (e.g., converting character codes to

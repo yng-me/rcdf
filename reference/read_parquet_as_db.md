@@ -1,4 +1,4 @@
-# Read Parquet file with optional decryption
+# Read Parquet file as database
 
 This function reads a Parquet file, optionally decrypting it using the
 provided decryption key. If no decryption key is provided, it reads the
@@ -9,13 +9,7 @@ argument.
 ## Usage
 
 ``` r
-read_parquet(
-  path,
-  ...,
-  decryption_key = NULL,
-  as_arrow_table = FALSE,
-  metadata = NULL
-)
+read_parquet_as_db(path, decryption_key, table_name = NULL, columns = NULL)
 ```
 
 ## Arguments
@@ -24,32 +18,23 @@ read_parquet(
 
   The file path to the Parquet file.
 
-- ...:
-
-  Additional arguments passed to
-  [`arrow::open_dataset()`](https://arrow.apache.org/docs/r/reference/open_dataset.html)
-  when no decryption key is provided.
-
 - decryption_key:
 
   A list containing `aes_key` and `aes_iv`. If provided, the Parquet
   file will be decrypted using these keys. Default is `NULL`.
 
-- as_arrow_table:
+- table_name:
 
-  Logical. If `TRUE`, the function will return the result as an Arrow
-  table. If `FALSE`, a regular data frame will be returned. Default is
-  `FALSE`.
+  Database table name. If `NULL`, file name will be used as table name.
 
-- metadata:
+- columns:
 
-  Optional metadata (e.g., a data dictionary) to be applied to the
-  resulting data.
+  A character vector matching the column names available in the Parquet
+  file.
 
 ## Value
 
-An Arrow table or a data frame, depending on the value of
-`as_arrow_table`.
+Lazy table from DuckDB connection
 
 ## Examples
 
@@ -58,11 +43,8 @@ if (FALSE) { # \dontrun{
 # Using sample Parquet files from `mtcars` dataset
 dir <- system.file("extdata", package = "rcdf")
 
-# Not encrypted
-read_parquet(file.path(dir, "mtcars.parquet"))
-
 # Encrypted
-read_parquet(
+read_parquet_db(
   file.path(dir, "mtcars-encrypted.parquet"),
   decryption_key = 'rppqM5CuEqotys4wQq/g7xh6wpIjRozcAIbI9sagwKE='
 )

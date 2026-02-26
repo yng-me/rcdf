@@ -4,7 +4,7 @@ pkgdown_sha: ~
 articles:
   merging-rcdf: merging-rcdf.html
   rcdf: rcdf.html
-last_built: 2026-02-23T20:40Z
+last_built: 2026-02-26T15:19Z
 urls:
   reference: https://yng-me.github.io/rcdf/reference
   article: https://yng-me.github.io/rcdf/articles

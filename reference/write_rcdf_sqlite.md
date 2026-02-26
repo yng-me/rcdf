@@ -29,7 +29,7 @@ write_rcdf_sqlite(data, path, db_name = "cbms_data", ..., parent_dir = NULL)
 
 - parent_dir:
 
-  Optional subdirectory under \`path\` to store the SQLite file.
+  Optional subdirectory under `path` to store the SQLite file.
 
 ## Value
 

@@ -18,8 +18,8 @@ generate_pw(length = 16, special_chr = TRUE)
 
 - special_chr:
 
-  Logical. Whether to include special characters (e.g., \`!\`, \`@\`,
-  \`#\`, etc.) in the password. Default is `TRUE`.
+  Logical. Whether to include special characters (e.g., `!`, `@`, `#`,
+  etc.) in the password. Default is `TRUE`.
 
 ## Value
 

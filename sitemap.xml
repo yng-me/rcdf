@@ -13,12 +13,16 @@
 <url><loc>https://yng-me.github.io/rcdf/reference/collect.html</loc></url>
 <url><loc>https://yng-me.github.io/rcdf/reference/generate_pw.html</loc></url>
 <url><loc>https://yng-me.github.io/rcdf/reference/generate_rsa_keys.html</loc></url>
+<url><loc>https://yng-me.github.io/rcdf/reference/get_attr.html</loc></url>
 <url><loc>https://yng-me.github.io/rcdf/reference/get_rcdf_metadata.html</loc></url>
 <url><loc>https://yng-me.github.io/rcdf/reference/index.html</loc></url>
 <url><loc>https://yng-me.github.io/rcdf/reference/merge_rcdf.html</loc></url>
+<url><loc>https://yng-me.github.io/rcdf/reference/rcdf-package.html</loc></url>
 <url><loc>https://yng-me.github.io/rcdf/reference/rcdf_list.html</loc></url>
+<url><loc>https://yng-me.github.io/rcdf/reference/read_dot_env.html</loc></url>
 <url><loc>https://yng-me.github.io/rcdf/reference/read_env.html</loc></url>
 <url><loc>https://yng-me.github.io/rcdf/reference/read_parquet.html</loc></url>
+<url><loc>https://yng-me.github.io/rcdf/reference/read_parquet_as_db.html</loc></url>
 <url><loc>https://yng-me.github.io/rcdf/reference/read_rcdf.html</loc></url>
 <url><loc>https://yng-me.github.io/rcdf/reference/write_parquet.html</loc></url>
 <url><loc>https://yng-me.github.io/rcdf/reference/write_rcdf.html</loc></url>
