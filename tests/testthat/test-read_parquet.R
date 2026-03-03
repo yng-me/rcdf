@@ -78,7 +78,12 @@ test_that("read_parquet reads encrypted Parquet file with decryption", {
 
 
 # Test `read_parquet()` with decryption
-test_that("read_parquet_as_db reads encrypted Parquet and returns a lazy table from DuckDB connection", {
+test_that("read_parquet_tbl reads encrypted Parquet and returns a lazy table from DuckDB connection", {
+
+  conn <- DBI::dbConnect(
+    drv = duckdb::duckdb(),
+    config = list(threads = 1)
+  )
 
   data <- tibble::tibble(a = 1:5, b = letters[1:5])
   temp_file <- tempfile(fileext = ".parquet")
@@ -89,7 +94,7 @@ test_that("read_parquet_as_db reads encrypted Parquet and returns a lazy table f
   write_parquet(data, temp_file, encryption_key = mock_key)
 
   # Read encrypted file with decryption
-  result <- read_parquet_as_db(temp_file, decryption_key = mock_key)
+  result <- read_parquet_tbl(conn, temp_file, decryption_key = mock_key)
 
   # Check if result is an Arrow table
   expect_true(inherits(result, "tbl_duckdb_connection"))
@@ -99,8 +104,17 @@ test_that("read_parquet_as_db reads encrypted Parquet and returns a lazy table f
   expect_equal(nrow(result_df), 5)
   expect_equal(ncol(result_df), 2)
 
-  result_2 <- read_parquet_as_db(temp_file, decryption_key = mock_key, columns = 'a') |>
-    dplyr::collect()
+  result_2 <- read_parquet_tbl(
+    conn,
+    file = temp_file,
+    table_name = 'result_2',
+    decryption_key = mock_key,
+    columns = 'a'
+  )
+
+  result_2 <- dplyr::collect(result_2)
+
+  DBI::dbDisconnect(conn, shutdown = TRUE)
 
   expect_equal(nrow(result_2), 5)
   expect_equal(ncol(result_2), 1)

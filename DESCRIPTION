@@ -18,22 +18,22 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports:
-    arrow,
-    duckdb,
-    haven,
-    openxlsx,
-    fs,
-    zip,
-    glue,
-    utils (>= 4.0.0),
-    openssl (>= 2.1.1),
-    dplyr (>= 1.1.0),
-    stringr (>= 1.4.0),
-    jsonlite (>= 1.8.0),
-    DBI (>= 1.1.0),
-    RSQLite (>= 2.2.0),
-    uuid (>= 0.1.2),
-    lifecycle
+  arrow,
+  duckdb,
+  haven,
+  openxlsx,
+  fs,
+  zip,
+  glue,
+  utils (>= 4.0.0),
+  openssl (>= 2.1.1),
+  dplyr (>= 1.1.0),
+  stringr (>= 1.4.0),
+  jsonlite (>= 1.8.0),
+  DBI (>= 1.1.0),
+  RSQLite (>= 2.2.0),
+  uuid (>= 0.1.2),
+  lifecycle
 Suggests: 
   dbplyr (>= 2.4.0),
   rlang (>= 1.0.2),

@@ -398,6 +398,6 @@ write_rcdf_sqlite <- function(data, path, db_name = "cbms_data", ..., parent_dir
 
   }
 
-  DBI::dbDisconnect(conn, force = TRUE)
+  on.exit(DBI::dbDisconnect(conn, force = TRUE), add = TRUE)
 
 }

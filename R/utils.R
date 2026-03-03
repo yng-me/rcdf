@@ -181,7 +181,6 @@ decrypt_info_aes <- function(data, key = list()) {
 
 }
 
-
 extract_key <- function(meta) {
 
   if(!is.null(meta$key)) {
@@ -225,7 +224,6 @@ encrypt_info_rsa <- function(data, pub_key) {
     openssl::rsa_encrypt(pubkey = pub_key) |>
     openssl::base64_encode()
 }
-
 
 decrypt_info_rsa <- function(data, prv_key, password = NULL) {
 
@@ -310,4 +308,60 @@ normalize_key_value <- function(value) {
 
 }
 
+decrypt_key <- function(data, prv_key, password = NULL) {
 
+  meta <- extract_key(data)
+
+  if(inherits(prv_key, 'rsa')) {
+
+    key <- meta$key
+    value <- openssl::base64_decode(meta$value) |>
+      openssl::rsa_decrypt(key, password = password) |>
+      unserialize()
+
+    if(meta$legacy) {
+
+      key <- openssl::base64_decode(meta$key) |>
+        openssl::rsa_decrypt(key, password = password) |>
+        unserialize()
+
+    }
+
+  } else if (inherits(prv_key, 'character')) {
+
+    if(grepl('.pem$', prv_key)) {
+
+      value <- decrypt_info_rsa(meta$value, prv_key = prv_key, password = password)
+      key <- meta$key
+
+      if(meta$legacy) {
+        key <- decrypt_info_rsa(meta$key, prv_key = prv_key, password = password)
+      }
+
+    } else {
+
+      # Legacy
+      key <- decrypt_info_aes(meta$key, key = list(aes_key = key))
+      value <- decrypt_info_aes(meta$value, key = list(aes_key = key))
+
+    }
+
+  }
+
+  return(
+    list(
+      key = key,
+      value = value
+    )
+  )
+}
+
+open_duckdb_connection <- function() {
+
+  conn <- DBI::dbConnect(
+    duckdb::duckdb(),
+    config = list(threads = 1)
+  )
+
+  conn
+}

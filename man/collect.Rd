@@ -9,7 +9,7 @@ collect(data, ...)
 \arguments{
 \item{data}{A lazy data frame (e.g. from dbplyr or dtplyr) from database connection.}
 
-\item{...}{Optional agruments}
+\item{...}{Optional arguments}
 }
 \value{
 A data frame

@@ -181,7 +181,8 @@ get_rcdf_metadata <- function(path, key) {
     stop(glue::glue("Not a valid RCDF file: {path}"))
   }
 
-  meta <- extract_rcdf(path)
+  meta <- extract_rcdf(path, meta_only = TRUE)
+  meta$cleanup()
   meta[[key]]
 
 }
