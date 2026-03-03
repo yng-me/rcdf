@@ -13,7 +13,7 @@ extract_rcdf <- function(path, meta_only = FALSE) {
     stop(glue::glue("RCDF file does not exist: {path}"))
   }
 
-  extract_dir <- fs::file_temp(pattern = rcdf_temp_root())
+  extract_dir <- fs::file_temp()
   fs::dir_create(extract_dir)
 
   zip::unzip(path, exdir = extract_dir, junkpaths = TRUE)
