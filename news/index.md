@@ -2,13 +2,24 @@
 
 ## rcdf 0.1.4
 
+#### Features
+
 - Added
   [`get_attr()`](https://yng-me.github.io/rcdf/reference/get_attr.md) to
-  retrieve attribute/s from RCDF object
+  retrieve attribute/s from RCDF object.
 - Added
-  [`read_parquet_as_db()`](https://yng-me.github.io/rcdf/reference/read_parquet_as_db.md)
+  [`read_parquet_tbl()`](https://yng-me.github.io/rcdf/reference/read_parquet_tbl.md)
   to read encrypted Parquet file and return as lazy data from DuckDB
   connection.
+
+#### Breaking change:
+
+- Removed `pre_collect` argument in
+  [`read_rcdf()`](https://yng-me.github.io/rcdf/reference/read_rcdf.md)
+
+#### Enhancements
+
+- Improved SQL query string interpolation for all DuckDB related codes.
 
 ## rcdf 0.1.3
 

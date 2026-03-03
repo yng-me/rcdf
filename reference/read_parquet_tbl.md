@@ -1,0 +1,56 @@
+# Read Parquet file as database
+
+This function reads a Parquet file, optionally decrypting it using the
+provided decryption key. If no decryption key is provided, it reads the
+file normally without decryption. It supports reading Parquet files as
+Arrow tables or regular data frames, depending on the `as_arrow_table`
+argument.
+
+## Usage
+
+``` r
+read_parquet_tbl(conn, file, decryption_key, table_name = NULL, columns = NULL)
+```
+
+## Arguments
+
+- conn:
+
+  A DuckDB connection.
+
+- file:
+
+  The file path to the Parquet file.
+
+- decryption_key:
+
+  A list containing `aes_key` and `aes_iv`. If provided, the Parquet
+  file will be decrypted using these keys. Default is `NULL`.
+
+- table_name:
+
+  Database table name. If `NULL`, file name will be used as table name.
+
+- columns:
+
+  A character vector matching the column names available in the Parquet
+  file.
+
+## Value
+
+Lazy table from DuckDB connection
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+# Using sample Parquet files from `mtcars` dataset
+dir <- system.file("extdata", package = "rcdf")
+
+# Encrypted
+read_parquet_tbl(
+  file.path(dir, "mtcars-encrypted.parquet"),
+  decryption_key = 'rppqM5CuEqotys4wQq/g7xh6wpIjRozcAIbI9sagwKE='
+)
+} # }
+```

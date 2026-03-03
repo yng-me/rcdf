@@ -48,13 +48,12 @@ and loads it into R as an RCDF object.</p>
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">read_rcdf</span><span class="op">(</span></span>
 <span>  <span class="va">path</span>,</span>
-<span>  <span class="va">decryption_key</span>,</span>
 <span>  <span class="va">...</span>,</span>
+<span>  <span class="va">decryption_key</span>,</span>
 <span>  password <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  metadata <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  ignore_duplicates <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  recursive <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  pre_collect <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  return_meta <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -67,12 +66,12 @@ and loads it into R as an RCDF object.</p>
 <dd><p>A string specifying the path to the RCDF archive (zip file). If a directory is provided, all <code>.rcdf</code> files within that directory will be processed.</p></dd>
 
 
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
+<dd><p>Additional parameters passed to other functions, if needed (not yet implemented).</p></dd>
+
+
 <dt id="arg-decryption-key">decryption_key<a class="anchor" aria-label="anchor" href="#arg-decryption-key"></a></dt>
 <dd><p>The key used to decrypt the RCDF. This can be an RSA or AES key, depending on how the RCDF was encrypted.</p></dd>
-
-
-<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Additional parameters passed to other functions, if needed.</p></dd>
 
 
 <dt id="arg-password">password<a class="anchor" aria-label="anchor" href="#arg-password"></a></dt>
@@ -89,10 +88,6 @@ and loads it into R as an RCDF object.</p>
 
 <dt id="arg-recursive">recursive<a class="anchor" aria-label="anchor" href="#arg-recursive"></a></dt>
 <dd><p>Logical. If <code>TRUE</code> and <code>path</code> is a directory, the function will search recursively for <code>.rcdf</code> files.</p></dd>
-
-
-<dt id="arg-pre-collect">pre_collect<a class="anchor" aria-label="anchor" href="#arg-pre-collect"></a></dt>
-<dd><p>Logical. Whether to load the data in the environment as data frame or a lazy data frame (e.g. from dbplyr or dtplyr) from database connection.</p></dd>
 
 
 <dt id="arg-return-meta">return_meta<a class="anchor" aria-label="anchor" href="#arg-return-meta"></a></dt>

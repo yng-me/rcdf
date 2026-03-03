@@ -17,7 +17,7 @@ collect(data, ...)
 
 - ...:
 
-  Optional agruments
+  Optional arguments
 
 ## Value
 

@@ -8,13 +8,12 @@ specified decryption key, and loads it into R as an RCDF object.
 ``` r
 read_rcdf(
   path,
-  decryption_key,
   ...,
+  decryption_key,
   password = NULL,
   metadata = list(),
   ignore_duplicates = TRUE,
   recursive = FALSE,
-  pre_collect = TRUE,
   return_meta = FALSE
 )
 ```
@@ -27,14 +26,15 @@ read_rcdf(
   directory is provided, all `.rcdf` files within that directory will be
   processed.
 
+- ...:
+
+  Additional parameters passed to other functions, if needed (not yet
+  implemented).
+
 - decryption_key:
 
   The key used to decrypt the RCDF. This can be an RSA or AES key,
   depending on how the RCDF was encrypted.
-
-- ...:
-
-  Additional parameters passed to other functions, if needed.
 
 - password:
 
@@ -57,12 +57,6 @@ read_rcdf(
 
   Logical. If `TRUE` and `path` is a directory, the function will search
   recursively for `.rcdf` files.
-
-- pre_collect:
-
-  Logical. Whether to load the data in the environment as data frame or
-  a lazy data frame (e.g. from dbplyr or dtplyr) from database
-  connection.
 
 - return_meta:
 

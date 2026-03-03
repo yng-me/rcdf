@@ -41,7 +41,7 @@
 - [`read_parquet()`](https://yng-me.github.io/rcdf/reference/read_parquet.md)
   : Read Parquet file with optional decryption
 
-- [`read_parquet_as_db()`](https://yng-me.github.io/rcdf/reference/read_parquet_as_db.md)
+- [`read_parquet_tbl()`](https://yng-me.github.io/rcdf/reference/read_parquet_tbl.md)
   : Read Parquet file as database
 
 - [`read_rcdf()`](https://yng-me.github.io/rcdf/reference/read_rcdf.md)
