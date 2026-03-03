@@ -4,7 +4,7 @@ NULL
 #' Collect
 #'
 #' @param data A lazy data frame (e.g. from dbplyr or dtplyr) from database connection.
-#' @param ... Optional agruments
+#' @param ... Optional arguments
 #'
 #' @returns A data frame
 #' @export

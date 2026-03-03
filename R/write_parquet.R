@@ -51,7 +51,7 @@ write_parquet <- function(data, path, ..., encryption_key = NULL) {
     )
 
     DBI::dbExecute(conn = pq_conn, statement = pq_query)
-    suppressWarnings(DBI::dbDisconnect(conn = pq_conn, shutdown = TRUE))
+    on.exit(DBI::dbDisconnect(conn = pq_conn, shutdown = TRUE), add = TRUE)
   }
 
 }

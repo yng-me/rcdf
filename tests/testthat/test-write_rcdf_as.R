@@ -86,9 +86,9 @@ test_that("write_rcdf_sqlite writes .db file with tables", {
   expect_true(file.exists(db_path))
 
   conn <- DBI::dbConnect(RSQLite::SQLite(), db_path)
-  on.exit(DBI::dbDisconnect(conn), add = TRUE)
-
   tables <- DBI::dbListTables(conn)
+
+  on.exit(DBI::dbDisconnect(conn), add = TRUE)
   expect_true(all(c("dataset1", "dataset2") %in% tables))
 
   unlink(db_path, force = TRUE)
