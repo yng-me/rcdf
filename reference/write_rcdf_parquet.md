@@ -64,7 +64,7 @@ rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key, password 
 temp_dir <- tempdir()
 
 write_rcdf_parquet(data = rcdf_data, path = temp_dir)
-#> [1] "/tmp/RtmpBNEalP/data.parquet"
+#> [1] "/tmp/RtmpRkdJaK/data.parquet"
 
 unlink(temp_dir, force = TRUE)
 ```
