@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">rcdf</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -33,7 +33,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Write RCDF data to Stata <code>.dta</code> files</h1>
-      <small class="dont-index">Source: <a href="https://github.com/yng-me/rcdf/blob/v0.1.4/R/write_rcdf_as.R" class="external-link"><code>R/write_rcdf_as.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/yng-me/rcdf/blob/main/R/write_rcdf_as.R" class="external-link"><code>R/write_rcdf_as.R</code></a></small>
       <div class="d-none name"><code>write_rcdf_dta.Rd</code></div>
     </div>
 
@@ -82,6 +82,12 @@
 <span class="r-in"><span><span class="va">private_key</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">dir</span>, <span class="st">'sample-private-key-pw.pem'</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">rcdf_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="read_rcdf.html">read_rcdf</a></span><span class="op">(</span>path <span class="op">=</span> <span class="va">rcdf_path</span>, decryption_key <span class="op">=</span> <span class="va">private_key</span>, password <span class="op">=</span> <span class="st">'1234'</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "log_id"             "created_at"         "meta"              </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [4] "area_names"         "summary_statistics" "dictionary"        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "ignore_duplicates"  "key_app"            "iv_app"            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [10] "key_admin"          "iv_admin"           "pc_os"             </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [13] "pc_os_release_date" "pc_os_version"      "pc_hardware"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [16] "version"            "checksum"          </span>
 <span class="r-in"><span><span class="va">temp_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">write_rcdf_dta</span><span class="op">(</span>data <span class="op">=</span> <span class="va">rcdf_data</span>, path <span class="op">=</span> <span class="va">temp_dir</span><span class="op">)</span></span></span>

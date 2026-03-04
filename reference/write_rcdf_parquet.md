@@ -61,10 +61,16 @@ rcdf_path <- file.path(dir, 'mtcars.rcdf')
 private_key <- file.path(dir, 'sample-private-key-pw.pem')
 
 rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key, password = '1234')
+#>  [1] "log_id"             "created_at"         "meta"              
+#>  [4] "area_names"         "summary_statistics" "dictionary"        
+#>  [7] "ignore_duplicates"  "key_app"            "iv_app"            
+#> [10] "key_admin"          "iv_admin"           "pc_os"             
+#> [13] "pc_os_release_date" "pc_os_version"      "pc_hardware"       
+#> [16] "version"            "checksum"          
 temp_dir <- tempdir()
 
 write_rcdf_parquet(data = rcdf_data, path = temp_dir)
-#> [1] "/tmp/RtmpRkdJaK/data.parquet"
+#> [1] "/tmp/Rtmpy8yaU0/data.parquet"
 
 unlink(temp_dir, force = TRUE)
 ```
