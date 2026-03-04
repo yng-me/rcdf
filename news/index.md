@@ -1,5 +1,12 @@
 # Changelog
 
+## rcdf 0.1.5
+
+- Fixed bugs not returning metadata attributes using either
+  [`read_rcdf()`](https://yng-me.github.io/rcdf/reference/read_rcdf.md)
+  and
+  [`get_rcdf_metadata()`](https://yng-me.github.io/rcdf/reference/get_rcdf_metadata.md)
+
 ## rcdf 0.1.4
 
 CRAN release: 2026-03-03
@@ -14,7 +21,7 @@ CRAN release: 2026-03-03
   to read encrypted Parquet file and return as lazy data from DuckDB
   connection.
 
-#### Breaking change:
+#### Breaking change
 
 - Removed `pre_collect` argument in
   [`read_rcdf()`](https://yng-me.github.io/rcdf/reference/read_rcdf.md)
