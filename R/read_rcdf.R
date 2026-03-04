@@ -64,12 +64,14 @@ read_rcdf <- function(
       ignore_duplicates = ignore_duplicates
     )
 
+    print(names(meta))
+
     # Collect Metadata
     meta_list$log_id     <- c(meta_list$log_id, meta$log_id)
     meta_list$created_at <- c(meta_list$created_at, meta$created_at)
     meta_list$version    <- c(meta_list$version, meta$version)
 
-    if (!is.null(meta$area_name)) {
+    if (!is.null(meta$area_names)) {
       meta_list$area_names <- dplyr::bind_rows(
         meta_list$area_names,
         meta$area_name

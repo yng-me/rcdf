@@ -127,7 +127,9 @@ process_rcdf_file <- function(conn, rcdf_file, key, password, metadata, ignore_d
     process_parquet_file(conn, pq_file, secret, pk)
   }
 
-  list(meta = meta, dir_base = ext$dir_base)
+  meta$dir_base = ext$dir_base
+
+  return(meta)
 
 }
 
