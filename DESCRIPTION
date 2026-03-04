@@ -1,7 +1,7 @@
 Package: rcdf
 Type: Package
 Title: A Comprehensive Toolkit for Working with Encrypted Parquet Files
-Version: 0.1.4
+Version: 0.1.5
 Description: Utilities for reading, writing, and managing RCDF files, including encryption and decryption support. It offers a flexible interface for handling data stored in encrypted Parquet format, along with metadata extraction, key management, and secure operations using AES and RSA encryptions.
 Authors@R: c(
     person(
