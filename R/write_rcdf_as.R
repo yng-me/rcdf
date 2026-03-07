@@ -233,24 +233,48 @@ write_rcdf_json <- function(data, path, ..., parent_dir = NULL) {
 #'
 #' unlink(temp_dir, force = TRUE)
 
-write_rcdf_xlsx <- function(data, path, ..., parent_dir = NULL) {
+write_rcdf_xlsx <- function(data, path, ..., parent_dir = NULL, as_single_file = FALSE, file_name = NULL) {
 
   check_if_rcdf(data)
   path <- dir_create_new(path, parent_dir)
 
   records <- names(data)
+  if(as_single_file) {
+    wb <- openxlsx::createWorkbook()
+  }
 
   for(i in seq_along(records)) {
 
     record <- records[i]
 
-    openxlsx::write.xlsx(
-      x = dplyr::collect(data[[record]]),
-      file = file.path(path, glue::glue("{record}.xlsx")),
-      ...
-    )
+    if(as_single_file) {
+
+      openxlsx::addWorksheet(wb, sheetName = record)
+      openxlsx::writeData(wb, x = dplyr::collect(data[[record]]), sheet = record)
+
+    } else {
+      openxlsx::write.xlsx(
+        x = dplyr::collect(data[[record]]),
+        file = file.path(path, glue::glue("{record}.xlsx")),
+        ...
+      )
+    }
   }
 
+  if(as_single_file) {
+
+    file <- "Book 1.xlsx"
+    if(!file_name) {
+      file <- file_name
+
+      if(!grepl('\\.xlsx$')) {
+        file <- paste(file, ".xlsx")
+      }
+    }
+
+    openxlsx::saveWorkbook(wb, file = file.path(path, file), ...)
+
+  }
 }
 
 
