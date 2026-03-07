@@ -32,6 +32,10 @@ collect.rcdf_tbl_db <- function(data, ...) {
 #' @export
 #'
 #' @examples
+#' dir <- system.file("extdata", package = "rcdf")
+#' pub_key <- file.path(dir, 'sample-public-key.pem')
+#' encrypt_string('hello', pub_key)
+
 encrypt_string <- function(x, pub_key) {
   x |>
     serialize(connection = NULL) |>
@@ -50,6 +54,12 @@ encrypt_string <- function(x, pub_key) {
 #' @export
 #'
 #' @examples
+#' dir <- system.file("extdata", package = "rcdf")
+#' pub_key <- file.path(dir, 'sample-public-key.pem')
+#' prv_key <- file.path(dir, 'sample-private-key.pem')
+#' x <- encrypt_string('hello', pub_key)
+#' decrypt_string(x, prv_key = prv_key, password = '1234')
+
 decrypt_string <- function(x, prv_key, password = NULL) {
 
   if(!is.null(password)) {

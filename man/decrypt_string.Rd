@@ -19,3 +19,10 @@ A decrpyted character of length 1
 \description{
 Decrypt string using RSA
 }
+\examples{
+dir <- system.file("extdata", package = "rcdf")
+pub_key <- file.path(dir, 'sample-public-key.pem')
+prv_key <- file.path(dir, 'sample-private-key.pem')
+x <- encrypt_string('hello', pub_key)
+decrypt_string(x, prv_key = prv_key, password = '1234')
+}

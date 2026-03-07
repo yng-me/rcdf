@@ -17,3 +17,8 @@ Encrypted base64-encoded string
 \description{
 Encrypt string using RSA
 }
+\examples{
+dir <- system.file("extdata", package = "rcdf")
+pub_key <- file.path(dir, 'sample-public-key.pem')
+encrypt_string('hello', pub_key)
+}
