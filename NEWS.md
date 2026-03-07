@@ -1,6 +1,14 @@
 # rcdf 0.1.5
 
-* Fixed bugs not returning metadata attributes using either `read_rcdf()` and `get_rcdf_metadata()`
+### Feature and update
+
+* Added `encrypt_value()` and `decrypt_value()` functions, respectively, to encrypt and decrypt string using RSA.
+* Changed "dot env" (`.env`) reader from `read_env()` to `read_dot_env()`.
+
+### Bug fix
+
+* Fixed bugs not returning metadata attributes using either `read_rcdf()` and `get_rcdf_metadata()`.
+
 
 # rcdf 0.1.4
 
