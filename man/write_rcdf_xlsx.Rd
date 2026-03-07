@@ -4,7 +4,14 @@
 \alias{write_rcdf_xlsx}
 \title{Write RCDF data to Excel files}
 \usage{
-write_rcdf_xlsx(data, path, ..., parent_dir = NULL)
+write_rcdf_xlsx(
+  data,
+  path,
+  ...,
+  parent_dir = NULL,
+  as_single_file = FALSE,
+  file_name = NULL
+)
 }
 \arguments{
 \item{data}{A valid RCDF object.}
