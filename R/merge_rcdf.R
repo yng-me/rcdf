@@ -63,7 +63,7 @@ merge_rcdf <- function(rcdf_files, decryption_keys, passwords, merged_file_path,
 
     alert <- cli::col_cyan(cli::style_bold(path_up))
     alert_pw <- cli::col_cyan(cli::style_bold(pw))
-    cli::cli_alert_info('Generatd new RSA keys in: {alert}')
+    cli::cli_alert_info('Generated new RSA keys in: {alert}')
     cli::cli_alert_info('Password for decryption key: {alert_pw}')
 
   }

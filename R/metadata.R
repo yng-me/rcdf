@@ -160,8 +160,9 @@ read_metadata <- function(path) {
 #' Retrieves a specific metadata value from a \code{.rcdf} file.
 #'
 #' @param path Character string. The file path to the \code{.rcdf} file.
-#' @param key Character string. The metadata key to extract from the file.
-
+#' @param name Character string. The metadata key to extract from the file.
+#' @param key `r lifecycle::badge('deprecated')` Character string. The metadata key to extract from the file.
+#'
 #' @return The value associated with the specified metadata key, or \code{NULL} if the key does not exist.
 #' @export
 #'
@@ -171,7 +172,7 @@ read_metadata <- function(path) {
 #' get_rcdf_metadata("example.rcdf", "log_id")
 #' }
 
-get_rcdf_metadata <- function(path, key) {
+get_rcdf_metadata <- function(path, name = NULL, key) {
 
   if(!fs::file_exists(path)) {
     stop(glue::glue("Specified RCDF file does not exist: {path}"))
@@ -183,14 +184,20 @@ get_rcdf_metadata <- function(path, key) {
 
   ext <- extract_rcdf(path, meta_only = TRUE)
   ext$cleanup()
-  ext$meta[[key]]
+
+  if(!is.null(name)) {
+    ext$meta[[name]]
+  } else {
+    warning("The `key` argument is now deprecated. Use `name` instead.")
+    ext$meta[[key]]
+  }
 
 }
 
 #' Get metadata attribute from RCDF data
 #'
 #' @param rcdf RCDF data
-#' @param key Valid metadata key.
+#' @param attr Valid metadata key.
 #'
 #' @returns RCDF attribute/s or NULL
 #' @export
@@ -206,14 +213,14 @@ get_rcdf_metadata <- function(path, key) {
 #' }
 
 
-get_attr <- function(rcdf, key) {
+get_attr <- function(rcdf, attr) {
 
-  attr_key <- stringr::str_split_1(key, "\\.")
+  attr_key <- stringr::str_split_1(attr, "\\.")
 
   if(length(attr_key) > 1) {
     attributes(rcdf)$metadata[[attr_key[1]]][[attr_key[2]]]
   } else {
-    attributes(rcdf)$metadata[[key]]
+    attributes(rcdf)$metadata[[attr]]
   }
 
 }

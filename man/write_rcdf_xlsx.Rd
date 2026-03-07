@@ -4,7 +4,14 @@
 \alias{write_rcdf_xlsx}
 \title{Write RCDF data to Excel files}
 \usage{
-write_rcdf_xlsx(data, path, ..., parent_dir = NULL)
+write_rcdf_xlsx(
+  data,
+  path,
+  ...,
+  parent_dir = NULL,
+  as_single_file = FALSE,
+  file_name = NULL
+)
 }
 \arguments{
 \item{data}{A valid RCDF object.}
@@ -14,6 +21,10 @@ write_rcdf_xlsx(data, path, ..., parent_dir = NULL)
 \item{...}{Additional arguments passed to \code{openxlsx::write.xlsx()}.}
 
 \item{parent_dir}{Optional subdirectory under \code{path} to group Excel files.}
+
+\item{as_single_file}{Whether to export all records (items in the RCDF list) in a single file where each item will be written per sheet in the workbook.}
+
+\item{file_name}{File name to assign when \code{as_single_file} is set to \code{TRUE}.}
 }
 \value{
 Invisibly returns \code{NULL}. Files are written to disk.

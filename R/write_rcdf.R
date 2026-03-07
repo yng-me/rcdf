@@ -100,7 +100,7 @@ write_rcdf <- function(data, path, pub_key, ..., metadata = list(), ignore_dupli
 
   meta <- list(
     log_id = key_uuid,
-    key =  encrypt_info_rsa(key, pub_key = pub_key),
+    key =  encrypt_string(key, pub_key = pub_key),
     created_at = stringr::str_sub(Sys.time(), 1, 19),
     meta = meta,
     area_names = area_names,

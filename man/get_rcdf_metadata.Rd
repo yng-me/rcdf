@@ -4,12 +4,14 @@
 \alias{get_rcdf_metadata}
 \title{Extract metadata from an RCDF file}
 \usage{
-get_rcdf_metadata(path, key)
+get_rcdf_metadata(path, name = NULL, key)
 }
 \arguments{
 \item{path}{Character string. The file path to the \code{.rcdf} file.}
 
-\item{key}{Character string. The metadata key to extract from the file.}
+\item{name}{Character string. The metadata key to extract from the file.}
+
+\item{key}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} Character string. The metadata key to extract from the file.}
 }
 \value{
 The value associated with the specified metadata key, or \code{NULL} if the key does not exist.
