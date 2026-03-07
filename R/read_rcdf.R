@@ -64,8 +64,6 @@ read_rcdf <- function(
       ignore_duplicates = ignore_duplicates
     )
 
-    print(names(meta))
-
     # Collect Metadata
     meta_list$log_id     <- c(meta_list$log_id, meta$log_id)
     meta_list$created_at <- c(meta_list$created_at, meta$created_at)
