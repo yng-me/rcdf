@@ -21,6 +21,10 @@ write_rcdf_xlsx(
 \item{...}{Additional arguments passed to \code{openxlsx::write.xlsx()}.}
 
 \item{parent_dir}{Optional subdirectory under \code{path} to group Excel files.}
+
+\item{as_single_file}{Whether to export all records (items in the RCDF list) in a single file where each item will be written per sheet in the workbook.}
+
+\item{file_name}{File name to assign when \code{as_single_file} is set to \code{TRUE}.}
 }
 \value{
 Invisibly returns \code{NULL}. Files are written to disk.

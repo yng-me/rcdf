@@ -29,11 +29,11 @@ test_that("dir_create_new creates a new directory", {
 })
 
 
-# Test `encrypt_info_rsa()` and `decrypt_info_rsa()`
+# Test `encrypt_string()` and `decrypt_string()`
 test_that("RSA encryption and decryption work", {
   rsa_key <- openssl::rsa_keygen()
-  encrypted_data <- encrypt_info_rsa("test data", rsa_key$pubkey)
-  decrypted_data <- decrypt_info_rsa(encrypted_data, rsa_key)
+  encrypted_data <- encrypt_string("test data", rsa_key$pubkey)
+  decrypted_data <- decrypt_string(encrypted_data, rsa_key)
   expect_equal(decrypted_data, "test data")
 })
 

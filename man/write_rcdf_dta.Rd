@@ -11,7 +11,7 @@ write_rcdf_dta(data, path, ..., parent_dir = NULL)
 
 \item{path}{Output directory for files.}
 
-\item{...}{Additional arguments passed to \code{foreign::write.dta()}.}
+\item{...}{Additional arguments passed to \code{haven::write.dta()}.}
 
 \item{parent_dir}{Optional subdirectory under \code{path} to group Stata files.}
 }

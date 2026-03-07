@@ -4,12 +4,12 @@
 \alias{get_attr}
 \title{Get metadata attribute from RCDF data}
 \usage{
-get_attr(rcdf, key)
+get_attr(rcdf, attr)
 }
 \arguments{
 \item{rcdf}{RCDF data}
 
-\item{key}{Valid metadata key.}
+\item{attr}{Valid metadata key.}
 }
 \value{
 RCDF attribute/s or NULL

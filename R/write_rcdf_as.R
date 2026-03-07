@@ -215,6 +215,8 @@ write_rcdf_json <- function(data, path, ..., parent_dir = NULL) {
 #' @param path The output directory.
 #' @param ... Additional arguments passed to \code{openxlsx::write.xlsx()}.
 #' @param parent_dir Optional subdirectory under \code{path} to group Excel files.
+#' @param as_single_file Whether to export all records (items in the RCDF list) in a single file where each item will be written per sheet in the workbook.
+#' @param file_name File name to assign when \code{as_single_file} is set to \code{TRUE}.
 #'
 #' @return Invisibly returns \code{NULL}. Files are written to disk.
 #' @export
@@ -284,7 +286,7 @@ write_rcdf_xlsx <- function(data, path, ..., parent_dir = NULL, as_single_file =
 #'
 #' @param data A valid RCDF object.
 #' @param path Output directory for files.
-#' @param ... Additional arguments passed to \code{foreign::write.dta()}.
+#' @param ... Additional arguments passed to \code{haven::write.dta()}.
 #' @param parent_dir Optional subdirectory under \code{path} to group Stata files.
 #'
 #' @return Invisibly returns \code{NULL}. Files are written to disk.
