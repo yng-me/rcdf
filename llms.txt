@@ -55,6 +55,12 @@ library(rcdf)
 - [`collect()`](https://yng-me.github.io/rcdf/reference/collect.md) :
   Collect
 
+- [`decrypt_string()`](https://yng-me.github.io/rcdf/reference/decrypt_string.md)
+  : Decrypt string using RSA
+
+- [`encrypt_string()`](https://yng-me.github.io/rcdf/reference/encrypt_string.md)
+  : Encrypt string using RSA
+
 - [`generate_pw()`](https://yng-me.github.io/rcdf/reference/generate_pw.md)
   : Generate a random password
 

@@ -5,7 +5,7 @@ Get metadata attribute from RCDF data
 ## Usage
 
 ``` r
-get_attr(rcdf, key)
+get_attr(rcdf, attr)
 ```
 
 ## Arguments
@@ -14,7 +14,7 @@ get_attr(rcdf, key)
 
   RCDF data
 
-- key:
+- attr:
 
   Valid metadata key.
 

@@ -11,6 +11,8 @@
 <url><loc>https://yng-me.github.io/rcdf/reference/add_metadata.html</loc></url>
 <url><loc>https://yng-me.github.io/rcdf/reference/as_rcdf.html</loc></url>
 <url><loc>https://yng-me.github.io/rcdf/reference/collect.html</loc></url>
+<url><loc>https://yng-me.github.io/rcdf/reference/decrypt_string.html</loc></url>
+<url><loc>https://yng-me.github.io/rcdf/reference/encrypt_string.html</loc></url>
 <url><loc>https://yng-me.github.io/rcdf/reference/generate_pw.html</loc></url>
 <url><loc>https://yng-me.github.io/rcdf/reference/generate_rsa_keys.html</loc></url>
 <url><loc>https://yng-me.github.io/rcdf/reference/get_attr.html</loc></url>

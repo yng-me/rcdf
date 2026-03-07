@@ -5,7 +5,7 @@ Retrieves a specific metadata value from a `.rcdf` file.
 ## Usage
 
 ``` r
-get_rcdf_metadata(path, key)
+get_rcdf_metadata(path, name = NULL, key)
 ```
 
 ## Arguments
@@ -14,9 +14,14 @@ get_rcdf_metadata(path, key)
 
   Character string. The file path to the `.rcdf` file.
 
-- key:
+- name:
 
   Character string. The metadata key to extract from the file.
+
+- key:
+
+  **\[deprecated\]** Character string. The metadata key to extract from
+  the file.
 
 ## Value
 

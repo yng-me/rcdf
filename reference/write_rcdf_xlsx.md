@@ -6,7 +6,14 @@ the `openxlsx` package.
 ## Usage
 
 ``` r
-write_rcdf_xlsx(data, path, ..., parent_dir = NULL)
+write_rcdf_xlsx(
+  data,
+  path,
+  ...,
+  parent_dir = NULL,
+  as_single_file = FALSE,
+  file_name = NULL
+)
 ```
 
 ## Arguments
@@ -28,6 +35,15 @@ write_rcdf_xlsx(data, path, ..., parent_dir = NULL)
 
   Optional subdirectory under `path` to group Excel files.
 
+- as_single_file:
+
+  Whether to export all records (items in the RCDF list) in a single
+  file where each item will be written per sheet in the workbook.
+
+- file_name:
+
+  File name to assign when `as_single_file` is set to `TRUE`.
+
 ## Value
 
 Invisibly returns `NULL`. Files are written to disk.
@@ -44,12 +60,6 @@ rcdf_path <- file.path(dir, 'mtcars.rcdf')
 private_key <- file.path(dir, 'sample-private-key-pw.pem')
 
 rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key, password = '1234')
-#>  [1] "log_id"             "created_at"         "meta"              
-#>  [4] "area_names"         "summary_statistics" "dictionary"        
-#>  [7] "ignore_duplicates"  "key_app"            "iv_app"            
-#> [10] "key_admin"          "iv_admin"           "pc_os"             
-#> [13] "pc_os_release_date" "pc_os_version"      "pc_hardware"       
-#> [16] "version"            "checksum"          
 temp_dir <- tempdir()
 
 write_rcdf_xlsx(data = rcdf_data, path = temp_dir)

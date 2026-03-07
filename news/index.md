@@ -2,10 +2,20 @@
 
 ## rcdf 0.1.5
 
+#### Feature and update
+
+- Added `encrypt_value()` and `decrypt_value()` functions, respectively,
+  to encrypt and decrypt string using RSA.
+- Changed “dot env” (`.env`) reader from
+  [`read_env()`](https://yng-me.github.io/rcdf/reference/read_env.md) to
+  [`read_dot_env()`](https://yng-me.github.io/rcdf/reference/read_dot_env.md).
+
+#### Bug fix
+
 - Fixed bugs not returning metadata attributes using either
   [`read_rcdf()`](https://yng-me.github.io/rcdf/reference/read_rcdf.md)
   and
-  [`get_rcdf_metadata()`](https://yng-me.github.io/rcdf/reference/get_rcdf_metadata.md)
+  [`get_rcdf_metadata()`](https://yng-me.github.io/rcdf/reference/get_rcdf_metadata.md).
 
 ## rcdf 0.1.4
 
