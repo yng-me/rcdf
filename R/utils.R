@@ -218,27 +218,6 @@ extract_key <- function(meta) {
 
 }
 
-encrypt_info_rsa <- function(data, pub_key) {
-  data |>
-    serialize(connection = NULL) |>
-    openssl::rsa_encrypt(pubkey = pub_key) |>
-    openssl::base64_encode()
-}
-
-decrypt_info_rsa <- function(data, prv_key, password = NULL) {
-
-  if(!is.null(password)) {
-    key <- openssl::read_key(file = prv_key, password = password)
-  } else {
-    key <- openssl::read_key(file = prv_key)
-  }
-
-  data |>
-    openssl::base64_decode() |>
-    openssl::rsa_decrypt(key) |>
-    unserialize()
-}
-
 get_pc_metadata <- function(which) {
 
   values <- list()
@@ -331,11 +310,11 @@ decrypt_key <- function(data, prv_key, password = NULL) {
 
     if(grepl('.pem$', prv_key)) {
 
-      value <- decrypt_info_rsa(meta$value, prv_key = prv_key, password = password)
+      value <- decrypt_string(meta$value, prv_key = prv_key, password = password)
       key <- meta$key
 
       if(meta$legacy) {
-        key <- decrypt_info_rsa(meta$key, prv_key = prv_key, password = password)
+        key <- decrypt_string(meta$key, prv_key = prv_key, password = password)
       }
 
     } else {
