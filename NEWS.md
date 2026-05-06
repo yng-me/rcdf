@@ -1,3 +1,32 @@
+# rcdf 0.1.6
+
+### Security fixes
+
+* `generate_pw()`: switched from Mersenne Twister to a cryptographically secure RNG (`openssl::rand_bytes`).
+* `write_parquet()`: DuckDB errors no longer leak raw encryption key material in messages.
+* `write_rcdf_parquet()`: plaintext temp table is now always removed after a shared-connection write.
+* `write_rcdf_as()`: replaced `eval(parse())` dispatch with a safe named-list of function references.
+* `hex_to_raw()`: added strict input validation (type, length, character set).
+
+### Performance enhancements
+
+* `write_parquet()` / `write_rcdf_parquet()`: removed `httpfs` overhead; shared DuckDB connection across writes; default compression changed to `zstd`.
+* `read_rcdf()`: new `lazy = TRUE` option for DuckDB-backed lazy reads; `n_threads` for parallel I/O; duplicate `PRAGMA` calls deduplicated per connection.
+* `add_metadata()`: label assignment vectorised with batch update.
+* `open_duckdb_connection()`: no longer forces single-threaded mode.
+
+### Bug fixes
+
+* `collect.rcdf_tbl_db()`: fixed infinite-dispatch recursion; `NULL` metadata no longer causes an error.
+* `read_parquet()`: unencrypted early-return path now correctly applies `metadata` and `as_arrow_table`.
+* `normalize_key_value()`: hex keys no longer misidentified as base-64.
+
+### Documentation
+
+* Main vignette rewritten for general/non-technical users with a step-by-step workflow.
+* Merging vignette completed and fixed.
+
+
 # rcdf 0.1.5
 
 ### Feature and update
