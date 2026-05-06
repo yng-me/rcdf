@@ -4,23 +4,47 @@
 \alias{write_parquet}
 \title{Write Parquet file with optional encryption}
 \usage{
-write_parquet(data, path, ..., encryption_key = NULL)
+write_parquet(
+  data,
+  path,
+  ...,
+  encryption_key = NULL,
+  conn = NULL,
+  compression = "zstd"
+)
 }
 \arguments{
-\item{data}{A data frame or tibble to write to a Parquet file.}
+\item{data}{A data frame or tibble to write.}
 
-\item{path}{The file path where the Parquet file will be written.}
+\item{path}{Character string. Destination file path for the Parquet file.}
 
-\item{...}{Additional arguments passed to \code{arrow::write_parquet()} if no encryption key is provided.}
+\item{...}{Additional arguments passed to \code{arrow::write_parquet()} when
+\code{encryption_key} is \code{NULL}.}
 
-\item{encryption_key}{A list containing \code{aes_key} and \code{aes_iv}. If provided, the data will be encrypted using AES before writing to Parquet.}
+\item{encryption_key}{A raw AES key as a hex string (32, 48, or 64 hex
+characters) or a base-64–encoded 256-bit key string. When \code{NULL}
+(default) no encryption is applied.}
+
+\item{conn}{An optional existing DuckDB \code{DBIConnection}. When supplied,
+the connection is reused instead of opening a new one, which avoids
+per-call setup overhead when writing many tables in a batch. The caller
+is responsible for disconnecting the connection. Default is \code{NULL}.}
+
+\item{compression}{Compression codec to use for unencrypted Parquet files.
+Any codec supported by \code{arrow::write_parquet()} is valid (e.g.
+\code{"zstd"}, \code{"snappy"}, \code{"gzip"}, \code{"lz4"},
+\code{"uncompressed"}). Ignored when \code{encryption_key} is set
+(DuckDB chooses the codec). Default is \code{"zstd"}.}
 }
 \value{
-None. The function writes the data to a Parquet file at the specified \code{path}.
+\code{NULL} invisibly. The Parquet file is written to \code{path}.
 }
 \description{
-This function writes a dataset to a Parquet file. If an encryption key is provided, the data will be encrypted before writing.
-Otherwise, the function writes the data as a regular Parquet file without encryption.
+Writes a data frame to a Parquet file. When \code{encryption_key} is
+supplied the file is encrypted with AES using DuckDB's native Parquet
+encryption support. Without a key the file is written by
+\code{arrow::write_parquet()} and supports any compression codec
+understood by the Arrow library.
 }
 \examples{
 \dontrun{
@@ -29,10 +53,18 @@ key <- "rppqM5CuEqotys4wQq/g7xh6wpIjRozcAIbI9sagwKE="
 
 temp_dir <- tempdir()
 
+# Encrypted write
 rcdf::write_parquet(
   data = data,
   path = file.path(temp_dir, "mtcars.parquet"),
   encryption_key = key
+)
+
+# Unencrypted write with gzip compression
+rcdf::write_parquet(
+  data = data,
+  path = file.path(temp_dir, "mtcars-gz.parquet"),
+  compression = "gzip"
 )
 }
 

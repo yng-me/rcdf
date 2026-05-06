@@ -12,7 +12,9 @@ read_rcdf(
   metadata = list(),
   ignore_duplicates = TRUE,
   recursive = FALSE,
-  return_meta = FALSE
+  return_meta = FALSE,
+  lazy = FALSE,
+  n_threads = NULL
 )
 }
 \arguments{
@@ -31,6 +33,10 @@ read_rcdf(
 \item{recursive}{Logical. If \code{TRUE} and \code{path} is a directory, the function will search recursively for \code{.rcdf} files.}
 
 \item{return_meta}{Logical. If \code{TRUE}, the metadata will be returned as an attribute of the RCDF object.}
+
+\item{lazy}{Logical. If \code{TRUE}, each dataset is returned as a lazy \code{rcdf_tbl_db} DuckDB-backed table instead of being collected into memory. The underlying DuckDB connection is kept alive; call \code{collect()} on each element when you are ready to materialise. Default is \code{FALSE}.}
+
+\item{n_threads}{Integer or \code{NULL}. Number of DuckDB threads to use for reading. \code{NULL} (default) lets DuckDB choose based on available cores.}
 }
 \value{
 An RCDF object, which is a list of Parquet files (one for each record) along with attached metadata.

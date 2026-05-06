@@ -2,18 +2,39 @@
 % Please edit documentation in R/helpers.R
 \name{collect}
 \alias{collect}
-\title{Collect}
+\alias{collect.rcdf_tbl_db}
+\title{Collect a lazy RCDF table into a data frame}
 \usage{
 collect(data, ...)
+
+\method{collect}{rcdf_tbl_db}(data, ...)
 }
 \arguments{
-\item{data}{A lazy data frame (e.g. from dbplyr or dtplyr) from database connection.}
+\item{data}{A lazy \code{rcdf_tbl_db} object (returned by
+\code{\link{read_rcdf}} with \code{lazy = TRUE}), or any object supported
+by \code{dplyr::collect()}.}
 
-\item{...}{Optional arguments}
+\item{...}{Additional arguments passed to \code{dplyr::collect()}.}
 }
 \value{
-A data frame
+A \code{tibble} with all rows materialised. If the table carries a
+metadata dictionary, variable labels and value labels are applied via
+\code{\link{add_metadata}} before returning.
 }
 \description{
-Collect
+Materialises a lazy \code{rcdf_tbl_db} DuckDB-backed table into a regular
+R data frame, optionally applying the variable labels and value labels stored
+in the table's metadata dictionary.
+}
+\examples{
+dir <- system.file("extdata", package = "rcdf")
+rcdf_path  <- file.path(dir, "mtcars.rcdf")
+prv_key    <- file.path(dir, "sample-private-key-pw.pem")
+
+\dontrun{
+result <- read_rcdf(path = rcdf_path, decryption_key = prv_key,
+                    password = "1234", lazy = TRUE)
+df <- collect(result$mtcars)
+class(df)  # "tbl_df"
+}
 }
