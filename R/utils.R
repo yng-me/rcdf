@@ -366,3 +366,24 @@ open_duckdb_connection <- function(n_threads = NULL) {
 
   conn
 }
+
+
+# Load the full crypto module needed for AES-encrypted Parquet writes.
+# Tries httpfs first (OpenSSL-backed); falls back to force_mbedtls_unsafe
+# (DuckDB's built-in mbedtls) so that writes succeed even when httpfs is
+# not installed in the current DuckDB distribution.
+load_duckdb_crypto <- function(conn) {
+  loaded <- tryCatch({
+    DBI::dbExecute(conn, "LOAD httpfs")
+    TRUE
+  }, error = function(e) FALSE)
+
+  if (!loaded) {
+    tryCatch(
+      DBI::dbExecute(conn, "SET force_mbedtls_unsafe = 'true'"),
+      error = function(e) NULL
+    )
+  }
+
+  invisible(NULL)
+}
