@@ -65,6 +65,8 @@ write_parquet <- function(data, path, ..., encryption_key = NULL, conn = NULL, c
     if (own_conn) {
       conn <- DBI::dbConnect(drv = duckdb::duckdb())
       on.exit(DBI::dbDisconnect(conn = conn, shutdown = TRUE), add = TRUE)
+      # httpfs provides the full crypto module required for encrypted Parquet writes.
+      tryCatch(DBI::dbExecute(conn, "LOAD httpfs"), error = function(e) NULL)
     }
 
     pq_key <- secret$key
@@ -132,6 +134,8 @@ write_rcdf_parquet <- function(data, path, ..., parent_dir = NULL, primary_key =
   # Open one shared DuckDB connection for all encrypted writes in this batch.
   pq_conn <- DBI::dbConnect(drv = duckdb::duckdb())
   on.exit(DBI::dbDisconnect(conn = pq_conn, shutdown = TRUE), add = TRUE)
+  # httpfs provides the full crypto module required for encrypted Parquet writes.
+  tryCatch(DBI::dbExecute(pq_conn, "LOAD httpfs"), error = function(e) NULL)
 
   for (i in seq_along(records)) {
 
