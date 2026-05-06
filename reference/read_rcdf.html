@@ -9,7 +9,7 @@ and loads it into R as an RCDF object."><meta property="og:image" content="https
 
     <a class="navbar-brand me-2" href="../index.html">rcdf</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -35,7 +35,7 @@ and loads it into R as an RCDF object."><meta property="og:image" content="https
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Read and decrypt RCDF data</h1>
-      <small class="dont-index">Source: <a href="https://github.com/yng-me/rcdf/blob/v0.1.5/R/read_rcdf.R" class="external-link"><code>R/read_rcdf.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/yng-me/rcdf/blob/main/R/read_rcdf.R" class="external-link"><code>R/read_rcdf.R</code></a></small>
       <div class="d-none name"><code>read_rcdf.Rd</code></div>
     </div>
 
@@ -54,7 +54,9 @@ and loads it into R as an RCDF object.</p>
 <span>  metadata <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  ignore_duplicates <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  recursive <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  return_meta <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  return_meta <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  lazy <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  n_threads <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -92,6 +94,14 @@ and loads it into R as an RCDF object.</p>
 
 <dt id="arg-return-meta">return_meta<a class="anchor" aria-label="anchor" href="#arg-return-meta"></a></dt>
 <dd><p>Logical. If <code>TRUE</code>, the metadata will be returned as an attribute of the RCDF object.</p></dd>
+
+
+<dt id="arg-lazy">lazy<a class="anchor" aria-label="anchor" href="#arg-lazy"></a></dt>
+<dd><p>Logical. If <code>TRUE</code>, each dataset is returned as a lazy <code>rcdf_tbl_db</code> DuckDB-backed table instead of being collected into memory. The underlying DuckDB connection is kept alive; call <code><a href="collect.html">collect()</a></code> on each element when you are ready to materialise. Default is <code>FALSE</code>.</p></dd>
+
+
+<dt id="arg-n-threads">n_threads<a class="anchor" aria-label="anchor" href="#arg-n-threads"></a></dt>
+<dd><p>Integer or <code>NULL</code>. Number of DuckDB threads to use for reading. <code>NULL</code> (default) lets DuckDB choose based on available cores.</p></dd>
 
 </dl></div>
     <div class="section level2">

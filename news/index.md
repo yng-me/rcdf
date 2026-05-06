@@ -1,6 +1,56 @@
 # Changelog
 
+## rcdf 0.1.6
+
+#### Security fixes
+
+- [`generate_pw()`](https://yng-me.github.io/rcdf/reference/generate_pw.md):
+  switched from Mersenne Twister to a cryptographically secure RNG
+  ([`openssl::rand_bytes`](https://jeroen.r-universe.dev/openssl/reference/rand_bytes.html)).
+- [`write_parquet()`](https://yng-me.github.io/rcdf/reference/write_parquet.md):
+  DuckDB errors no longer leak raw encryption key material in messages.
+- [`write_rcdf_parquet()`](https://yng-me.github.io/rcdf/reference/write_rcdf_parquet.md):
+  plaintext temp table is now always removed after a shared-connection
+  write.
+- [`write_rcdf_as()`](https://yng-me.github.io/rcdf/reference/write_rcdf_as.md):
+  replaced `eval(parse())` dispatch with a safe named-list of function
+  references.
+- `hex_to_raw()`: added strict input validation (type, length, character
+  set).
+
+#### Performance enhancements
+
+- [`write_parquet()`](https://yng-me.github.io/rcdf/reference/write_parquet.md)
+  /
+  [`write_rcdf_parquet()`](https://yng-me.github.io/rcdf/reference/write_rcdf_parquet.md):
+  removed `httpfs` overhead; shared DuckDB connection across writes;
+  default compression changed to `zstd`.
+- [`read_rcdf()`](https://yng-me.github.io/rcdf/reference/read_rcdf.md):
+  new `lazy = TRUE` option for DuckDB-backed lazy reads; `n_threads` for
+  parallel I/O; duplicate `PRAGMA` calls deduplicated per connection.
+- [`add_metadata()`](https://yng-me.github.io/rcdf/reference/add_metadata.md):
+  label assignment vectorised with batch update.
+- `open_duckdb_connection()`: no longer forces single-threaded mode.
+
+#### Bug fixes
+
+- [`collect.rcdf_tbl_db()`](https://yng-me.github.io/rcdf/reference/collect.md):
+  fixed infinite-dispatch recursion; `NULL` metadata no longer causes an
+  error.
+- [`read_parquet()`](https://yng-me.github.io/rcdf/reference/read_parquet.md):
+  unencrypted early-return path now correctly applies `metadata` and
+  `as_arrow_table`.
+- `normalize_key_value()`: hex keys no longer misidentified as base-64.
+
+#### Documentation
+
+- Main vignette rewritten for general/non-technical users with a
+  step-by-step workflow.
+- Merging vignette completed and fixed.
+
 ## rcdf 0.1.5
+
+CRAN release: 2026-03-07
 
 #### Feature and update
 

@@ -23,6 +23,7 @@ Key features include:
 Install from CRAN with:
 
 ``` r
+
 install.packages("rcdf")
 ```
 
@@ -30,6 +31,7 @@ You can also install the development version of `rcdf` from
 [GitHub](https://github.com/) with:
 
 ``` r
+
 # install.packages("devtools")
 devtools::install_github("yng-me/rcdf")
 ```
@@ -38,5 +40,6 @@ Once installed, you can load the package and start working with RCDF
 files.
 
 ``` r
+
 library(rcdf)
 ```

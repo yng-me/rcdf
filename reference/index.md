@@ -10,7 +10,7 @@
   Convert to `rcdf` class
 
 - [`collect()`](https://yng-me.github.io/rcdf/reference/collect.md) :
-  Collect
+  Collect a lazy RCDF table into a data frame
 
 - [`decrypt_string()`](https://yng-me.github.io/rcdf/reference/decrypt_string.md)
   : Decrypt string using RSA
@@ -26,6 +26,9 @@
 
 - [`get_attr()`](https://yng-me.github.io/rcdf/reference/get_attr.md) :
   Get metadata attribute from RCDF data
+
+- [`get_attrs()`](https://yng-me.github.io/rcdf/reference/get_attrs.md)
+  : Read all top-level metadata from an RCDF file
 
 - [`get_rcdf_metadata()`](https://yng-me.github.io/rcdf/reference/get_rcdf_metadata.md)
   : Extract metadata from an RCDF file

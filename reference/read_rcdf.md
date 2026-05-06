@@ -14,7 +14,9 @@ read_rcdf(
   metadata = list(),
   ignore_duplicates = TRUE,
   recursive = FALSE,
-  return_meta = FALSE
+  return_meta = FALSE,
+  lazy = FALSE,
+  n_threads = NULL
 )
 ```
 
@@ -62,6 +64,19 @@ read_rcdf(
 
   Logical. If `TRUE`, the metadata will be returned as an attribute of
   the RCDF object.
+
+- lazy:
+
+  Logical. If `TRUE`, each dataset is returned as a lazy `rcdf_tbl_db`
+  DuckDB-backed table instead of being collected into memory. The
+  underlying DuckDB connection is kept alive; call
+  [`collect()`](https://yng-me.github.io/rcdf/reference/collect.md) on
+  each element when you are ready to materialise. Default is `FALSE`.
+
+- n_threads:
+
+  Integer or `NULL`. Number of DuckDB threads to use for reading. `NULL`
+  (default) lets DuckDB choose based on available cores.
 
 ## Value
 

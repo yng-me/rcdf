@@ -46,6 +46,7 @@ merge_rcdf(
 ## Examples
 
 ``` r
+
 if (FALSE) { # \dontrun{
 dir <- system.file("extdata", package = "rcdf")
 

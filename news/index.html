@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">rcdf</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -33,11 +33,52 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.svg" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/yng-me/rcdf/blob/v0.1.5/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/yng-me/rcdf/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.1.5" id="rcdf-015">rcdf 0.1.5<a class="anchor" aria-label="anchor" href="#rcdf-015"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.1.6" id="rcdf-016">rcdf 0.1.6<a class="anchor" aria-label="anchor" href="#rcdf-016"></a></h2>
+<div class="section level4">
+<h4 id="security-fixes-0-1-6">Security fixes<a class="anchor" aria-label="anchor" href="#security-fixes-0-1-6"></a></h4>
+<ul><li>
+<code><a href="../reference/generate_pw.html">generate_pw()</a></code>: switched from Mersenne Twister to a cryptographically secure RNG (<code><a href="https://jeroen.r-universe.dev/openssl/reference/rand_bytes.html" class="external-link">openssl::rand_bytes</a></code>).</li>
+<li>
+<code><a href="../reference/write_parquet.html">write_parquet()</a></code>: DuckDB errors no longer leak raw encryption key material in messages.</li>
+<li>
+<code><a href="../reference/write_rcdf_parquet.html">write_rcdf_parquet()</a></code>: plaintext temp table is now always removed after a shared-connection write.</li>
+<li>
+<code><a href="../reference/write_rcdf_as.html">write_rcdf_as()</a></code>: replaced <code>eval(parse())</code> dispatch with a safe named-list of function references.</li>
+<li>
+<code>hex_to_raw()</code>: added strict input validation (type, length, character set).</li>
+</ul></div>
+<div class="section level4">
+<h4 id="performance-enhancements-0-1-6">Performance enhancements<a class="anchor" aria-label="anchor" href="#performance-enhancements-0-1-6"></a></h4>
+<ul><li>
+<code><a href="../reference/write_parquet.html">write_parquet()</a></code> / <code><a href="../reference/write_rcdf_parquet.html">write_rcdf_parquet()</a></code>: removed <code>httpfs</code> overhead; shared DuckDB connection across writes; default compression changed to <code>zstd</code>.</li>
+<li>
+<code><a href="../reference/read_rcdf.html">read_rcdf()</a></code>: new <code>lazy = TRUE</code> option for DuckDB-backed lazy reads; <code>n_threads</code> for parallel I/O; duplicate <code>PRAGMA</code> calls deduplicated per connection.</li>
+<li>
+<code><a href="../reference/add_metadata.html">add_metadata()</a></code>: label assignment vectorised with batch update.</li>
+<li>
+<code>open_duckdb_connection()</code>: no longer forces single-threaded mode.</li>
+</ul></div>
+<div class="section level4">
+<h4 id="bug-fixes-0-1-6">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-1-6"></a></h4>
+<ul><li>
+<code><a href="../reference/collect.html">collect.rcdf_tbl_db()</a></code>: fixed infinite-dispatch recursion; <code>NULL</code> metadata no longer causes an error.</li>
+<li>
+<code><a href="../reference/read_parquet.html">read_parquet()</a></code>: unencrypted early-return path now correctly applies <code>metadata</code> and <code>as_arrow_table</code>.</li>
+<li>
+<code>normalize_key_value()</code>: hex keys no longer misidentified as base-64.</li>
+</ul></div>
+<div class="section level4">
+<h4 id="documentation-0-1-6">Documentation<a class="anchor" aria-label="anchor" href="#documentation-0-1-6"></a></h4>
+<ul><li>Main vignette rewritten for general/non-technical users with a step-by-step workflow.</li>
+<li>Merging vignette completed and fixed.</li>
+</ul></div>
+</div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.1.5" id="rcdf-015">rcdf 0.1.5<a class="anchor" aria-label="anchor" href="#rcdf-015"></a></h2><p class="text-muted">CRAN release: 2026-03-07</p>
 <div class="section level4">
 <h4 id="feature-and-update-0-1-5">Feature and update<a class="anchor" aria-label="anchor" href="#feature-and-update-0-1-5"></a></h4>
 <ul><li>Added <code>encrypt_value()</code> and <code>decrypt_value()</code> functions, respectively, to encrypt and decrypt string using RSA.</li>
