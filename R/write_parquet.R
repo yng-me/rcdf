@@ -65,8 +65,11 @@ write_parquet <- function(data, path, ..., encryption_key = NULL, conn = NULL, c
     if (own_conn) {
       conn <- DBI::dbConnect(drv = duckdb::duckdb())
       on.exit(DBI::dbDisconnect(conn = conn, shutdown = TRUE), add = TRUE)
-      load_duckdb_crypto(conn)
     }
+
+    # Ensure the full write-capable crypto module is loaded on this connection,
+    # regardless of whether the connection was created here or supplied by the caller.
+    load_duckdb_crypto(conn)
 
     pq_key <- secret$key
 
