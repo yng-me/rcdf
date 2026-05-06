@@ -91,3 +91,13 @@ test_that("read_dot_env throws an error when the file doesn't exist", {
   expect_error(read_dot_env(non_existent_file), "dot-env file does not exist")
 })
 
+
+test_that("read_env is deprecated and delegates to read_dot_env", {
+  temp_env_file <- tempfile("test", fileext = ".env")
+  writeLines(c("KEY=value"), temp_env_file)
+  on.exit(unlink(temp_env_file), add = TRUE)
+
+  expect_warning(read_env(temp_env_file), "deprecated")
+  result <- suppressWarnings(read_env(temp_env_file))
+  expect_equal(result$KEY, "value")
+})

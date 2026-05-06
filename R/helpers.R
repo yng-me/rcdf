@@ -1,24 +1,46 @@
 #' @importFrom dplyr collect
 NULL
 
-#' Collect
+#' Collect a lazy RCDF table into a data frame
 #'
-#' @param data A lazy data frame (e.g. from dbplyr or dtplyr) from database connection.
-#' @param ... Optional arguments
+#' Materialises a lazy \code{rcdf_tbl_db} DuckDB-backed table into a regular
+#' R data frame, optionally applying the variable labels and value labels stored
+#' in the table's metadata dictionary.
 #'
-#' @returns A data frame
+#' @param data A lazy \code{rcdf_tbl_db} object (returned by
+#'   \code{\link{read_rcdf}} with \code{lazy = TRUE}), or any object supported
+#'   by \code{dplyr::collect()}.
+#' @param ... Additional arguments passed to \code{dplyr::collect()}.
+#'
+#' @returns A \code{tibble} with all rows materialised. If the table carries a
+#'   metadata dictionary, variable labels and value labels are applied via
+#'   \code{\link{add_metadata}} before returning.
 #' @export
 #'
+#' @examples
+#' dir <- system.file("extdata", package = "rcdf")
+#' rcdf_path  <- file.path(dir, "mtcars.rcdf")
+#' prv_key    <- file.path(dir, "sample-private-key-pw.pem")
+#'
+#' \dontrun{
+#' result <- read_rcdf(path = rcdf_path, decryption_key = prv_key,
+#'                     password = "1234", lazy = TRUE)
+#' df <- collect(result$mtcars)
+#' class(df)  # "tbl_df"
+#' }
 collect <- function(data, ...) { UseMethod('collect') }
 
 
+#' @rdname collect
 #' @export
 collect.rcdf_tbl_db <- function(data, ...) {
 
   metadata <- attributes(data)$metadata
   attr(data, 'metadata') <- NULL
+  class(data) <- setdiff(class(data), "rcdf_tbl_db")
 
-  add_metadata(dplyr::collect(data), metadata)
+  collected <- dplyr::collect(data)
+  if (!is.null(metadata)) add_metadata(collected, metadata) else collected
 }
 
 

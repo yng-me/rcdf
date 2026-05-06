@@ -122,3 +122,38 @@ test_that("read_parquet_tbl reads encrypted Parquet and returns a lazy table fro
   unlink(temp_file, recursive = TRUE, force = TRUE)
 
 })
+
+
+test_that("read_parquet returns an Arrow table when as_arrow_table = TRUE", {
+  data <- tibble::tibble(a = 1:5, b = letters[1:5])
+  temp_file <- tempfile(fileext = ".parquet")
+  arrow::write_parquet(data, temp_file)
+
+  result <- read_parquet(temp_file, as_arrow_table = TRUE)
+  expect_true(inherits(result, "ArrowTabular"))
+
+  unlink(temp_file, force = TRUE)
+})
+
+
+test_that("read_parquet applies metadata labels when metadata is provided", {
+  data <- data.frame(sex = c(1L, 2L, 1L), age = c(23L, 45L, 34L))
+  temp_file <- tempfile(fileext = ".parquet")
+  arrow::write_parquet(data, temp_file)
+
+  meta <- data.frame(
+    variable_name = c("sex", "age"),
+    label         = c("Gender", "Age in years"),
+    type          = c("categorical", "numeric"),
+    valueset      = I(list(
+      data.frame(value = c(1L, 2L), label = c("Male", "Female")),
+      NULL
+    ))
+  )
+
+  result <- read_parquet(temp_file, metadata = meta)
+  expect_equal(attr(result$sex, "label"), "Gender")
+  expect_equal(attr(result$age, "label"), "Age in years")
+
+  unlink(temp_file, force = TRUE)
+})

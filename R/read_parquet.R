@@ -29,12 +29,15 @@
 read_parquet <- function(path, ..., decryption_key = NULL, as_arrow_table = FALSE, metadata = NULL) {
 
   if(is.null(decryption_key)) {
-    return(arrow::read_parquet(file = path, ...))
+    data <- arrow::read_parquet(file = path, ...)
+    if (!is.null(metadata)) data <- add_metadata(data, metadata)
+    if (as_arrow_table) data <- arrow::arrow_table(data)
+    return(data)
   }
 
   pq_conn <- open_duckdb_connection()
-  data <- dplyr::collect(read_parquet_tbl(pq_conn, file = path, decryption_key = decryption_key))
   on.exit(DBI::dbDisconnect(conn = pq_conn, shutdown = TRUE), add = TRUE)
+  data <- dplyr::collect(read_parquet_tbl(pq_conn, file = path, decryption_key = decryption_key))
 
   if(!is.null(metadata)) { data <- add_metadata(data, metadata) }
 
@@ -81,12 +84,15 @@ read_parquet_tbl <- function(conn, file, decryption_key, table_name = NULL, colu
     table_name <- fs::path_ext_remove(basename(file))
   }
 
-  DBI::dbExecute(
-    conn,
-    glue::glue_sql(
-      "PRAGMA add_parquet_key({secret$key}, {secret$value})",
-      .con = conn
-    )
+  tryCatch(
+    DBI::dbExecute(
+      conn,
+      glue::glue_sql(
+        "PRAGMA add_parquet_key({secret$key}, {secret$value})",
+        .con = conn
+      )
+    ),
+    error = function(e) stop("Failed to register parquet decryption key.", call. = FALSE)
   )
 
   if(!is.null(columns)) {

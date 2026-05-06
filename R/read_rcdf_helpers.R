@@ -123,8 +123,12 @@ process_rcdf_file <- function(conn, rcdf_file, key, password, metadata, ignore_d
 
   pk <- resolve_primary_key(meta, metadata, ignore_duplicates)
 
+  # Track registered key labels to avoid issuing duplicate PRAGMA calls
+  # for multiple parquet files that share the same AES key.
+  registered_keys <- new.env(parent = emptyenv())
+
   for (pq_file in pq_files) {
-    process_parquet_file(conn, pq_file, secret, pk)
+    process_parquet_file(conn, pq_file, secret, pk, registered_keys)
   }
 
   meta$dir_base = ext$dir_base
@@ -148,17 +152,27 @@ resolve_primary_key <- function(meta, metadata, ignore_duplicates) {
 
 }
 
-process_parquet_file <- function(conn, pq_file, secret, pk) {
+process_parquet_file <- function(conn, pq_file, secret, pk, registered_keys = NULL) {
 
   record <- fs::path_ext_remove(basename(pq_file))
 
-  DBI::dbExecute(
-    conn,
-    glue::glue_sql(
-      "PRAGMA add_parquet_key({secret$key}, {secret$value})",
-      .con = conn
+  # Register the AES key with DuckDB only once per unique key label.
+  key_label <- secret$key
+  if (is.null(registered_keys) || is.null(registered_keys[[key_label]])) {
+    tryCatch(
+      DBI::dbExecute(
+        conn,
+        glue::glue_sql(
+          "PRAGMA add_parquet_key({secret$key}, {secret$value})",
+          .con = conn
+        )
+      ),
+      error = function(e) stop("Failed to register parquet decryption key.", call. = FALSE)
     )
-  )
+    if (!is.null(registered_keys)) {
+      registered_keys[[key_label]] <- TRUE
+    }
+  }
 
   if (!DBI::dbExistsTable(conn, record)) {
 
@@ -219,6 +233,27 @@ collect_tables <- function(conn, data_dictionary) {
     }
 
     pq[[record]] <- df
+  }
+
+  pq
+}
+
+# Returns each table as a lazy rcdf_tbl_db (DuckDB connection stays open).
+collect_tables_lazy <- function(conn, data_dictionary) {
+
+  pq <- rcdf_list()
+
+  for (record in DBI::dbListTables(conn)) {
+
+    lazy_tbl <- dplyr::tbl(conn, record)
+
+    if (!is.null(data_dictionary) && length(data_dictionary) > 0) {
+      lazy_tbl <- add_metadata(lazy_tbl, data_dictionary)
+    } else {
+      class(lazy_tbl) <- c("rcdf_tbl_db", class(lazy_tbl))
+    }
+
+    pq[[record]] <- lazy_tbl
   }
 
   pq

@@ -141,6 +141,7 @@ write_rcdf <- function(data, path, pub_key, ..., metadata = list(), ignore_dupli
   )
 
   unlink(dir_zip, force = TRUE, recursive = TRUE)
+  unlink(file.path(dir_temp, 'lineage'), force = TRUE, recursive = TRUE)
   unlink(file.path(dir_temp, '__rcdf_temp__'), force = TRUE, recursive = TRUE)
 
   return(data)
