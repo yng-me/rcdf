@@ -90,13 +90,19 @@ generate_rsa_keys <- function(path, ..., password = NULL, which = "public", pref
 
 generate_pw <- function(length = 16, special_chr = TRUE) {
 
-  pw <-c(0:9, rep(letters, 2), rep(LETTERS, 2))
+  pw <- c(0:9, rep(letters, 2), rep(LETTERS, 2))
 
   if(special_chr) {
     pw <- c(pw, "!", "#", "@", "$", "%", "&", "^", "-", "_", "=", "(", ")", "*", "+", "?", "<", ">")
   }
 
-  paste0(sample(pw, length), collapse = "")
+  # Use a cryptographically secure RNG: draw one random byte per character
+  # and use modular reduction to pick an index.
+  n_choices <- length(pw)
+  rand_bytes <- as.integer(openssl::rand_bytes(length))
+  indices <- (rand_bytes %% n_choices) + 1L
+
+  paste0(pw[indices], collapse = "")
 
 }
 
@@ -134,6 +140,15 @@ raw_to_hex <- function(x) {
 
 
 hex_to_raw <- function(x) {
+  if (!is.character(x) || length(x) != 1L) {
+    stop("hex_to_raw: input must be a single character string.", call. = FALSE)
+  }
+  if (nchar(x) %% 2L != 0L) {
+    stop("hex_to_raw: input must have an even number of characters.", call. = FALSE)
+  }
+  if (!grepl("^[0-9A-Fa-f]*$", x)) {
+    stop("hex_to_raw: input contains non-hexadecimal characters.", call. = FALSE)
+  }
   digits <- strtoi(strsplit(x, "")[[1]], base = 16L)
   as.raw(bitwShiftL(digits[c(TRUE, FALSE)], 4) + digits[c(FALSE, TRUE)])
 }
@@ -257,22 +272,24 @@ normalize_key_value <- function(value) {
 
   } else if (typeof(value) == 'character') {
 
-    if(grepl('^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$', value)) {
-
-      return(
-        list(
-          key = "key256base64",
-          value = value
-        )
-      )
-
-    } else if (grepl("^(?:[A-Fa-f0-9]{32}|[A-Fa-f0-9]{48}|[A-Fa-f0-9]{64})$", value, ignore.case = TRUE)) {
+    # Check hex before base64: hex chars are a subset of base64-valid characters,
+    # so a pure-hex string of length 32/48/64 would otherwise always match base64 first.
+    if (grepl("^(?:[A-Fa-f0-9]{32}|[A-Fa-f0-9]{48}|[A-Fa-f0-9]{64})$", value, ignore.case = TRUE)) {
 
       key_length <- 8 * nchar(value)
 
       return(
         list(
           key = glue::glue("key{key_length}"),
+          value = value
+        )
+      )
+
+    } else if(grepl('^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)?$', value)) {
+
+      return(
+        list(
+          key = "key256base64",
           value = value
         )
       )
@@ -320,7 +337,7 @@ decrypt_key <- function(data, prv_key, password = NULL) {
     } else {
 
       # Legacy
-      key <- decrypt_info_aes(meta$key, key = list(aes_key = key))
+      key <- decrypt_info_aes(meta$key, key = list(aes_key = prv_key))
       value <- decrypt_info_aes(meta$value, key = list(aes_key = key))
 
     }
@@ -335,11 +352,16 @@ decrypt_key <- function(data, prv_key, password = NULL) {
   )
 }
 
-open_duckdb_connection <- function() {
+open_duckdb_connection <- function(n_threads = NULL) {
+
+  cfg <- list()
+  if (!is.null(n_threads)) {
+    cfg$threads <- as.integer(n_threads)
+  }
 
   conn <- DBI::dbConnect(
     duckdb::duckdb(),
-    config = list(threads = 1)
+    config = cfg
   )
 
   conn

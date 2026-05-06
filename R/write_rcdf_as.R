@@ -32,6 +32,18 @@ write_rcdf_as <- function(data, path, formats, ...) {
   valid_formats <- c("csv", "tsv", "json", "parquet", "xlsx", "dta", "sav", "sqlite")
   label_formats <- c("CSV", "TSV", "JSON", "Parquet", "Excel", "Stata", "SPSS", "SQLite")
 
+  # Safe dispatch table — avoids eval(parse()) on user-supplied format names.
+  writer_fns <- list(
+    csv     = write_rcdf_csv,
+    tsv     = write_rcdf_tsv,
+    json    = write_rcdf_json,
+    parquet = write_rcdf_parquet,
+    xlsx    = write_rcdf_xlsx,
+    dta     = write_rcdf_dta,
+    sav     = write_rcdf_sav,
+    sqlite  = write_rcdf_sqlite
+  )
+
   valid_format_args <- which(formats %in% valid_formats)
 
   if(length(valid_format_args) < length(formats)) {
@@ -50,9 +62,7 @@ write_rcdf_as <- function(data, path, formats, ...) {
     data_format <- formats[i]
     label_format <- label_formats[which(valid_formats == data_format)]
 
-    write_rcdf_fn <- eval(parse(text = glue::glue("write_rcdf_{data_format}")))
-
-    write_rcdf_fn(
+    writer_fns[[data_format]](
       data = data,
       path = path,
       ...,
@@ -93,7 +103,7 @@ write_rcdf_as <- function(data, path, formats, ...) {
 
 write_rcdf_csv <- function(data, path, ..., parent_dir = NULL) {
 
-  check_if_rcdf(data)
+  data <- check_if_rcdf(data)
   path <- dir_create_new(path, parent_dir)
 
   records <- names(data)
@@ -139,7 +149,7 @@ write_rcdf_csv <- function(data, path, ..., parent_dir = NULL) {
 
 write_rcdf_tsv <- function(data, path, ..., parent_dir = NULL) {
 
-  check_if_rcdf(data)
+  data <- check_if_rcdf(data)
   path <- dir_create_new(path, parent_dir)
 
   records <- names(data)
@@ -187,7 +197,7 @@ write_rcdf_tsv <- function(data, path, ..., parent_dir = NULL) {
 
 write_rcdf_json <- function(data, path, ..., parent_dir = NULL) {
 
-  check_if_rcdf(data)
+  data <- check_if_rcdf(data)
   path <- dir_create_new(path, parent_dir)
 
   records <- names(data)
@@ -237,7 +247,7 @@ write_rcdf_json <- function(data, path, ..., parent_dir = NULL) {
 
 write_rcdf_xlsx <- function(data, path, ..., parent_dir = NULL, as_single_file = FALSE, file_name = NULL) {
 
-  check_if_rcdf(data)
+  data <- check_if_rcdf(data)
   path <- dir_create_new(path, parent_dir)
 
   records <- names(data)
@@ -266,11 +276,11 @@ write_rcdf_xlsx <- function(data, path, ..., parent_dir = NULL, as_single_file =
   if(as_single_file) {
 
     file <- "Book 1.xlsx"
-    if(!file_name) {
+    if(!is.null(file_name)) {
       file <- file_name
 
-      if(!grepl('\\.xlsx$')) {
-        file <- paste(file, ".xlsx")
+      if(!grepl('\\.xlsx$', file_name)) {
+        file <- paste0(file, ".xlsx")
       }
     }
 
@@ -308,7 +318,7 @@ write_rcdf_xlsx <- function(data, path, ..., parent_dir = NULL, as_single_file =
 
 write_rcdf_dta <- function(data, path, ..., parent_dir = NULL) {
 
-  check_if_rcdf(data)
+  data <- check_if_rcdf(data)
   path <- dir_create_new(path, parent_dir)
 
   records <- names(data)
@@ -356,7 +366,7 @@ write_rcdf_dta <- function(data, path, ..., parent_dir = NULL) {
 
 write_rcdf_sav <- function(data, path, ..., parent_dir = NULL) {
 
-  check_if_rcdf(data)
+  data <- check_if_rcdf(data)
   path <- dir_create_new(path, parent_dir)
 
   records <- names(data)
@@ -404,7 +414,7 @@ write_rcdf_sav <- function(data, path, ..., parent_dir = NULL) {
 
 write_rcdf_sqlite <- function(data, path, db_name = "cbms_data", ..., parent_dir = NULL) {
 
-  check_if_rcdf(data)
+  data <- check_if_rcdf(data)
   path <- dir_create_new(path, parent_dir)
 
   conn <- DBI::dbConnect(RSQLite::SQLite(), file.path(path, glue::glue("{db_name}.db")))
