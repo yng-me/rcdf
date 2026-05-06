@@ -124,3 +124,24 @@ test_that("write_rcdf_as throws error on invalid formats", {
     "invalid format"
   )
 })
+
+
+test_that("write_rcdf_xlsx as_single_file = TRUE without file_name creates 'Book 1.xlsx'", {
+  dir <- withr::local_tempdir()
+  write_rcdf_xlsx(mock_rcdf, dir, as_single_file = TRUE)
+  expect_true(file.exists(file.path(dir, "Book 1.xlsx")))
+})
+
+
+test_that("write_rcdf_xlsx as_single_file = TRUE with file_name that already has .xlsx", {
+  dir <- withr::local_tempdir()
+  write_rcdf_xlsx(mock_rcdf, dir, as_single_file = TRUE, file_name = "output.xlsx")
+  expect_true(file.exists(file.path(dir, "output.xlsx")))
+})
+
+
+test_that("write_rcdf_xlsx as_single_file = TRUE with file_name without .xlsx extension", {
+  dir <- withr::local_tempdir()
+  write_rcdf_xlsx(mock_rcdf, dir, as_single_file = TRUE, file_name = "output")
+  expect_true(file.exists(file.path(dir, "output.xlsx")))
+})
