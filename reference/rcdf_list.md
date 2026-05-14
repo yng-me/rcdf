@@ -25,5 +25,5 @@ A list object of class `rcdf`.
 ``` r
 rcdf <- rcdf_list()
 class(rcdf)
-#> [1] "list" "rcdf"
+#> [1] "rcdf"
 ```

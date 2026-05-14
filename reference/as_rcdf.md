@@ -25,5 +25,5 @@ The input object with class set to `rcdf`.
 my_list <- list(a = 1, b = 2)
 rcdf_obj <- as_rcdf(my_list)
 class(rcdf_obj)
-#> [1] "list" "rcdf"
+#> [1] "rcdf"
 ```
