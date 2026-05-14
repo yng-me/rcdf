@@ -54,7 +54,18 @@ write_parquet <- function(data, path, ..., encryption_key = NULL, conn = NULL, c
   secret <- normalize_key_value(encryption_key)
 
   if (is.null(secret)) {
-    arrow::write_parquet(x = data, sink = path, compression = compression, ...)
+    pq_conn_w <- DBI::dbConnect(duckdb::duckdb())
+    on.exit(DBI::dbDisconnect(pq_conn_w, shutdown = TRUE), add = TRUE)
+    DBI::dbWriteTable(pq_conn_w, "__WRITE_DATA__", data, overwrite = TRUE)
+    DBI::dbExecute(
+      pq_conn_w,
+      sprintf(
+        "COPY __WRITE_DATA__ TO '%s' (FORMAT PARQUET, COMPRESSION '%s')",
+        gsub("'", "''", path, fixed = TRUE),
+        toupper(compression)
+      )
+    )
+    DBI::dbRemoveTable(pq_conn_w, "__WRITE_DATA__")
   } else {
 
     pq_name <- "__TEMP_DATA__"
@@ -75,15 +86,18 @@ write_parquet <- function(data, path, ..., encryption_key = NULL, conn = NULL, c
 
     # Escape single quotes in the file path so it embeds safely in a SQL string literal.
     safe_path <- gsub("'", "''", path, fixed = TRUE)
-    pq_query  <- glue::glue(
-      "COPY {pq_name} TO '{safe_path}' (ENCRYPTION_CONFIG {{ footer_key: '{pq_key}' }});"
+    pq_query  <- sprintf(
+      "COPY %s TO '%s' (ENCRYPTION_CONFIG { footer_key: '%s' });",
+      pq_name,
+      safe_path,
+      pq_key
     )
 
     # Wrap PRAGMA in tryCatch so the raw AES key value is never echoed in an error message.
     tryCatch(
       DBI::dbExecute(
         conn = conn,
-        statement = glue::glue("PRAGMA add_parquet_key('{pq_key}', '{secret$value}')")
+        statement = sprintf("PRAGMA add_parquet_key('%s', '%s')", pq_key, secret$value)
       ),
       error = function(e) stop("Failed to register parquet encryption key.", call. = FALSE)
     )
@@ -155,7 +169,7 @@ write_rcdf_parquet <- function(data, path, ..., parent_dir = NULL, primary_key =
 
     rcdf::write_parquet(
       data = data_i,
-      path = file.path(path, glue::glue("{record_i}.parquet")),
+      path = file.path(path, paste0(record_i, ".parquet")),
       conn = pq_conn,
       ...
     )
@@ -168,15 +182,14 @@ write_rcdf_parquet <- function(data, path, ..., parent_dir = NULL, primary_key =
 
 check_duplicates <- function(data, record, primary_key, ignore_duplicates) {
 
-  pk <- dplyr::pull(dplyr::filter(primary_key, file == record), pk_field_name)
+  pk <- primary_key[primary_key$file == record, "pk_field_name", drop = TRUE]
   if(length(pk) == 0) return(NULL)
 
-  dup_records <- data |>
-    dplyr::group_by(dplyr::pick(dplyr::any_of(unlist(stringr::str_split(pk, ', '))))) |>
-    dplyr::count() |>
-    dplyr::filter(n > 1)
+  pk_cols <- intersect(trimws(strsplit(pk, ",\\s*")[[1]]), names(data))
+  if (length(pk_cols) == 0) return(NULL)
 
-  dup_n <- nrow(dup_records)
+  keys <- do.call(paste, c(data[pk_cols], list(sep = "\001")))
+  dup_n <- sum(table(keys) > 1L)
 
   if(dup_n == 0) return(NULL)
 
@@ -184,12 +197,16 @@ check_duplicates <- function(data, record, primary_key, ignore_duplicates) {
   if(dup_n > 1) { if_plural <- "s" }
 
   if(ignore_duplicates) {
-    cli::cli_warn(
-      "Detected potential duplicates in `{record}` based on provided `primary_key`: {dup_n} row{if_plural}"
+    warning(
+      sprintf("Detected potential duplicates in `%s` based on provided `primary_key`: %d row%s",
+              record, dup_n, if_plural),
+      call. = FALSE
     )
   } else {
-    cli::cli_abort(
-      "Detected potential duplicates in `{record}` based on provided `primary_keys`: {dup_n} row{if_plural}"
+    stop(
+      sprintf("Detected potential duplicates in `%s` based on provided `primary_keys`: %d row%s",
+              record, dup_n, if_plural),
+      call. = FALSE
     )
   }
 }

@@ -29,9 +29,19 @@
 read_parquet <- function(path, ..., decryption_key = NULL, as_arrow_table = FALSE, metadata = NULL) {
 
   if(is.null(decryption_key)) {
-    data <- arrow::read_parquet(file = path, ...)
+    pq_conn_r <- open_duckdb_connection()
+    on.exit(DBI::dbDisconnect(pq_conn_r, shutdown = TRUE), add = TRUE)
+    data <- DBI::dbGetQuery(
+      pq_conn_r,
+      sprintf("SELECT * FROM read_parquet(%s)", sql_literal(pq_conn_r, path))
+    )
     if (!is.null(metadata)) data <- add_metadata(data, metadata)
-    if (as_arrow_table) data <- arrow::arrow_table(data)
+    if (as_arrow_table) {
+      if (!requireNamespace("arrow", quietly = TRUE)) {
+        stop('Package "arrow" is required for as_arrow_table = TRUE. Install it with: install.packages("arrow")', call. = FALSE)
+      }
+      data <- arrow::arrow_table(data)
+    }
     return(data)
   }
 
@@ -42,6 +52,9 @@ read_parquet <- function(path, ..., decryption_key = NULL, as_arrow_table = FALS
   if(!is.null(metadata)) { data <- add_metadata(data, metadata) }
 
   if(as_arrow_table) {
+    if (!requireNamespace("arrow", quietly = TRUE)) {
+      stop('Package "arrow" is required for as_arrow_table = TRUE. Install it with: install.packages("arrow")', call. = FALSE)
+    }
     data <- arrow::arrow_table(data)
   }
 
@@ -81,15 +94,16 @@ read_parquet_tbl <- function(conn, file, decryption_key, table_name = NULL, colu
   secret <- normalize_key_value(decryption_key)
 
   if(is.null(table_name)) {
-    table_name <- fs::path_ext_remove(basename(file))
+    table_name <- tools::file_path_sans_ext(basename(file))
   }
 
   tryCatch(
     DBI::dbExecute(
       conn,
-      glue::glue_sql(
-        "PRAGMA add_parquet_key({secret$key}, {secret$value})",
-        .con = conn
+      sprintf(
+        "PRAGMA add_parquet_key(%s, %s)",
+        sql_literal(conn, secret$key),
+        sql_literal(conn, secret$value)
       )
     ),
     error = function(e) stop("Failed to register parquet decryption key.", call. = FALSE)
@@ -97,25 +111,21 @@ read_parquet_tbl <- function(conn, file, decryption_key, table_name = NULL, colu
 
   if(!is.null(columns)) {
 
-    q <- glue::glue_sql(
-      "CREATE TABLE {`table_name`} AS
-      SELECT {`columns`*}
-      FROM read_parquet(
-        {file},
-        encryption_config = {{ footer_key: {secret$key} }}
-      );",
-      vals = columns,
-      .con = conn
+    col_idents <- paste(vapply(columns, function(c) sql_ident(conn, c), character(1)), collapse = ", ")
+    q <- sprintf(
+      "CREATE TABLE %s AS\n      SELECT %s\n      FROM read_parquet(\n        %s,\n        encryption_config = { footer_key: %s }\n      );",
+      sql_ident(conn, table_name),
+      col_idents,
+      sql_literal(conn, file),
+      sql_literal(conn, secret$key)
     )
 
   } else {
-    q <- glue::glue_sql(
-      "CREATE TABLE {`table_name`} AS
-      SELECT * FROM read_parquet(
-        {file},
-        encryption_config = {{ footer_key: {secret$key} }}
-      );",
-      .con = conn
+    q <- sprintf(
+      "CREATE TABLE %s AS\n      SELECT * FROM read_parquet(\n        %s,\n        encryption_config = { footer_key: %s }\n      );",
+      sql_ident(conn, table_name),
+      sql_literal(conn, file),
+      sql_literal(conn, secret$key)
     )
   }
 

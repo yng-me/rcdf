@@ -52,19 +52,19 @@ merge_rcdf <- function(rcdf_files, decryption_keys, passwords, merged_file_path,
 
     pw <- generate_pw(32)
 
-    path_up <- fs::path_norm(merged_file_path)
-    path_up <- stringr::str_remove(path_up, paste0('/', basename(path_up)))
-    pub_key_name <- fs::path_ext_remove(basename(merged_file_path))
+    path_up <- normalizePath(merged_file_path, winslash = "/", mustWork = FALSE)
+    path_up <- sub(paste0("/", basename(path_up), "$"), "", path_up)
+    pub_key_name <- tools::file_path_sans_ext(basename(merged_file_path))
     pub_key <- generate_rsa_keys(
       path = path_up,
       prefix = pub_key_name,
       password = pw
     )
 
-    alert <- cli::col_cyan(cli::style_bold(path_up))
-    alert_pw <- cli::col_cyan(cli::style_bold(pw))
-    cli::cli_alert_info('Generated new RSA keys in: {alert}')
-    cli::cli_alert_info('Password for decryption key: {alert_pw}')
+    alert <- path_up
+    alert_pw <- pw
+    message(sprintf("Generated new RSA keys in: %s", alert))
+    message(sprintf("Password for decryption key: %s", alert_pw))
 
   }
 
