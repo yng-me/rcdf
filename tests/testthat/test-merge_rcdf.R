@@ -82,3 +82,119 @@ test_that("merge_rcdf auto-appends .rcdf extension when missing", {
 
   expect_true(file.exists(paste0(merged_no_ext, ".rcdf")))
 })
+
+
+
+test_that("merge_rcdf ratains the correct metadata of merged .rcdf files", {
+
+  rcdf_random <- function() {
+    rcdf_list(
+      d1 = data.frame(
+        a = sample(1:100, size = 5),
+        b = sample(LETTERS, size = 5)
+      ),
+      d2 = data.frame(
+        a = sample(1:100, size = 5),
+        b = sample(LETTERS, size = 5)
+      )
+    )
+  }
+
+  temp_dir <- tempdir()
+  pub_key <- file.path(temp_dir, 'pub.pem')
+  prv_key <- file.path(temp_dir, 'prv.pem')
+  pw <- '1234'
+
+  key <- openssl::rsa_keygen()
+  openssl::write_pem(key$pubkey, pub_key)
+  openssl::write_pem(key, prv_key, password = pw)
+
+  rcdf1 <- rcdf_random()
+  rcdf2 <- rcdf_random()
+
+  rcdf_path1 <- tempfile(fileext = '.rcdf')
+  rcdf_path2 <- tempfile(fileext = '.rcdf')
+
+  write_rcdf(
+    rcdf1,
+    path = rcdf_path1,
+    metadata = list(
+      meta = list(
+        id = data.frame(
+          code = c(1, 2),
+          label = c("A", "B")
+        )
+      ),
+      area_names = data.frame(
+        a = c(1, 2),
+        b = c('a', 'b'),
+        c = c('aa', 'bb')
+      )
+    ),
+    pub_key = pub_key
+  )
+
+  get_rcdf_metadata(rcdf_path1, 'id')
+
+  write_rcdf(
+    rcdf2,
+    path = rcdf_path2,
+    metadata = list(
+      meta = list(
+        id = data.frame(
+          code = c(3, 4),
+          label = c("C", "D")
+        )
+      ),
+      area_names = data.frame(
+        a = c(3, 4),
+        b = c('c', 'd'),
+        c = c('cc', 'dd')
+      )
+    ),
+    pub_key = pub_key
+  )
+
+  merged_rcdf_file <- tempfile(fileext = '.rcdf')
+
+  merge_rcdf(
+    rcdf_files = c(rcdf_path1, rcdf_path2),
+    decryption_keys = prv_key,
+    passwords = pw,
+    merged_file_path = merged_rcdf_file,
+    pub_key = pub_key
+  )
+
+  final_rcdf <- read_rcdf(
+    path = merged_rcdf_file,
+    decryption_key = prv_key,
+    password = pw
+  )
+
+  expect_true(class(final_rcdf) %in% "rcdf")
+
+  meta_area_names <- get_rcdf_metadata(
+    merged_rcdf_file,
+    name = 'area_names'
+  )
+
+  expect_identical(
+    meta_area_names,
+    data.frame(
+      a = 1:4,
+      b = letters[1:4],
+      c = c("aa", "bb", "cc", "dd")
+    )
+  )
+
+})
+
+
+
+
+
+
+
+
+
+

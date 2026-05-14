@@ -108,13 +108,13 @@ generate_pw <- function(length = 16, special_chr = TRUE) {
 
 
 set_class <- function(data, class_name) {
-  class(data) <- c(class(data), class_name)
+  class(data) <- class_name
   return(data)
 }
 
 
 is_rcdf <- function(data) {
-  inherits(data, 'rcdf') & inherits(data, 'list')
+  inherits(data, 'rcdf') && is.list(data)
 }
 
 
@@ -125,6 +125,23 @@ check_if_rcdf <- function(data) {
 
   data
 
+}
+
+
+generate_uuid <- function() {
+  bytes <- as.integer(openssl::rand_bytes(16L))
+  # Set version 4 bits (bits 12-15 of byte 7 = 0100)
+  bytes[7L] <- bitwOr(bitwAnd(bytes[7L], 0x0fL), 0x40L)
+  # Set variant bits (bits 6-7 of byte 9 = 10)
+  bytes[9L] <- bitwOr(bitwAnd(bytes[9L], 0x3fL), 0x80L)
+  hex <- sprintf("%02x", bytes)
+  paste0(
+    paste0(hex[1:4],  collapse = ""), "-",
+    paste0(hex[5:6],  collapse = ""), "-",
+    paste0(hex[7:8],  collapse = ""), "-",
+    paste0(hex[9:10], collapse = ""), "-",
+    paste0(hex[11:16], collapse = "")
+  )
 }
 
 
@@ -154,11 +171,22 @@ hex_to_raw <- function(x) {
 }
 
 
+# sql_literal: quote a scalar value for safe interpolation into a DuckDB SQL string.
+# Returns the DBI-quoted character representation.
+sql_literal <- function(conn, x) {
+  as.character(DBI::dbQuoteLiteral(conn, x))
+}
+
+# sql_ident: quote an identifier (table/column name) for safe use in DuckDB SQL.
+sql_ident <- function(conn, x) {
+  as.character(DBI::dbQuoteIdentifier(conn, x))
+}
+
 dir_create_new <- function(path, parent_dir = NULL) {
   if(!is.null(parent_dir)) {
     path <- file.path(path, parent_dir)
   }
-  fs::dir_create(path)
+  dir.create(path, recursive = TRUE, showWarnings = FALSE)
   return(path)
 }
 
@@ -225,7 +253,7 @@ extract_key <- function(meta) {
     }
 
     if(!is.null(value_admin)) {
-      value <- stringr::str_split_i(value_admin, pattern = '>>><<<', i = 1)
+      value <- strsplit(value_admin, ">>><<<", fixed = TRUE)[[1]][1]
     }
 
     return(list(key = key, value = value, legacy = TRUE))
@@ -242,10 +270,13 @@ get_pc_metadata <- function(which) {
   values$pc_os <- tolower(pc[["sysname"]])
   values$pc_user <- pc[["user"]]
   values$pc_effective_user <- pc[["effective_user"]]
-  values$pc_os_release_date <- pc[["version"]] |>
-    stringr::str_extract(":\\s\\w*\\s\\w*\\s\\d{2}\\s\\d{2}:\\d{2}:\\d{2}.*;") |>
-    stringr::str_remove("^:\\s") |>
-    stringr::str_remove(";$")
+  values$pc_os_release_date <- {
+    raw <- pc[["version"]]
+    m <- regexpr(":\\s\\w*\\s\\w*\\s\\d{2}\\s\\d{2}:\\d{2}:\\d{2}.*;", raw, perl = TRUE)
+    extracted <- if (m > 0) regmatches(raw, m) else ""
+    extracted <- sub("^:\\s", "", extracted)
+    sub(";$", "", extracted)
+  }
   values$pc_os_version <- pc[["release"]]
   values$pc_hardware <- pc[["machine"]]
   values$pc_pid <- Sys.getpid()
@@ -280,7 +311,7 @@ normalize_key_value <- function(value) {
 
       return(
         list(
-          key = glue::glue("key{key_length}"),
+          key = paste0("key", key_length),
           value = value
         )
       )

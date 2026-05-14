@@ -74,10 +74,30 @@ read_rcdf <- function(
     meta_list$version    <- c(meta_list$version, meta$version)
 
     if (!is.null(meta$area_names)) {
-      meta_list$area_names <- dplyr::bind_rows(
-        meta_list$area_names,
-        meta$area_names
-      )
+      if (is.null(meta_list$area_names)) {
+        meta_list$area_names <- meta$area_names
+      } else {
+        meta_list$area_names <- rbind(meta_list$area_names, meta$area_names)
+      }
+    }
+
+    if (!is.null(meta$meta)) {
+      if (is.null(meta_list$meta)) {
+        meta_list$meta <- meta$meta
+      } else {
+        all_keys <- union(names(meta_list$meta), names(meta$meta))
+        meta_list$meta <- setNames(
+          lapply(all_keys, function(k) {
+            a <- meta_list$meta[[k]]
+            b <- meta$meta[[k]]
+            if (is.null(a)) return(b)
+            if (is.null(b)) return(a)
+            if (is.data.frame(a) && is.data.frame(b)) return(rbind(a, b))
+            b
+          }),
+          all_keys
+        )
+      }
     }
 
     # Dictionary merge
@@ -87,10 +107,7 @@ read_rcdf <- function(
       if (is.null(data_dictionary)) {
         data_dictionary <- meta$dictionary
       } else {
-        data_dictionary <- dplyr::bind_rows(
-          data_dictionary,
-          meta$dictionary
-        )
+        data_dictionary <- rbind(data_dictionary, meta$dictionary)
       }
     }
   }

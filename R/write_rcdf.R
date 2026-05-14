@@ -46,7 +46,7 @@ write_rcdf <- function(data, path, pub_key, ..., metadata = list(), ignore_dupli
 
   dir_temp <- tempdir()
 
-  key_uuid <- uuid::UUIDgenerate()
+  key_uuid <- generate_uuid()
   key_pub <-  openssl::read_pubkey(pub_key)
   key <- openssl::base64_encode(openssl::aes_keygen(32))
 
@@ -59,13 +59,15 @@ write_rcdf <- function(data, path, pub_key, ..., metadata = list(), ignore_dupli
     ignore_duplicates = ignore_duplicates
   )
 
-  checksum <- pq_files |>
-    tools::md5sum() |>
-    dplyr::as_tibble(rownames = 'file') |>
-    dplyr::mutate(file = basename(file))
+  md5 <- tools::md5sum(pq_files)
+  checksum <- data.frame(
+    file = basename(names(md5)),
+    value = unname(md5),
+    stringsAsFactors = FALSE
+  )
 
   if(!is.null(metadata$primary_key)) {
-    checksum <- dplyr::left_join(checksum, metadata$primary_key, by = "file")
+    checksum <- merge(checksum, metadata$primary_key, by = "file", all.x = TRUE)
   }
 
   dictionary <- NULL
@@ -90,6 +92,8 @@ write_rcdf <- function(data, path, pub_key, ..., metadata = list(), ignore_dupli
   area_names <- NULL
   if(!is.null(metadata$meta)) {
     meta <- metadata$meta
+  }
+  if(!is.null(metadata$area_names)) {
     area_names <- metadata$area_names
   }
 
@@ -101,7 +105,7 @@ write_rcdf <- function(data, path, pub_key, ..., metadata = list(), ignore_dupli
   meta <- list(
     log_id = key_uuid,
     key =  encrypt_string(key, pub_key = pub_key),
-    created_at = stringr::str_sub(Sys.time(), 1, 19),
+    created_at = substr(as.character(Sys.time()), 1, 19),
     meta = meta,
     area_names = area_names,
     summary_statistics = summary_statistics,
@@ -115,7 +119,8 @@ write_rcdf <- function(data, path, pub_key, ..., metadata = list(), ignore_dupli
     checksum = checksum
   )
 
-  dir_zip <- fs::dir_create(dir_temp, key_uuid)
+  dir_zip <- file.path(dir_temp, key_uuid)
+  dir.create(dir_zip, recursive = TRUE, showWarnings = FALSE)
 
   jsonlite::write_json(
     x =  meta,

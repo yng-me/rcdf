@@ -122,7 +122,7 @@ test_that("read_metadata reads an XLSX file", {
 
 test_that("read_metadata reads a Parquet file", {
   tmp <- tempfile(fileext = ".parquet")
-  arrow::write_parquet(
+  write_parquet(
     data.frame(variable_name = "x", label = "X", type = "numeric"), tmp
   )
   result <- read_metadata(tmp)

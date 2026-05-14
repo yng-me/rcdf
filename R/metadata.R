@@ -77,11 +77,11 @@ add_metadata <- function(data, metadata, ..., set_data_types = FALSE) {
         valueset <- dictionary$valueset[i][[1]]
         if (length(valueset) > 0) {
           labels <- valueset$value
-          is_int <- rlang::is_integer(col)
-          if (is_int && !rlang::is_integer(labels) && grepl("^\\d{1,}$", labels[1])) {
+          is_int <- is.integer(col)
+          if (is_int && !is.integer(labels) && grepl("^\\d{1,}$", labels[1])) {
             labels <- as.integer(labels)
           }
-          if (!is_int && grepl("^\\d{1,}$", col[1]) && rlang::is_integer(labels)) {
+          if (!is_int && grepl("^\\d{1,}$", col[1]) && is.integer(labels)) {
             col <- as.integer(col)
           }
           names(labels) <- valueset$label
@@ -110,26 +110,24 @@ check_metadata_structure <- function(data, cols) {
     stop("Invalid column names specified.")
   }
 
-  data |>
-    dplyr::filter(!is.na(variable_name)) |>
-    dplyr::distinct(variable_name, .keep_all = TRUE) |>
-    convert_to_na() |>
-    dplyr::select(
-      variable_name,
-      label,
-      type,
-      dplyr::any_of(c("input_data", "valueset", "labels"))
-    ) |>
-    dplyr::filter(variable_name %in% cols)
+  data <- data[!is.na(data$variable_name), , drop = FALSE]
+  data <- data[!duplicated(data$variable_name), , drop = FALSE]
+  data <- convert_to_na(data)
+
+  optional_cols <- intersect(names(data), c("input_data", "valueset", "labels"))
+  keep_cols <- c("variable_name", "label", "type", optional_cols)
+  data <- data[, keep_cols, drop = FALSE]
+
+  data[data$variable_name %in% cols, , drop = FALSE]
 }
 
 convert_to_na <- function(data) {
-  data |>
-    dplyr::mutate_if(is.character, stringr::str_trim) |>
-    dplyr::mutate_if(
-      is.character,
-      ~ dplyr::if_else(. == '', NA_character_, stringr::str_squish(.))
-    )
+  chr_cols <- which(vapply(data, is.character, logical(1L)))
+  for (j in chr_cols) {
+    x <- trimws(data[[j]])
+    data[[j]] <- ifelse(x == "", NA_character_, gsub("\\s+", " ", x))
+  }
+  data
 }
 
 read_metadata <- function(path) {
@@ -141,9 +139,17 @@ read_metadata <- function(path) {
   } else if (grepl("\\.csv$", path)) {
     data <- utils::read.csv(path)
   } else if (grepl("\\.xlsx$", path)) {
+    if (!requireNamespace("openxlsx", quietly = TRUE)) {
+      stop('Package "openxlsx" is required to read .xlsx metadata files. Install it with: install.packages("openxlsx")', call. = FALSE)
+    }
     data <- openxlsx::read.xlsx(path)
   } else if (grepl("\\.parquet$", path)) {
-    data <- arrow::open_dataset(path)
+    conn_pq <- open_duckdb_connection()
+    on.exit(DBI::dbDisconnect(conn_pq, shutdown = TRUE), add = TRUE)
+    data <- DBI::dbGetQuery(
+      conn_pq,
+      sprintf("SELECT * FROM read_parquet(%s)", sql_literal(conn_pq, path))
+    )
   }
 
   data
@@ -170,12 +176,12 @@ read_metadata <- function(path) {
 
 get_rcdf_metadata <- function(path, name = NULL, key) {
 
-  if(!fs::file_exists(path)) {
-    stop(glue::glue("Specified RCDF file does not exist: {path}"))
+  if(!file.exists(path)) {
+    stop(paste0("Specified RCDF file does not exist: ", path))
   }
 
   if(!grepl("\\.rcdf$", path)) {
-    stop(glue::glue("Not a valid RCDF file: {path}"))
+    stop(paste0("Not a valid RCDF file: ", path))
   }
 
   ext <- extract_rcdf(path, meta_only = TRUE)
@@ -211,7 +217,7 @@ get_rcdf_metadata <- function(path, name = NULL, key) {
 
 get_attr <- function(rcdf, attr) {
 
-  attr_key <- stringr::str_split_1(attr, "\\.")
+  attr_key <- strsplit(attr, "\\.")[[1]]
 
   if(length(attr_key) > 1) {
     attributes(rcdf)$metadata[[attr_key[1]]][[attr_key[2]]]
@@ -248,21 +254,21 @@ get_attr <- function(rcdf, attr) {
 #' meta$created_at
 get_attrs <- function(path) {
 
-  if(!fs::file_exists(path)) {
-    stop(glue::glue("Specified RCDF file does not exist: {path}"))
+  if(!file.exists(path)) {
+    stop(paste0("Specified RCDF file does not exist: ", path))
   }
 
   if(!grepl("\\.rcdf$", path)) {
-    stop(glue::glue("Not a valid RCDF file: {path}"))
+    stop(paste0("Not a valid RCDF file: ", path))
   }
 
-  extracted_dir <- fs::file_temp()
-  fs::dir_create(extracted_dir)
+  extracted_dir <- tempfile()
+  dir.create(extracted_dir, recursive = TRUE, showWarnings = FALSE)
 
   zip::unzip(path, exdir = extracted_dir, junkpaths = TRUE)
   meta_file <- file.path(extracted_dir, "metadata.json")
 
-  if (!fs::file_exists(meta_file)) {
+  if (!file.exists(meta_file)) {
     unlink(extracted_dir, recursive = TRUE, force = TRUE)
     stop("metadata.json not found inside RCDF archive.")
   }
