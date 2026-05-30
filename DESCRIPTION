@@ -26,7 +26,8 @@ Imports:
   dplyr (>= 1.1.0),
   jsonlite (>= 1.8.0),
   DBI (>= 1.1.0),
-  tools
+  tools,
+  stats
 Suggests: 
   arrow,
   dbplyr (>= 2.4.0),

@@ -86,7 +86,7 @@ read_rcdf <- function(
         meta_list$meta <- meta$meta
       } else {
         all_keys <- union(names(meta_list$meta), names(meta$meta))
-        meta_list$meta <- setNames(
+        meta_list$meta <- stats::setNames(
           lapply(all_keys, function(k) {
             a <- meta_list$meta[[k]]
             b <- meta$meta[[k]]
