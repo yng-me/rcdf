@@ -66,20 +66,22 @@ write_parquet(
 
 ``` r
 if (FALSE) { # \dontrun{
+library(rcdf)
+
 data <- mtcars
 key <- "rppqM5CuEqotys4wQq/g7xh6wpIjRozcAIbI9sagwKE="
 
 temp_dir <- tempdir()
 
 # Encrypted write
-rcdf::write_parquet(
+write_parquet(
   data = data,
   path = file.path(temp_dir, "mtcars.parquet"),
   encryption_key = key
 )
 
 # Unencrypted write with gzip compression
-rcdf::write_parquet(
+write_parquet(
   data = data,
   path = file.path(temp_dir, "mtcars-gz.parquet"),
   compression = "gzip"

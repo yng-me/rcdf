@@ -2,6 +2,8 @@
 
 ## rcdf 0.1.6
 
+CRAN release: 2026-05-30
+
 #### Security fixes
 
 - [`generate_pw()`](https://yng-me.github.io/rcdf/reference/generate_pw.md):
