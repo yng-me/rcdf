@@ -18,8 +18,7 @@ write_parquet(
 
 \item{path}{Character string. Destination file path for the Parquet file.}
 
-\item{...}{Additional arguments passed to \code{arrow::write_parquet()} when
-\code{encryption_key} is \code{NULL}.}
+\item{...}{Currently unused.}
 
 \item{encryption_key}{A raw AES key as a hex string (32, 48, or 64 hex
 characters) or a base-64–encoded 256-bit key string. When \code{NULL}
@@ -30,11 +29,10 @@ the connection is reused instead of opening a new one, which avoids
 per-call setup overhead when writing many tables in a batch. The caller
 is responsible for disconnecting the connection. Default is \code{NULL}.}
 
-\item{compression}{Compression codec to use for unencrypted Parquet files.
-Any codec supported by \code{arrow::write_parquet()} is valid (e.g.
+\item{compression}{Compression codec for the Parquet file, encrypted or not.
+Any codec supported by DuckDB's Parquet writer is valid (e.g.
 \code{"zstd"}, \code{"snappy"}, \code{"gzip"}, \code{"lz4"},
-\code{"uncompressed"}). Ignored when \code{encryption_key} is set
-(DuckDB chooses the codec). Default is \code{"zstd"}.}
+\code{"uncompressed"}). Default is \code{"zstd"}.}
 }
 \value{
 \code{NULL} invisibly. The Parquet file is written to \code{path}.
@@ -42,9 +40,8 @@ Any codec supported by \code{arrow::write_parquet()} is valid (e.g.
 \description{
 Writes a data frame to a Parquet file. When \code{encryption_key} is
 supplied the file is encrypted with AES using DuckDB's native Parquet
-encryption support. Without a key the file is written by
-\code{arrow::write_parquet()} and supports any compression codec
-understood by the Arrow library.
+encryption support. Without a key the file is written unencrypted, also by
+DuckDB, using the codec given in \code{compression}.
 }
 \examples{
 \dontrun{

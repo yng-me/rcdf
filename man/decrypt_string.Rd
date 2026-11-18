@@ -11,7 +11,7 @@ decrypt_string(x, prv_key, password = NULL)
 
 \item{prv_key}{A private key object or .pem file}
 
-\item{password}{Passwor of the private key}
+\item{password}{Password of the private key (ignored when \code{prv_key} is a key object)}
 }
 \value{
 A decrpyted character of length 1

@@ -24,7 +24,10 @@ merge_rcdf(
 \item{pub_key}{Public key to encrypt the merged file. If \code{NULL}, a new RSA key pair will be generated.}
 }
 \value{
-\code{NULL} (void)
+Invisibly, a list with \code{path} (the merged file) and
+\code{password} (the password of a newly generated private key, or
+\code{NULL} when \code{pub_key} was given). The password is printed only
+in interactive sessions, so it does not end up in job logs.
 }
 \description{
 Merge multiple RCDF files

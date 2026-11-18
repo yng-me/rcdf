@@ -102,22 +102,9 @@ write_rcdf_as <- function(data, path, formats, ...) {
 #' unlink(temp_dir, force = TRUE)
 
 write_rcdf_csv <- function(data, path, ..., parent_dir = NULL) {
-
-  data <- check_if_rcdf(data)
-  path <- dir_create_new(path, parent_dir)
-
-  records <- names(data)
-
-  for(i in seq_along(records)) {
-
-    record <- records[i]
-
-    utils::write.csv(
-      x = dplyr::collect(data[[record]]),
-      file = file.path(path, paste0(record, ".csv"))
-    )
-  }
-
+  write_each_record(data, path, parent_dir, function(df, record, dir) {
+    utils::write.csv(x = df, file = file.path(dir, paste0(record, ".csv")), row.names = FALSE)
+  })
 }
 
 
@@ -148,23 +135,9 @@ write_rcdf_csv <- function(data, path, ..., parent_dir = NULL) {
 #' unlink(temp_dir, force = TRUE)
 
 write_rcdf_tsv <- function(data, path, ..., parent_dir = NULL) {
-
-  data <- check_if_rcdf(data)
-  path <- dir_create_new(path, parent_dir)
-
-  records <- names(data)
-
-  for(i in seq_along(records)) {
-
-    record <- records[i]
-
-    utils::write.table(
-      x = dplyr::collect(data[[record]]),
-      file = file.path(path, paste0(record, ".txt")),
-      sep = "\t"
-    )
-  }
-
+  write_each_record(data, path, parent_dir, function(df, record, dir) {
+    utils::write.table(x = df, file = file.path(dir, paste0(record, ".txt")), sep = "\t", row.names = FALSE)
+  })
 }
 
 
@@ -196,24 +169,9 @@ write_rcdf_tsv <- function(data, path, ..., parent_dir = NULL) {
 
 
 write_rcdf_json <- function(data, path, ..., parent_dir = NULL) {
-
-  data <- check_if_rcdf(data)
-  path <- dir_create_new(path, parent_dir)
-
-  records <- names(data)
-
-  for(i in seq_along(records)) {
-
-    record <- records[i]
-
-    jsonlite::write_json(
-      x = dplyr::collect(data[[record]]),
-      path = file.path(path, paste0(record, ".json")),
-      auto_unbox = TRUE,
-      pretty = TRUE
-    )
-  }
-
+  write_each_record(data, path, parent_dir, function(df, record, dir) {
+    jsonlite::write_json(x = df, path = file.path(dir, paste0(record, ".json")), auto_unbox = TRUE, pretty = TRUE)
+  })
 }
 
 
@@ -251,46 +209,33 @@ write_rcdf_xlsx <- function(data, path, ..., parent_dir = NULL, as_single_file =
     stop('Package "openxlsx" is required for Excel export. Install it with: install.packages("openxlsx")', call. = FALSE)
   }
 
-  data <- check_if_rcdf(data)
-  path <- dir_create_new(path, parent_dir)
-
-  records <- names(data)
-  if(as_single_file) {
-    wb <- openxlsx::createWorkbook()
+  if(!as_single_file) {
+    write_each_record(data, path, parent_dir, function(df, record, dir) {
+      openxlsx::write.xlsx(x = df, file = file.path(dir, paste0(record, ".xlsx")), ...)
+    })
+    return(invisible())
   }
 
-  for(i in seq_along(records)) {
-
-    record <- records[i]
-
-    if(as_single_file) {
-
-      openxlsx::addWorksheet(wb, sheetName = record)
-      openxlsx::writeData(wb, x = dplyr::collect(data[[record]]), sheet = record)
-
-    } else {
-      openxlsx::write.xlsx(
-        x = dplyr::collect(data[[record]]),
-        file = file.path(path, paste0(record, ".xlsx")),
-        ...
-      )
+  wb <- openxlsx::createWorkbook()
+  dir <- dir_create_new(path, parent_dir)
+  write_each_record(data, dir, NULL, function(df, record, dir) {
+    # Excel caps sheet names at 31 characters; keep truncated names unique.
+    sheet <- substr(record, 1, 31)
+    i <- 1
+    while (tolower(sheet) %in% tolower(names(wb))) {
+      sheet <- paste0(substr(record, 1, 28), "_", i)
+      i <- i + 1
     }
+    openxlsx::addWorksheet(wb, sheetName = sheet)
+    openxlsx::writeData(wb, x = df, sheet = sheet)
+  })
+
+  file <- "Book 1.xlsx"
+  if(!is.null(file_name)) {
+    file <- if (grepl('\\.xlsx$', file_name)) file_name else paste0(file_name, ".xlsx")
   }
 
-  if(as_single_file) {
-
-    file <- "Book 1.xlsx"
-    if(!is.null(file_name)) {
-      file <- file_name
-
-      if(!grepl('\\.xlsx$', file_name)) {
-        file <- paste0(file, ".xlsx")
-      }
-    }
-
-    openxlsx::saveWorkbook(wb, file = file.path(path, file), ...)
-
-  }
+  openxlsx::saveWorkbook(wb, file = file.path(dir, file), ...)
 }
 
 
@@ -321,23 +266,9 @@ write_rcdf_xlsx <- function(data, path, ..., parent_dir = NULL, as_single_file =
 #' unlink(temp_dir, force = TRUE)
 
 write_rcdf_dta <- function(data, path, ..., parent_dir = NULL) {
-
-  data <- check_if_rcdf(data)
-  path <- dir_create_new(path, parent_dir)
-
-  records <- names(data)
-
-  for(i in seq_along(records)) {
-
-    record <- records[i]
-
-    haven::write_dta(
-      data = dplyr::collect(data[[record]]),
-      path = file.path(path, paste0(record, ".dta")),
-      ...
-    )
-  }
-
+  write_each_record(data, path, parent_dir, function(df, record, dir) {
+    haven::write_dta(data = df, path = file.path(dir, paste0(record, ".dta")), ...)
+  })
 }
 
 
@@ -369,23 +300,9 @@ write_rcdf_dta <- function(data, path, ..., parent_dir = NULL) {
 
 
 write_rcdf_sav <- function(data, path, ..., parent_dir = NULL) {
-
-  data <- check_if_rcdf(data)
-  path <- dir_create_new(path, parent_dir)
-
-  records <- names(data)
-
-  for(i in seq_along(records)) {
-
-    record <- records[i]
-
-    haven::write_sav(
-      data = dplyr::collect(data[[record]]),
-      path = file.path(path, paste0(record, ".sav")),
-      ...
-    )
-  }
-
+  write_each_record(data, path, parent_dir, function(df, record, dir) {
+    haven::write_sav(data = df, path = file.path(dir, paste0(record, ".sav")), ...)
+  })
 }
 
 
@@ -422,26 +339,24 @@ write_rcdf_sqlite <- function(data, path, db_name = "cbms_data", ..., parent_dir
     stop('Package "RSQLite" is required for SQLite export. Install it with: install.packages("RSQLite")', call. = FALSE)
   }
 
-  data <- check_if_rcdf(data)
-  path <- dir_create_new(path, parent_dir)
+  dir <- dir_create_new(path, parent_dir)
+  conn <- DBI::dbConnect(RSQLite::SQLite(), file.path(dir, paste0(db_name, ".db")))
+  on.exit(DBI::dbDisconnect(conn), add = TRUE)
 
-  conn <- DBI::dbConnect(RSQLite::SQLite(), file.path(path, paste0(db_name, ".db")))
-
-  records <- names(data)
-
-  for(i in seq_along(records)) {
-
-    record <- records[i]
-
-    DBI::dbWriteTable(
-      conn = conn,
-      name = record,
-      value = dplyr::collect(data[[record]]),
-      ...
-    )
-
-  }
-
-  on.exit(DBI::dbDisconnect(conn, force = TRUE), add = TRUE)
-
+  write_each_record(data, dir, NULL, function(df, record, dir) {
+    DBI::dbWriteTable(conn = conn, name = record, value = df, ...)
+  })
 }
+
+
+# Shared record loop for every export writer: collects each record once and
+# hands it to `write_fn(df, record, dir)`. `__data_dictionary` is metadata, not a record.
+write_each_record <- function(data, path, parent_dir, write_fn) {
+  data <- check_if_rcdf(data)
+  dir <- dir_create_new(path, parent_dir)
+  for (record in setdiff(names(data), "__data_dictionary")) {
+    write_fn(dplyr::collect(data[[record]]), record, dir)
+  }
+  invisible()
+}
+

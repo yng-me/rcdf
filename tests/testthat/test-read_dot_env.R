@@ -101,3 +101,11 @@ test_that("read_env is deprecated and delegates to read_dot_env", {
   result <- suppressWarnings(read_env(temp_env_file))
   expect_equal(result$KEY, "value")
 })
+
+test_that("read_dot_env allows spaces around = and keeps spaces inside quotes", {
+  f <- withr::local_tempfile(lines = c("PASSWORD = 1234  ", "QUOTED = \" a b \"", "export TOKEN=xyz"))
+  env <- read_dot_env(f)
+  expect_equal(env$PASSWORD, "1234")
+  expect_equal(env$QUOTED, " a b ")
+  expect_equal(env$TOKEN, "xyz")
+})

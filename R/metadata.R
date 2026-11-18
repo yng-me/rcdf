@@ -81,8 +81,15 @@ add_metadata <- function(data, metadata, ..., set_data_types = FALSE) {
           if (is_int && !is.integer(labels) && grepl("^\\d{1,}$", labels[1])) {
             labels <- as.integer(labels)
           }
-          if (!is_int && grepl("^\\d{1,}$", col[1]) && is.integer(labels)) {
+          # Convert only when every value is a plain integer that survives the
+          # round trip: no leading zeros ("012"), no letters, no decimals, fits in int.
+          vals <- col[!is.na(col)]
+          if (!is_int && is.integer(labels) && length(vals) > 0 &&
+              all(grepl("^(0|[1-9][0-9]{0,8})$", vals))) {
             col <- as.integer(col)
+          }
+          if (is.character(col) && !is.character(labels)) {
+            labels <- as.character(labels)
           }
           names(labels) <- valueset$label
           col <- haven::labelled(x = col, labels = labels, label = dictionary$label[i])
@@ -176,14 +183,6 @@ read_metadata <- function(path) {
 
 get_rcdf_metadata <- function(path, name = NULL, key) {
 
-  if(!file.exists(path)) {
-    stop(paste0("Specified RCDF file does not exist: ", path))
-  }
-
-  if(!grepl("\\.rcdf$", path)) {
-    stop(paste0("Not a valid RCDF file: ", path))
-  }
-
   ext <- extract_rcdf(path, meta_only = TRUE)
   ext$cleanup()
 
@@ -217,13 +216,12 @@ get_rcdf_metadata <- function(path, name = NULL, key) {
 
 get_attr <- function(rcdf, attr) {
 
-  attr_key <- strsplit(attr, "\\.")[[1]]
-
-  if(length(attr_key) > 1) {
-    attributes(rcdf)$metadata[[attr_key[1]]][[attr_key[2]]]
-  } else {
-    attributes(rcdf)$metadata[[attr]]
-  }
+  # Walk any depth ("a.b.c"); a missing step gives NULL instead of an error.
+  Reduce(
+    function(x, key) if (is.list(x)) x[[key]] else NULL,
+    strsplit(attr, ".", fixed = TRUE)[[1]],
+    attributes(rcdf)$metadata
+  )
 
 }
 
@@ -253,28 +251,8 @@ get_attr <- function(rcdf, attr) {
 #' meta$version
 #' meta$created_at
 get_attrs <- function(path) {
-
-  if(!file.exists(path)) {
-    stop(paste0("Specified RCDF file does not exist: ", path))
-  }
-
-  if(!grepl("\\.rcdf$", path)) {
-    stop(paste0("Not a valid RCDF file: ", path))
-  }
-
-  extracted_dir <- tempfile()
-  dir.create(extracted_dir, recursive = TRUE, showWarnings = FALSE)
-
-  zip::unzip(path, exdir = extracted_dir, junkpaths = TRUE)
-  meta_file <- file.path(extracted_dir, "metadata.json")
-
-  if (!file.exists(meta_file)) {
-    unlink(extracted_dir, recursive = TRUE, force = TRUE)
-    stop("metadata.json not found inside RCDF archive.")
-  }
-
-  meta <- jsonlite::read_json(meta_file, simplifyVector = TRUE)
-  unlink(extracted_dir, recursive = TRUE, force = TRUE)
-  return(meta)
+  ext <- extract_rcdf(path, meta_only = TRUE)
+  ext$cleanup()
+  ext$meta
 }
 

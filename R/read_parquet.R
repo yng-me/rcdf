@@ -28,26 +28,17 @@
 
 read_parquet <- function(path, ..., decryption_key = NULL, as_arrow_table = FALSE, metadata = NULL) {
 
-  if(is.null(decryption_key)) {
-    pq_conn_r <- open_duckdb_connection()
-    on.exit(DBI::dbDisconnect(pq_conn_r, shutdown = TRUE), add = TRUE)
-    data <- DBI::dbGetQuery(
-      pq_conn_r,
-      sprintf("SELECT * FROM read_parquet(%s)", sql_literal(pq_conn_r, path))
-    )
-    if (!is.null(metadata)) data <- add_metadata(data, metadata)
-    if (as_arrow_table) {
-      if (!requireNamespace("arrow", quietly = TRUE)) {
-        stop('Package "arrow" is required for as_arrow_table = TRUE. Install it with: install.packages("arrow")', call. = FALSE)
-      }
-      data <- arrow::arrow_table(data)
-    }
-    return(data)
-  }
-
   pq_conn <- open_duckdb_connection()
   on.exit(DBI::dbDisconnect(conn = pq_conn, shutdown = TRUE), add = TRUE)
-  data <- dplyr::collect(read_parquet_tbl(pq_conn, file = path, decryption_key = decryption_key))
+
+  if(is.null(decryption_key)) {
+    data <- DBI::dbGetQuery(
+      pq_conn,
+      sprintf("SELECT * FROM read_parquet(%s)", sql_literal(pq_conn, path))
+    )
+  } else {
+    data <- dplyr::collect(read_parquet_tbl(pq_conn, file = path, decryption_key = decryption_key))
+  }
 
   if(!is.null(metadata)) { data <- add_metadata(data, metadata) }
 
@@ -97,39 +88,8 @@ read_parquet_tbl <- function(conn, file, decryption_key, table_name = NULL, colu
     table_name <- tools::file_path_sans_ext(basename(file))
   }
 
-  tryCatch(
-    DBI::dbExecute(
-      conn,
-      sprintf(
-        "PRAGMA add_parquet_key(%s, %s)",
-        sql_literal(conn, secret$key),
-        sql_literal(conn, secret$value)
-      )
-    ),
-    error = function(e) stop("Failed to register parquet decryption key.", call. = FALSE)
-  )
-
-  if(!is.null(columns)) {
-
-    col_idents <- paste(vapply(columns, function(c) sql_ident(conn, c), character(1)), collapse = ", ")
-    q <- sprintf(
-      "CREATE TABLE %s AS\n      SELECT %s\n      FROM read_parquet(\n        %s,\n        encryption_config = { footer_key: %s }\n      );",
-      sql_ident(conn, table_name),
-      col_idents,
-      sql_literal(conn, file),
-      sql_literal(conn, secret$key)
-    )
-
-  } else {
-    q <- sprintf(
-      "CREATE TABLE %s AS\n      SELECT * FROM read_parquet(\n        %s,\n        encryption_config = { footer_key: %s }\n      );",
-      sql_ident(conn, table_name),
-      sql_literal(conn, file),
-      sql_literal(conn, secret$key)
-    )
-  }
-
-  DBI::dbExecute(conn, q)
+  register_parquet_key(conn, secret)
+  load_encrypted_parquet(conn, table_name, file, secret$key, columns = columns)
 
   dplyr::tbl(conn, table_name)
 

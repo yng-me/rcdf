@@ -70,7 +70,7 @@ encrypt_string <- function(x, pub_key) {
 #'
 #' @param x Encrypted base64-encoded string
 #' @param prv_key A private key object or .pem file
-#' @param password Passwor of the private key
+#' @param password Password of the private key (ignored when \code{prv_key} is a key object)
 #'
 #' @returns A decrpyted character of length 1
 #' @export
@@ -84,7 +84,9 @@ encrypt_string <- function(x, pub_key) {
 
 decrypt_string <- function(x, prv_key, password = NULL) {
 
-  if(!is.null(password)) {
+  if(inherits(prv_key, "key")) {
+    key <- prv_key
+  } else if(!is.null(password)) {
     key <- openssl::read_key(file = prv_key, password = password)
   } else {
     key <- openssl::read_key(file = prv_key)
@@ -93,7 +95,22 @@ decrypt_string <- function(x, prv_key, password = NULL) {
   x |>
     openssl::base64_decode() |>
     openssl::rsa_decrypt(key) |>
-    unserialize()
+    unserialize_string()
+}
+
+# unserialize() for bytes that come from an archive. Anyone with the public key
+# can craft them, and on R < 4.4 unserializing a promise runs code
+# (CVE-2024-27322). Only a plain character vector (type 16, no attributes) passes.
+unserialize_string <- function(x) {
+  int_at <- function(i) readBin(x[i:(i + 3)], "integer", size = 4, endian = "big")
+  ok <- length(x) >= 18 && identical(x[1:2], charToRaw("X\n"))
+  if (ok) {
+    version <- int_at(3)
+    flags_at <- if (version == 3L) 19 + int_at(15) else 15
+    ok <- version %in% 2:3 && length(x) >= flags_at + 3 && int_at(flags_at) == 16L
+  }
+  if (!ok) stop("Unexpected content in encrypted RCDF key; refusing to load it.", call. = FALSE)
+  unserialize(x)
 }
 
 

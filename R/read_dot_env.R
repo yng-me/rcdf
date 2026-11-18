@@ -59,10 +59,10 @@ parse_dot_line <- function(line) {
   line_regex <- paste0(
     "^\\s*",
     "(?<export>export\\s+)?", # export, if given
-    "(?<key>[^=]+)",          # variable name
-    "=",                      # equals sign
+    "(?<key>[^=]+?)",         # variable name
+    "\\s*=\\s*",              # equals sign, spaces around it allowed
     "(?<q>['\"]?)",           # quote if present
-    "(?<value>.*)",           # value
+    "(?<value>.*?)",          # value (lazy, so trailing spaces are dropped)
     "\\g{q}",                 # the same quote again
     "\\s*",                   # trailing whitespace
     "$"                       # end of line

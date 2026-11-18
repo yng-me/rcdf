@@ -8,7 +8,12 @@
 #' @param path The path where the RCDF file will be written. The file will be saved with a \code{.rcdf} extension if not already specified.
 #' @param pub_key The public RSA key used to encrypt the AES encryption keys.
 #' @param ... Additional arguments passed to helper functions if needed.
-#' @param metadata A list of metadata to be included in the RCDF file.
+#' @param metadata A list of metadata to be included in the RCDF file. Recognised fields:
+#'   \code{dictionary} (a data frame, or a path to a .json/.csv/.xlsx/.parquet file),
+#'   \code{primary_key} (a data frame with \code{file} and \code{pk_field_name}),
+#'   \code{meta}, \code{area_names}, \code{summary_statistics}, and
+#'   \code{created_at} (keeps an original creation time, e.g. when re-writing or
+#'   merging; the write time is then stored as \code{updated_at}).
 #' @param ignore_duplicates A \code{logical} flag. If \code{TRUE}, a warning is issued when duplicates are found. If \code{FALSE}, the function stops with an error.
 #'
 #' @return NULL. The function writes the data to a \code{.rcdf} file at the specified path.
@@ -44,7 +49,10 @@
 
 write_rcdf <- function(data, path, pub_key, ..., metadata = list(), ignore_duplicates = TRUE) {
 
-  dir_temp <- tempdir()
+  # Private staging dir: a shared tempdir() would let leftovers from an earlier
+  # failed write get packed into this archive.
+  dir_temp <- tempfile("rcdf_")
+  on.exit(unlink(dir_temp, recursive = TRUE, force = TRUE), add = TRUE)
 
   key_uuid <- generate_uuid()
   key_pub <-  openssl::read_pubkey(pub_key)
@@ -52,9 +60,8 @@ write_rcdf <- function(data, path, pub_key, ..., metadata = list(), ignore_dupli
 
   pq_files <- write_rcdf_parquet(
     data = data,
-    path = dir_temp,
+    path = rcdf_lineage_dir(dir_temp),
     encryption_key = key,
-    parent_dir = 'lineage',
     primary_key = metadata$primary_key,
     ignore_duplicates = ignore_duplicates
   )
@@ -67,7 +74,10 @@ write_rcdf <- function(data, path, pub_key, ..., metadata = list(), ignore_dupli
   )
 
   if(!is.null(metadata$primary_key)) {
-    checksum <- merge(checksum, metadata$primary_key, by = "file", all.x = TRUE)
+    # Checksum rows are keyed "<record>.parquet"; accept either form from the caller.
+    pk <- metadata$primary_key
+    pk$file <- paste0(rcdf_record_name(pk$file), ".parquet")
+    checksum <- merge(checksum, pk, by = "file", all.x = TRUE)
   }
 
   dictionary <- NULL
@@ -81,9 +91,7 @@ write_rcdf <- function(data, path, pub_key, ..., metadata = list(), ignore_dupli
     }
 
     required_cols <- c("variable_name", "label", "type")
-    required_cols_which <- which(required_cols %in% names(metadata$dictionary))
-
-    if (length(required_cols_which) != length(required_cols)) {
+    if (!all(required_cols %in% names(dictionary))) {
       dictionary <- NULL
     }
   }
@@ -102,10 +110,12 @@ write_rcdf <- function(data, path, pub_key, ..., metadata = list(), ignore_dupli
     summary_statistics <- metadata$summary_statistics
   }
 
+  current_time <- substr(as.character(Sys.time()), 1, 19)
+
   meta <- list(
     log_id = key_uuid,
-    key =  encrypt_string(key, pub_key = pub_key),
-    created_at = substr(as.character(Sys.time()), 1, 19),
+    key =  encrypt_string(key, pub_key = key_pub),
+    created_at = current_time,
     meta = meta,
     area_names = area_names,
     summary_statistics = summary_statistics,
@@ -119,35 +129,14 @@ write_rcdf <- function(data, path, pub_key, ..., metadata = list(), ignore_dupli
     checksum = checksum
   )
 
-  dir_zip <- file.path(dir_temp, key_uuid)
-  dir.create(dir_zip, recursive = TRUE, showWarnings = FALSE)
+  if(!is.null(metadata$created_at)) {
+    meta$created_at <- metadata$created_at
+    meta$updated_at <- current_time
+  }
 
-  jsonlite::write_json(
-    x =  meta,
-    path = file.path(dir_zip, 'metadata.json'),
-    pretty = TRUE,
-    auto_unbox = TRUE
-  )
+  if(!grepl('\\.rcdf$', path)) { path <- paste0(path, '.rcdf') }
 
-  zip::zip(
-    zipfile = file.path(dir_zip, 'lineage.zip'),
-    files = file.path(dir_temp, 'lineage'),
-    include_directories = FALSE,
-    mode = "cherry-pick"
-  )
-
-  if(!grepl('.rcdf$', path)) { path <- paste0(path, '.rcdf') }
-
-  zip::zip(
-    zipfile = path,
-    files = dir_zip,
-    include_directories = F,
-    mode = "cherry-pick"
-  )
-
-  unlink(dir_zip, force = TRUE, recursive = TRUE)
-  unlink(file.path(dir_temp, 'lineage'), force = TRUE, recursive = TRUE)
-  unlink(file.path(dir_temp, '__rcdf_temp__'), force = TRUE, recursive = TRUE)
+  pack_rcdf(dir_temp, meta, path)
 
   return(data)
 
