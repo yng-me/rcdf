@@ -41,7 +41,12 @@ write_rcdf(
 
 - metadata:
 
-  A list of metadata to be included in the RCDF file.
+  A list of metadata to be included in the RCDF file. Recognised fields:
+  `dictionary` (a data frame, or a path to a .json/.csv/.xlsx/.parquet
+  file), `primary_key` (a data frame with `file` and `pk_field_name`),
+  `meta`, `area_names`, `summary_statistics`, and `created_at` (keeps an
+  original creation time, e.g. when re-writing or merging; the write
+  time is then stored as `updated_at`).
 
 - ignore_duplicates:
 

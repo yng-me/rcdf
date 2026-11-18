@@ -20,7 +20,7 @@ decrypt_string(x, prv_key, password = NULL)
 
 - password:
 
-  Passwor of the private key
+  Password of the private key (ignored when `prv_key` is a key object)
 
 ## Value
 

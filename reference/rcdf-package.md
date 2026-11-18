@@ -20,3 +20,8 @@ Useful links:
 
 **Maintainer**: Bhas Abdulsamad <aeabdulsamad@gmail.com>
 ([ORCID](https://orcid.org/0009-0002-5891-8124)) \[copyright holder\]
+
+Authors:
+
+- Bhas Abdulsamad <aeabdulsamad@gmail.com>
+  ([ORCID](https://orcid.org/0009-0002-5891-8124)) \[copyright holder\]

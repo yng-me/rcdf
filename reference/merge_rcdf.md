@@ -41,7 +41,10 @@ merge_rcdf(
 
 ## Value
 
-`NULL` (void)
+Invisibly, a list with `path` (the merged file) and `password` (the
+password of a newly generated private key, or `NULL` when `pub_key` was
+given). The password is printed only in interactive sessions, so it does
+not end up in job logs.
 
 ## Examples
 

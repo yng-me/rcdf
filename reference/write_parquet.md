@@ -2,9 +2,8 @@
 
 Writes a data frame to a Parquet file. When `encryption_key` is supplied
 the file is encrypted with AES using DuckDB's native Parquet encryption
-support. Without a key the file is written by
-[`arrow::write_parquet()`](https://arrow.apache.org/docs/r/reference/write_parquet.html)
-and supports any compression codec understood by the Arrow library.
+support. Without a key the file is written unencrypted, also by DuckDB,
+using the codec given in `compression`.
 
 ## Usage
 
@@ -31,9 +30,7 @@ write_parquet(
 
 - ...:
 
-  Additional arguments passed to
-  [`arrow::write_parquet()`](https://arrow.apache.org/docs/r/reference/write_parquet.html)
-  when `encryption_key` is `NULL`.
+  Currently unused.
 
 - encryption_key:
 
@@ -51,12 +48,9 @@ write_parquet(
 
 - compression:
 
-  Compression codec to use for unencrypted Parquet files. Any codec
-  supported by
-  [`arrow::write_parquet()`](https://arrow.apache.org/docs/r/reference/write_parquet.html)
-  is valid (e.g. `"zstd"`, `"snappy"`, `"gzip"`, `"lz4"`,
-  `"uncompressed"`). Ignored when `encryption_key` is set (DuckDB
-  chooses the codec). Default is `"zstd"`.
+  Compression codec for the Parquet file, encrypted or not. Any codec
+  supported by DuckDB's Parquet writer is valid (e.g. `"zstd"`,
+  `"snappy"`, `"gzip"`, `"lz4"`, `"uncompressed"`). Default is `"zstd"`.
 
 ## Value
 

@@ -71,7 +71,11 @@ read_rcdf(
   DuckDB-backed table instead of being collected into memory. The
   underlying DuckDB connection is kept alive; call
   [`collect()`](https://yng-me.github.io/rcdf/reference/collect.md) on
-  each element when you are ready to materialise. Default is `FALSE`.
+  each element when you are ready to materialise. When you are done,
+  close it with
+  `DBI::dbDisconnect(dbplyr::remote_con(x[[1]]), shutdown = TRUE)`;
+  otherwise it stays open (holding the decrypted data in memory) until R
+  garbage-collects it. Default is `FALSE`.
 
 - n_threads:
 

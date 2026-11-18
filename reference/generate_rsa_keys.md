@@ -19,7 +19,7 @@ generate_rsa_keys(path, ..., password = NULL, which = "public", prefix = NULL)
 - ...:
 
   Additional arguments passed to the
-  [`openssl::rsa_keygen()`](https://jeroen.r-universe.dev/openssl/reference/keygen.html)
+  [`openssl::rsa_keygen()`](https://rdrr.io/pkg/openssl/man/keygen.html)
   function, such as key size.
 
 - password:
@@ -48,5 +48,5 @@ A character string representing the file path of the generated key
 # Generate both public and private RSA keys and save them to the temp directory
 path_to <- tempdir()
 generate_rsa_keys(path = path_to, password = "securepassword")
-#> [1] "/tmp/RtmpwQlppM/public-key.pem"
+#> [1] "/tmp/RtmpUI2AMC/public-key.pem"
 ```
