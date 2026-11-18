@@ -11,7 +11,7 @@
 #' @param ignore_duplicates A \code{logical} flag. If \code{TRUE}, a warning is issued when duplicates are found, based on the primary key/s defined during creation of RCDF file. If \code{FALSE}, the function stops with an error.
 #' @param recursive Logical. If \code{TRUE} and \code{path} is a directory, the function will search recursively for \code{.rcdf} files.
 #' @param return_meta Logical. If \code{TRUE}, the metadata will be returned as an attribute of the RCDF object.
-#' @param lazy Logical. If \code{TRUE}, each dataset is returned as a lazy \code{rcdf_tbl_db} DuckDB-backed table instead of being collected into memory. The underlying DuckDB connection is kept alive; call \code{collect()} on each element when you are ready to materialise. Default is \code{FALSE}.
+#' @param lazy Logical. If \code{TRUE}, each dataset is returned as a lazy \code{rcdf_tbl_db} DuckDB-backed table instead of being collected into memory. The underlying DuckDB connection is kept alive; call \code{collect()} on each element when you are ready to materialise. When you are done, close it with \code{DBI::dbDisconnect(dbplyr::remote_con(x[[1]]), shutdown = TRUE)}; otherwise it stays open (holding the decrypted data in memory) until R garbage-collects it. Default is \code{FALSE}.
 #' @param n_threads Integer or \code{NULL}. Number of DuckDB threads to use for reading. \code{NULL} (default) lets DuckDB choose based on available cores.
 #'
 #' @return An RCDF object, which is a list of Parquet files (one for each record) along with attached metadata.
@@ -54,67 +54,56 @@ read_rcdf <- function(
   conn <- open_duckdb_connection(n_threads = n_threads)
   on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 
+  # Extracted parquet files live until read_rcdf() returns.
+  cleanups <- list()
+  run_cleanups <- function() for (f in cleanups) f()
+  on.exit(run_cleanups(), add = TRUE)
+
   meta_list <- list()
-  data_dictionary <- metadata$dictionary
+  # One row per parquet file: its record and the key label of its archive.
+  sources <- data.frame(record = character(0), file = character(0), key_label = character(0))
 
   for (i in seq_along(rcdf_files)) {
 
-    meta <- process_rcdf_file(
+    key_label <- paste0("rcdf_key_", i)
+    src <- open_rcdf_file(
       conn = conn,
       rcdf_file = rcdf_files[i],
-      key = creds$keys[i],
+      key = creds$keys[[i]],
       password = creds$passwords[i],
-      metadata = metadata,
-      ignore_duplicates = ignore_duplicates
+      key_label = key_label
     )
+    cleanups[[i]] <- src$cleanup
+    sources <- rbind(sources, data.frame(
+      record = rcdf_record_name(src$files), file = src$files, key_label = rep(key_label, length(src$files))
+    ))
 
-    # Collect Metadata
-    meta_list$log_id     <- c(meta_list$log_id, meta$log_id)
-    meta_list$created_at <- c(meta_list$created_at, meta$created_at)
-    meta_list$version    <- c(meta_list$version, meta$version)
-
-    if (!is.null(meta$area_names)) {
-      if (is.null(meta_list$area_names)) {
-        meta_list$area_names <- meta$area_names
-      } else {
-        meta_list$area_names <- rbind(meta_list$area_names, meta$area_names)
-      }
-    }
-
-    if (!is.null(meta$meta)) {
-      if (is.null(meta_list$meta)) {
-        meta_list$meta <- meta$meta
-      } else {
-        all_keys <- union(names(meta_list$meta), names(meta$meta))
-        meta_list$meta <- stats::setNames(
-          lapply(all_keys, function(k) {
-            a <- meta_list$meta[[k]]
-            b <- meta$meta[[k]]
-            if (is.null(a)) return(b)
-            if (is.null(b)) return(a)
-            if (is.data.frame(a) && is.data.frame(b)) return(rbind(a, b))
-            b
-          }),
-          all_keys
-        )
-      }
-    }
-
-    # Dictionary merge
-    if (!is.null(meta$dictionary) &&
-        is.null(metadata$dictionary)) {
-
-      if (is.null(data_dictionary)) {
-        data_dictionary <- meta$dictionary
-      } else {
-        data_dictionary <- rbind(data_dictionary, meta$dictionary)
-      }
-    }
+    meta_list <- combine_rcdf_meta(meta_list, src$meta)
   }
+
+  # A dictionary passed by the caller replaces the ones stored in the archives.
+  data_dictionary <- metadata$dictionary
+  if (is.null(data_dictionary)) data_dictionary <- meta_list$dictionary
+  stored_pk <- meta_list$primary_key
+  meta_list$dictionary <- NULL
+  meta_list$primary_key <- NULL
+
+  # One table per record; same-named records across files are combined.
+  # Eager reads use views so data goes from parquet straight into R (one copy,
+  # not two). Lazy reads copy into DuckDB, since the files are deleted on return.
+  for (record in unique(sources$record)) {
+    hit <- sources$record == record
+    load_encrypted_parquet(conn, record, sources$file[hit], sources$key_label[hit], view = !lazy)
+  }
+
+  # Checked after all files load, so duplicates across files are caught too.
+  pk <- resolve_primary_key(metadata, stored_pk)
+  if (!is.null(pk)) check_duplicate_keys(conn, pk, ignore_duplicates)
 
   if (lazy) {
     # Return lazy DuckDB-backed tables. The connection is kept open; the
     # caller is responsible for collecting when ready.
+    run_cleanups()
     on.exit(NULL, add = FALSE)  # cancel the auto-disconnect
     pq <- collect_tables_lazy(conn, data_dictionary)
   } else {

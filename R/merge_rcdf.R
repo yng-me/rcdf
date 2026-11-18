@@ -6,7 +6,10 @@
 #' @param merged_file_path File path or name of the merged RCDF file.
 #' @param pub_key Public key to encrypt the merged file. If \code{NULL}, a new RSA key pair will be generated.
 #'
-#' @returns \code{NULL} (void)
+#' @returns Invisibly, a list with \code{path} (the merged file) and
+#'   \code{password} (the password of a newly generated private key, or
+#'   \code{NULL} when \code{pub_key} was given). The password is printed only
+#'   in interactive sessions, so it does not end up in job logs.
 #' @export
 #'
 #' @examples
@@ -48,6 +51,8 @@ merge_rcdf <- function(rcdf_files, decryption_keys, passwords, merged_file_path,
     merged_file_path <- paste0(merged_file_path, '.rcdf')
   }
 
+  pw <- NULL
+
   if(is.null(pub_key)) {
 
     pw <- generate_pw(32)
@@ -61,10 +66,10 @@ merge_rcdf <- function(rcdf_files, decryption_keys, passwords, merged_file_path,
       password = pw
     )
 
-    alert <- path_up
-    alert_pw <- pw
-    message(sprintf("Generated new RSA keys in: %s", alert))
-    message(sprintf("Password for decryption key: %s", alert_pw))
+    message(sprintf("Generated new RSA keys in: %s", path_up))
+    if (interactive()) {
+      message(sprintf("Password for decryption key: %s", pw))
+    }
 
   }
 
@@ -78,10 +83,13 @@ merge_rcdf <- function(rcdf_files, decryption_keys, passwords, merged_file_path,
     metadata = list(
       dictionary = dcf,
       meta = meta$meta,
-      area_names = meta$area_names
+      area_names = meta$area_names,
+      summary_statistics = meta$summary_statistics,
+      # Earliest source date; write_rcdf() then records the merge time as updated_at.
+      created_at = if (length(meta$created_at) > 0) min(meta$created_at)
     )
   )
 
-  return(invisible(NULL))
+  invisible(list(path = merged_file_path, password = pw))
 
 }

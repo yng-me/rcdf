@@ -96,13 +96,18 @@ generate_pw <- function(length = 16, special_chr = TRUE) {
     pw <- c(pw, "!", "#", "@", "$", "%", "&", "^", "-", "_", "=", "(", ")", "*", "+", "?", "<", ">")
   }
 
-  # Use a cryptographically secure RNG: draw one random byte per character
-  # and use modular reduction to pick an index.
+  # Cryptographically secure bytes. Bytes at or above `limit` are rejected so
+  # the modulo maps every pool entry with equal probability (no modulo bias).
   n_choices <- length(pw)
-  rand_bytes <- as.integer(openssl::rand_bytes(length))
-  indices <- (rand_bytes %% n_choices) + 1L
+  limit <- 256L - 256L %% n_choices
+  indices <- integer(0)
 
-  paste0(pw[indices], collapse = "")
+  while (length(indices) < length) {
+    bytes <- as.integer(openssl::rand_bytes(2L * length))
+    indices <- c(indices, bytes[bytes < limit] %% n_choices + 1L)
+  }
+
+  paste0(pw[indices[seq_len(length)]], collapse = "")
 
 }
 
@@ -182,6 +187,14 @@ sql_ident <- function(conn, x) {
   as.character(DBI::dbQuoteIdentifier(conn, x))
 }
 
+# Primary-key columns for `record`. `pk` is a data frame with `file` (record
+# name, with or without ".parquet") and `pk_field_name` ("a" or "a, b").
+pk_columns <- function(pk, record) {
+  fields <- pk$pk_field_name[rcdf_record_name(pk$file) == record]
+  if (length(fields) == 0 || is.na(fields[1])) return(character(0))
+  trimws(strsplit(fields[1], ",")[[1]])
+}
+
 dir_create_new <- function(path, parent_dir = NULL) {
   if(!is.null(parent_dir)) {
     path <- file.path(path, parent_dir)
@@ -199,7 +212,7 @@ decrypt_info_aes <- function(data, key = list()) {
   aes_iv <- key$aes_iv
 
   if(is.null(aes_key)) {
-    return(unserialize(data))
+    return(unserialize_string(data))
   }
 
   if(is.null(aes_iv)) {
@@ -210,7 +223,7 @@ decrypt_info_aes <- function(data, key = list()) {
       iv = NULL
     )
 
-    return(unserialize(value))
+    return(unserialize_string(value))
 
   }
 
@@ -220,15 +233,15 @@ decrypt_info_aes <- function(data, key = list()) {
     iv = hex_to_raw(aes_iv)
   )
 
-  unserialize(value)
+  unserialize_string(value)
 
 }
 
 extract_key <- function(meta) {
 
-  if(!is.null(meta$key)) {
+  if(!is.null(meta[["key"]])) {  # [[ ]]: `$` would partially match legacy `key_app`
 
-    secret <- normalize_key_value(meta$key)
+    secret <- normalize_key_value(meta[["key"]])
 
     return(
       list(
@@ -309,6 +322,13 @@ normalize_key_value <- function(value) {
 
       key_length <- 8 * nchar(value)
 
+      # 32 hex chars are passed as-is: DuckDB reads them as a 32-byte key, and
+      # existing files depend on that. 48 and 64 are too long to pass as-is, so
+      # they are decoded to 24/32 bytes and passed as base64.
+      if (nchar(value) > 32) {
+        value <- openssl::base64_encode(hex_to_raw(value))
+      }
+
       return(
         list(
           key = paste0("key", key_length),
@@ -339,48 +359,23 @@ decrypt_key <- function(data, prv_key, password = NULL) {
 
   meta <- extract_key(data)
 
-  if(inherits(prv_key, 'rsa')) {
+  is_rsa <- inherits(prv_key, "key") ||
+    (is.character(prv_key) && length(prv_key) == 1 && grepl("\\.pem$", prv_key))
 
-    key <- meta$key
-    value <- openssl::base64_decode(meta$value) |>
-      openssl::rsa_decrypt(key, password = password) |>
-      unserialize()
-
-    if(meta$legacy) {
-
-      key <- openssl::base64_decode(meta$key) |>
-        openssl::rsa_decrypt(key, password = password) |>
-        unserialize()
-
-    }
-
-  } else if (inherits(prv_key, 'character')) {
-
-    if(grepl('.pem$', prv_key)) {
-
-      value <- decrypt_string(meta$value, prv_key = prv_key, password = password)
-      key <- meta$key
-
-      if(meta$legacy) {
-        key <- decrypt_string(meta$key, prv_key = prv_key, password = password)
-      }
-
-    } else {
-
-      # Legacy
-      key <- decrypt_info_aes(meta$key, key = list(aes_key = prv_key))
-      value <- decrypt_info_aes(meta$value, key = list(aes_key = key))
-
-    }
-
+  if (is_rsa) {
+    # RSA private key (object or .pem path): `value` is always RSA-wrapped;
+    # in legacy archives the key label is wrapped too.
+    key <- if (meta$legacy) decrypt_string(meta$key, prv_key, password) else meta$key
+    return(list(key = key, value = decrypt_string(meta$value, prv_key, password)))
   }
 
-  return(
-    list(
-      key = key,
-      value = value
-    )
-  )
+  if (is.character(prv_key) && length(prv_key) == 1) {
+    # Legacy: AES passphrase.
+    key <- decrypt_info_aes(meta$key, key = list(aes_key = prv_key))
+    return(list(key = key, value = decrypt_info_aes(meta$value, key = list(aes_key = key))))
+  }
+
+  stop("`decryption_key` must be an RSA private key object, a path to a .pem file, or a legacy key string.", call. = FALSE)
 }
 
 open_duckdb_connection <- function(n_threads = NULL) {
@@ -396,25 +391,4 @@ open_duckdb_connection <- function(n_threads = NULL) {
   )
 
   conn
-}
-
-
-# Load the full crypto module needed for AES-encrypted Parquet writes.
-# Tries httpfs first (OpenSSL-backed); falls back to force_mbedtls_unsafe
-# (DuckDB's built-in mbedtls) so that writes succeed even when httpfs is
-# not installed in the current DuckDB distribution.
-load_duckdb_crypto <- function(conn) {
-  loaded <- tryCatch({
-    DBI::dbExecute(conn, "LOAD httpfs")
-    TRUE
-  }, error = function(e) FALSE)
-
-  if (!loaded) {
-    tryCatch(
-      DBI::dbExecute(conn, "SET force_mbedtls_unsafe = 'true'"),
-      error = function(e) NULL
-    )
-  }
-
-  invisible(NULL)
 }

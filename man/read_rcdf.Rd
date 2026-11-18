@@ -34,7 +34,7 @@ read_rcdf(
 
 \item{return_meta}{Logical. If \code{TRUE}, the metadata will be returned as an attribute of the RCDF object.}
 
-\item{lazy}{Logical. If \code{TRUE}, each dataset is returned as a lazy \code{rcdf_tbl_db} DuckDB-backed table instead of being collected into memory. The underlying DuckDB connection is kept alive; call \code{collect()} on each element when you are ready to materialise. Default is \code{FALSE}.}
+\item{lazy}{Logical. If \code{TRUE}, each dataset is returned as a lazy \code{rcdf_tbl_db} DuckDB-backed table instead of being collected into memory. The underlying DuckDB connection is kept alive; call \code{collect()} on each element when you are ready to materialise. When you are done, close it with \code{DBI::dbDisconnect(dbplyr::remote_con(x[[1]]), shutdown = TRUE)}; otherwise it stays open (holding the decrypted data in memory) until R garbage-collects it. Default is \code{FALSE}.}
 
 \item{n_threads}{Integer or \code{NULL}. Number of DuckDB threads to use for reading. \code{NULL} (default) lets DuckDB choose based on available cores.}
 }

@@ -185,3 +185,11 @@ test_that("get_attr retrieves a top-level metadata attribute after read_rcdf", {
   version <- get_attr(rcdf_data, "version")
   expect_true(is.character(version))
 })
+
+test_that("get_attr walks nested metadata at any depth and returns NULL for missing steps", {
+  x <- structure(list(), metadata = list(meta = list(source = list(note = "n1")), version = "1"))
+  expect_equal(get_attr(x, "version"), "1")
+  expect_equal(get_attr(x, "meta.source.note"), "n1")
+  expect_null(get_attr(x, "meta.missing.note"))
+  expect_null(get_attr(x, "version.extra"))
+})

@@ -1,3 +1,10 @@
+# Throwaway in-memory DuckDB connection, closed when the calling test ends.
+local_duckdb <- function(env = parent.frame()) {
+  con <- DBI::dbConnect(duckdb::duckdb())
+  withr::defer(DBI::dbDisconnect(con, shutdown = TRUE), envir = env)
+  con
+}
+
 # Test `write_parquet()` with encryption
 test_that("write_parquet writes encrypted Parquet files (legacy)", {
   data <- tibble::tibble(a = 1:5, b = letters[1:5])
@@ -89,7 +96,7 @@ test_that("check_duplicates warns when ignore_duplicates = TRUE", {
   pk <- data.frame(file = "df1", pk_field_name = "id")
 
   expect_warning(
-    check_duplicates(data_with_dupes, record = "df1", primary_key = pk, ignore_duplicates = TRUE),
+    check_duplicates(data_with_dupes, record = "df1", primary_key = pk, ignore_duplicates = TRUE, conn = local_duckdb()),
     "duplicates"
   )
 })
@@ -100,7 +107,7 @@ test_that("check_duplicates aborts when ignore_duplicates = FALSE", {
   pk <- data.frame(file = "df1", pk_field_name = "id")
 
   expect_error(
-    check_duplicates(data_with_dupes, record = "df1", primary_key = pk, ignore_duplicates = FALSE),
+    check_duplicates(data_with_dupes, record = "df1", primary_key = pk, ignore_duplicates = FALSE, conn = local_duckdb()),
     "duplicates"
   )
 })
@@ -136,4 +143,14 @@ test_that("write_parquet encryption works via shared caller-supplied connection"
   expect_true(file.exists(f))
   # The shared conn must still be usable after the call
   expect_true(DBI::dbIsValid(conn))
+})
+
+test_that("write_parquet applies `compression` to encrypted files too", {
+  dir_temp <- withr::local_tempdir()
+  key <- "rppqM5CuEqotys4wQq/g7xh6wpIjRozcAIbI9sagwKE="
+  df <- data.frame(a = sprintf("%012d", 1:50000))  # unique, so no dictionary encoding
+  write_parquet(df, file.path(dir_temp, "z.parquet"), encryption_key = key, compression = "zstd")
+  write_parquet(df, file.path(dir_temp, "u.parquet"), encryption_key = key, compression = "uncompressed")
+  expect_lt(file.size(file.path(dir_temp, "z.parquet")), file.size(file.path(dir_temp, "u.parquet")))
+  expect_equal(nrow(read_parquet(file.path(dir_temp, "z.parquet"), decryption_key = key)), 50000)
 })

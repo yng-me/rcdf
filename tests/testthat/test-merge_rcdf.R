@@ -198,3 +198,40 @@ test_that("merge_rcdf ratains the correct metadata of merged .rcdf files", {
 
 
 
+
+test_that("merge_rcdf keeps the earliest created_at, sets updated_at, and keeps summary_statistics", {
+  dir <- withr::local_tempdir()
+  key <- openssl::rsa_keygen()
+  pub <- file.path(dir, "pub.pem")
+  prv <- file.path(dir, "prv.pem")
+  openssl::write_pem(key$pubkey, pub)
+  openssl::write_pem(key, prv)
+
+  p1 <- file.path(dir, "a.rcdf")
+  p2 <- file.path(dir, "b.rcdf")
+  write_rcdf(rcdf_list(d = data.frame(x = 1)), p1, pub,
+             metadata = list(created_at = "2020-01-01 00:00:00", summary_statistics = list(n = data.frame(v = 1))))
+  write_rcdf(rcdf_list(d = data.frame(x = 2)), p2, pub,
+             metadata = list(created_at = "2021-01-01 00:00:00", summary_statistics = list(n = data.frame(v = 2))))
+
+  out <- file.path(dir, "merged.rcdf")
+  merge_rcdf(c(p1, p2), prv, NULL, out, pub_key = pub)
+  meta <- get_attrs(out)
+
+  expect_equal(meta$created_at, "2020-01-01 00:00:00")
+  expect_false(is.null(meta$updated_at))
+  expect_equal(meta$summary_statistics$n$v, c(1, 2))
+})
+
+test_that("merge_rcdf returns the generated password and path invisibly", {
+  dir <- withr::local_tempdir()
+  f1 <- create_rcdf_for_merge(dir, "g1", list(ds = data.frame(x = 1:5)))
+  merged_path <- file.path(dir, "ret_merged.rcdf")
+
+  res <- suppressMessages(merge_rcdf(f1$path, f1$prv, NULL, merged_path))
+
+  expect_equal(res$path, merged_path)
+  expect_true(is.character(res$password) && nchar(res$password) == 32)
+  out <- read_rcdf(merged_path, decryption_key = file.path(dir, "ret_merged-private-key.pem"), password = res$password)
+  expect_equal(out$ds$x, 1:5)
+})

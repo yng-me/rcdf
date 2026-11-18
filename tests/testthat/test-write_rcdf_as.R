@@ -145,3 +145,38 @@ test_that("write_rcdf_xlsx as_single_file = TRUE with file_name without .xlsx ex
   write_rcdf_xlsx(mock_rcdf, dir, as_single_file = TRUE, file_name = "output")
   expect_true(file.exists(file.path(dir, "output.xlsx")))
 })
+
+test_that("export writers skip the __data_dictionary element", {
+  dir_temp <- withr::local_tempdir()
+  data <- rcdf_list(d = data.frame(a = 1:2), `__data_dictionary` = data.frame(variable_name = "a"))
+  write_rcdf_csv(data, dir_temp)
+  expect_equal(list.files(dir_temp), "d.csv")
+})
+
+test_that("CSV and TSV exports have no row-name column", {
+  dir_temp <- withr::local_tempdir()
+  data <- rcdf_list(d = data.frame(a = 1:2, b = c("x", "y")))
+  write_rcdf_csv(data, dir_temp)
+  write_rcdf_tsv(data, dir_temp)
+  expect_equal(readLines(file.path(dir_temp, "d.csv"))[1], "\"a\",\"b\"")
+  expect_equal(readLines(file.path(dir_temp, "d.txt"))[1], "\"a\"\t\"b\"")
+})
+
+test_that("single-file Excel export shortens long record names to unique sheet names", {
+  skip_if_not_installed("openxlsx")
+  dir_temp <- withr::local_tempdir()
+  long <- "cbms_household_record_child_mortality"
+  data <- rcdf_list(a = data.frame(x = 1))
+  data[[long]] <- data.frame(x = 2)
+  data[[paste0(long, "_v2")]] <- data.frame(x = 3)
+  write_rcdf_xlsx(data, dir_temp, as_single_file = TRUE, file_name = "out")
+  sheets <- openxlsx::getSheetNames(file.path(dir_temp, "out.xlsx"))
+  expect_equal(sheets, c("a", substr(long, 1, 31), paste0(substr(long, 1, 28), "_1")))
+})
+
+test_that("export writers return NULL invisibly", {
+  dir_temp <- withr::local_tempdir()
+  data <- rcdf_list(d = data.frame(a = 1:2))
+  expect_null(write_rcdf_csv(data, dir_temp))
+  expect_null(write_rcdf_json(data, dir_temp))
+})

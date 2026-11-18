@@ -22,7 +22,12 @@ write_rcdf(
 
 \item{...}{Additional arguments passed to helper functions if needed.}
 
-\item{metadata}{A list of metadata to be included in the RCDF file.}
+\item{metadata}{A list of metadata to be included in the RCDF file. Recognised fields:
+\code{dictionary} (a data frame, or a path to a .json/.csv/.xlsx/.parquet file),
+\code{primary_key} (a data frame with \code{file} and \code{pk_field_name}),
+\code{meta}, \code{area_names}, \code{summary_statistics}, and
+\code{created_at} (keeps an original creation time, e.g. when re-writing or
+merging; the write time is then stored as \code{updated_at}).}
 
 \item{ignore_duplicates}{A \code{logical} flag. If \code{TRUE}, a warning is issued when duplicates are found. If \code{FALSE}, the function stops with an error.}
 }

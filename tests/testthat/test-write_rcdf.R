@@ -136,3 +136,51 @@ test_that("write_rcdf with ignore_duplicates = FALSE and duplicate rows throws a
     "duplicates"
   )
 })
+
+test_that("write_rcdf does not pack leftover parquet files from tempdir()/lineage", {
+  dir_temp <- withr::local_tempdir()
+  key <- openssl::rsa_keygen()
+  openssl::write_pem(key$pubkey, file.path(dir_temp, "pub.pem"))
+
+  stale_dir <- file.path(tempdir(), "lineage")
+  dir.create(stale_dir, showWarnings = FALSE)
+  stale <- file.path(stale_dir, "ghost.parquet")
+  writeLines("stale", stale)
+  withr::defer(unlink(stale))
+
+  path <- file.path(dir_temp, "x.rcdf")
+  write_rcdf(rcdf_list(real = data.frame(a = 1:2)), path, file.path(dir_temp, "pub.pem"))
+
+  expect_equal(get_attrs(path)$checksum$file, "real.parquet")
+  expect_equal(names(read_rcdf(path, decryption_key = key)), "real")
+})
+
+test_that("write_rcdf keeps a dictionary given as a file path", {
+  dir_temp <- withr::local_tempdir()
+  key <- openssl::rsa_keygen()
+  openssl::write_pem(key$pubkey, file.path(dir_temp, "pub.pem"))
+
+  dict_path <- file.path(dir_temp, "dict.csv")
+  utils::write.csv(
+    data.frame(variable_name = "a", label = "Label A", type = "numeric"),
+    dict_path, row.names = FALSE
+  )
+
+  path <- file.path(dir_temp, "x.rcdf")
+  write_rcdf(rcdf_list(d = data.frame(a = 1:2)), path, file.path(dir_temp, "pub.pem"),
+             metadata = list(dictionary = dict_path))
+
+  expect_equal(get_attrs(path)$dictionary$label, "Label A")
+})
+
+test_that("write_rcdf stores archive entries without zip compression", {
+  dir_temp <- withr::local_tempdir()
+  key <- openssl::rsa_keygen()
+  pub <- file.path(dir_temp, "pub.pem")
+  openssl::write_pem(key$pubkey, pub)
+  path <- file.path(dir_temp, "x.rcdf")
+  write_rcdf(rcdf_list(d = data.frame(a = rep(1:10, 1000))), path, pub)
+
+  entries <- zip::zip_list(path)
+  expect_equal(entries$compressed_size, entries$uncompressed_size)
+})

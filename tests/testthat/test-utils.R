@@ -139,6 +139,13 @@ test_that("generate_pw respects custom length", {
   expect_equal(nchar(pw), 32L)
 })
 
+test_that("generate_pw rejects bytes that would cause modulo bias", {
+  # Alphanumeric pool has 114 entries, so bytes >= 228 must be skipped.
+  local_mocked_bindings(rand_bytes = function(n) as.raw(c(250, 3, rep(0, n - 2))), .package = "openssl")
+  expect_equal(generate_pw(1, special_chr = FALSE), "3")
+  expect_equal(generate_pw(0), "")
+})
+
 test_that("generate_pw without special characters produces only alphanumeric", {
   pw <- generate_pw(100, special_chr = FALSE)
   expect_true(grepl("^[A-Za-z0-9]+$", pw))
@@ -164,7 +171,48 @@ test_that("normalize_key_value handles 256-bit hex key string", {
   hex_key <- paste0(rep("a", 64), collapse = "")  # 64 hex chars = 256 bits
   result <- normalize_key_value(hex_key)
   expect_equal(result$key, "key512")  # 8 * nchar(64) = 512
-  expect_true(nchar(result$value) == 64L)
+  # Decoded to 32 bytes and passed as base64, so DuckDB accepts it.
+  expect_equal(openssl::base64_decode(result$value), hex_to_raw(hex_key))
+})
+
+test_that("48- and 64-char hex keys round-trip through encrypted parquet", {
+  dir_temp <- withr::local_tempdir()
+  for (hex in c(strrep("a1", 24), strrep("a1", 32))) {
+    f <- file.path(dir_temp, paste0(nchar(hex), ".parquet"))
+    write_parquet(mtcars, f, encryption_key = hex)
+    expect_equal(nrow(read_parquet(f, decryption_key = hex)), 32L)
+  }
+})
+
+test_that("unserialize_string accepts plain strings and refuses anything else", {
+  expect_equal(unserialize_string(serialize("abc", NULL)), "abc")
+  expect_equal(unserialize_string(serialize("abc", NULL, version = 2)), "abc")
+  expect_error(unserialize_string(serialize(list("abc"), NULL)), "refusing")
+  expect_error(unserialize_string(serialize(structure("a", class = "x"), NULL)), "refusing")
+  expect_error(unserialize_string(serialize(quote(f()), NULL)), "refusing")
+  expect_error(unserialize_string(as.raw(1:5)), "refusing")
+})
+
+test_that("decrypt_string refuses a non-string payload encrypted with the public key", {
+  dir_temp <- withr::local_tempdir()
+  key <- openssl::rsa_keygen()
+  pub <- file.path(dir_temp, "pub.pem")
+  prv <- file.path(dir_temp, "prv.pem")
+  openssl::write_pem(key$pubkey, pub)
+  openssl::write_pem(key, prv)
+  bad <- openssl::base64_encode(openssl::rsa_encrypt(serialize(quote(f()), NULL), openssl::read_pubkey(pub)))
+  expect_error(decrypt_string(bad, prv), "refusing")
+})
+
+test_that("add_metadata keeps codes with leading zeros or letters", {
+  df <- data.frame(code = c("012", "034", "9X"))
+  dict <- data.frame(variable_name = "code", label = "Code", type = "categorical")
+  dict$valueset <- list(data.frame(value = c(12L, 34L), label = c("A", "B")))
+  expect_equal(as.vector(unclass(add_metadata(df, dict)$code)), c("012", "034", "9X"))
+
+  df2 <- data.frame(code = c(1, 2.5))
+  dict$valueset <- list(data.frame(value = c(1L, 2L), label = c("A", "B")))
+  expect_equal(as.vector(unclass(add_metadata(df2, dict)$code)), c(1, 2.5))
 })
 
 test_that("normalize_key_value returns NULL for empty list without aes_key", {
@@ -207,4 +255,27 @@ test_that("decrypt_info_aes decrypts with AES-CBC key and no IV", {
   )
   result <- decrypt_info_aes(encrypted, key = list(aes_key = aes_key))
   expect_equal(result, original)
+})
+
+test_that("decrypt_key reads legacy RSA metadata (key_app / iv_app)", {
+  dir_temp <- withr::local_tempdir()
+  key <- openssl::rsa_keygen()
+  pub <- file.path(dir_temp, "pub.pem")
+  prv <- file.path(dir_temp, "prv.pem")
+  openssl::write_pem(key$pubkey, pub)
+  openssl::write_pem(key, prv)
+
+  meta <- list(key_app = encrypt_string("label", pub), iv_app = encrypt_string("secret", pub))
+
+  expect_equal(decrypt_key(meta, prv), list(key = "label", value = "secret"))
+  expect_equal(decrypt_key(meta, key), list(key = "label", value = "secret"))
+})
+
+test_that("decrypt_key reads legacy AES-passphrase metadata", {
+  wrap <- function(x, pass) {
+    openssl::base64_encode(openssl::aes_cbc_encrypt(serialize(x, NULL), openssl::sha256(charToRaw(pass)), iv = raw(16)))
+  }
+  meta <- list(key_app = wrap("label", "passphrase"), iv_app = wrap("secret", "label"))
+
+  expect_equal(decrypt_key(meta, "passphrase"), list(key = "label", value = "secret"))
 })
