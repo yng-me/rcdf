@@ -26,9 +26,9 @@ try everything without creating your own files first:
 
 ``` r
 
-sample_dir  <- system.file("extdata", package = "rcdf")
+sample_dir <- system.file("extdata", package = "rcdf")
 sample_rcdf <- file.path(sample_dir, "mtcars.rcdf")
-sample_key  <- file.path(sample_dir, "sample-private-key.pem")
+sample_key <- file.path(sample_dir, "sample-private-key.pem")
 ```
 
 ------------------------------------------------------------------------
@@ -48,7 +48,7 @@ Generate a new pair with one function call:
 ``` r
 
 pub_key <- generate_rsa_keys(
-  path     = "~/my-keys",         # folder where both files are saved
+  path = "~/my-keys",         # folder where both files are saved
   password = "a-strong-password"  # optional, but protects the private key
 )
 # pub_key holds the path to the public key — you will pass it to write_rcdf()
@@ -72,12 +72,12 @@ my_data <- rcdf_list()
 
 # Add any data frames you want to store together
 my_data$households <- data.frame(id = 1:100, region = sample(c("North", "South"), 100, TRUE))
-my_data$survey     <- data.frame(id = 1:100, score  = rnorm(100))
+my_data$survey <- data.frame(id = 1:100, score = rnorm(100))
 
 # Save everything as a single encrypted file
 write_rcdf(
-  data    = my_data,
-  path    = "~/data/survey-2024.rcdf",
+  data = my_data,
+  path = "~/data/survey-2024.rcdf",
   pub_key = pub_key              # path returned by generate_rsa_keys()
 )
 ```
@@ -94,9 +94,9 @@ To open an RCDF file, provide the matching private key:
 ``` r
 
 survey_data <- read_rcdf(
-  path           = "~/data/survey-2024.rcdf",
+  path = "~/data/survey-2024.rcdf",
   decryption_key = "~/my-keys/private-key.pem",
-  password       = "a-strong-password"   # only needed if you set one
+  password = "a-strong-password"   # only needed if you set one
 )
 
 # Each table comes back as a data frame inside the list
@@ -109,9 +109,9 @@ Try it right now using the bundled sample data:
 ``` r
 
 sample_data <- read_rcdf(
-  path           = sample_rcdf,
+  path = sample_rcdf,
   decryption_key = file.path(sample_dir, "sample-private-key-pw.pem"),
-  password       = "1234"
+  password = "1234"
 )
 
 head(sample_data$mtcars)
@@ -126,10 +126,10 @@ single table:
 ``` r
 
 all_data <- read_rcdf(
-  path           = "~/data/monthly-exports/",
+  path = "~/data/monthly-exports/",
   decryption_key = "~/my-keys/private-key.pem",
-  password       = "a-strong-password",
-  recursive      = FALSE   # set TRUE to also search sub-folders
+  password = "a-strong-password",
+  recursive = FALSE   # set TRUE to also search sub-folders
 )
 ```
 
@@ -143,8 +143,8 @@ needs:
 ``` r
 
 write_rcdf_as(
-  data    = survey_data,
-  path    = "~/exports/survey-2024",
+  data = survey_data,
+  path = "~/exports/survey-2024",
   formats = c("csv", "xlsx")   # create both at once
 )
 # Result:

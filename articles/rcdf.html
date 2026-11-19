@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">rcdf</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -67,7 +67,7 @@
       <img src="../logo.svg" class="logo" alt=""><h1>Getting Started with rcdf</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/yng-me/rcdf/blob/v0.2.0/vignettes/rcdf.Rmd" class="external-link"><code>vignettes/rcdf.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/yng-me/rcdf/blob/main/vignettes/rcdf.Rmd" class="external-link"><code>vignettes/rcdf.Rmd</code></a></small>
       <div class="d-none name"><code>rcdf.Rmd</code></div>
     </div>
 
@@ -95,9 +95,9 @@ automatically — you never have to configure it yourself.</p>
 <p>The package ships with a sample RCDF file and matching keys so you
 can try everything without creating your own files first:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">sample_dir</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, package <span class="op">=</span> <span class="st">"rcdf"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">sample_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, package <span class="op">=</span> <span class="st">"rcdf"</span><span class="op">)</span></span>
 <span><span class="va">sample_rcdf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">sample_dir</span>, <span class="st">"mtcars.rcdf"</span><span class="op">)</span></span>
-<span><span class="va">sample_key</span>  <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">sample_dir</span>, <span class="st">"sample-private-key.pem"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">sample_key</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">sample_dir</span>, <span class="st">"sample-private-key.pem"</span><span class="op">)</span></span></code></pre></div>
 <hr>
 </div>
 <div class="section level2">
@@ -127,7 +127,7 @@ that work together:</p>
 <p>Generate a new pair with one function call:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">pub_key</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/generate_rsa_keys.html">generate_rsa_keys</a></span><span class="op">(</span></span>
-<span>  path     <span class="op">=</span> <span class="st">"~/my-keys"</span>,         <span class="co"># folder where both files are saved</span></span>
+<span>  path <span class="op">=</span> <span class="st">"~/my-keys"</span>,         <span class="co"># folder where both files are saved</span></span>
 <span>  password <span class="op">=</span> <span class="st">"a-strong-password"</span>  <span class="co"># optional, but protects the private key</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co"># pub_key holds the path to the public key — you will pass it to write_rcdf()</span></span></code></pre></div>
@@ -149,12 +149,12 @@ or encrypted drive is a good choice.</p>
 <span></span>
 <span><span class="co"># Add any data frames you want to store together</span></span>
 <span><span class="va">my_data</span><span class="op">$</span><span class="va">households</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>id <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100</span>, region <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"North"</span>, <span class="st">"South"</span><span class="op">)</span>, <span class="fl">100</span>, <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">my_data</span><span class="op">$</span><span class="va">survey</span>     <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>id <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100</span>, score  <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">my_data</span><span class="op">$</span><span class="va">survey</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>id <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">100</span>, score <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Save everything as a single encrypted file</span></span>
 <span><span class="fu"><a href="../reference/write_rcdf.html">write_rcdf</a></span><span class="op">(</span></span>
-<span>  data    <span class="op">=</span> <span class="va">my_data</span>,</span>
-<span>  path    <span class="op">=</span> <span class="st">"~/data/survey-2024.rcdf"</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">my_data</span>,</span>
+<span>  path <span class="op">=</span> <span class="st">"~/data/survey-2024.rcdf"</span>,</span>
 <span>  pub_key <span class="op">=</span> <span class="va">pub_key</span>              <span class="co"># path returned by generate_rsa_keys()</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>This creates <code>survey-2024.rcdf</code> — a single, portable file
@@ -167,9 +167,9 @@ containing all your tables, fully encrypted and ready to share.</p>
 <p>To open an RCDF file, provide the matching private key:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">survey_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_rcdf.html">read_rcdf</a></span><span class="op">(</span></span>
-<span>  path           <span class="op">=</span> <span class="st">"~/data/survey-2024.rcdf"</span>,</span>
+<span>  path <span class="op">=</span> <span class="st">"~/data/survey-2024.rcdf"</span>,</span>
 <span>  decryption_key <span class="op">=</span> <span class="st">"~/my-keys/private-key.pem"</span>,</span>
-<span>  password       <span class="op">=</span> <span class="st">"a-strong-password"</span>   <span class="co"># only needed if you set one</span></span>
+<span>  password <span class="op">=</span> <span class="st">"a-strong-password"</span>   <span class="co"># only needed if you set one</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Each table comes back as a data frame inside the list</span></span>
@@ -178,9 +178,9 @@ containing all your tables, fully encrypted and ready to share.</p>
 <p>Try it right now using the bundled sample data:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sample_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_rcdf.html">read_rcdf</a></span><span class="op">(</span></span>
-<span>  path           <span class="op">=</span> <span class="va">sample_rcdf</span>,</span>
+<span>  path <span class="op">=</span> <span class="va">sample_rcdf</span>,</span>
 <span>  decryption_key <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">sample_dir</span>, <span class="st">"sample-private-key-pw.pem"</span><span class="op">)</span>,</span>
-<span>  password       <span class="op">=</span> <span class="st">"1234"</span></span>
+<span>  password <span class="op">=</span> <span class="st">"1234"</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">sample_data</span><span class="op">$</span><span class="va">mtcars</span><span class="op">)</span></span></code></pre></div>
@@ -192,10 +192,10 @@ Tables that share a name across files are automatically stacked into a
 single table:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">all_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_rcdf.html">read_rcdf</a></span><span class="op">(</span></span>
-<span>  path           <span class="op">=</span> <span class="st">"~/data/monthly-exports/"</span>,</span>
+<span>  path <span class="op">=</span> <span class="st">"~/data/monthly-exports/"</span>,</span>
 <span>  decryption_key <span class="op">=</span> <span class="st">"~/my-keys/private-key.pem"</span>,</span>
-<span>  password       <span class="op">=</span> <span class="st">"a-strong-password"</span>,</span>
-<span>  recursive      <span class="op">=</span> <span class="cn">FALSE</span>   <span class="co"># set TRUE to also search sub-folders</span></span>
+<span>  password <span class="op">=</span> <span class="st">"a-strong-password"</span>,</span>
+<span>  recursive <span class="op">=</span> <span class="cn">FALSE</span>   <span class="co"># set TRUE to also search sub-folders</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <hr>
 </div>
@@ -207,8 +207,8 @@ single table:</p>
 needs:</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/write_rcdf_as.html">write_rcdf_as</a></span><span class="op">(</span></span>
-<span>  data    <span class="op">=</span> <span class="va">survey_data</span>,</span>
-<span>  path    <span class="op">=</span> <span class="st">"~/exports/survey-2024"</span>,</span>
+<span>  data <span class="op">=</span> <span class="va">survey_data</span>,</span>
+<span>  path <span class="op">=</span> <span class="st">"~/exports/survey-2024"</span>,</span>
 <span>  formats <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"csv"</span>, <span class="st">"xlsx"</span><span class="op">)</span>   <span class="co"># create both at once</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co"># Result:</span></span>

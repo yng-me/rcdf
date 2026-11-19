@@ -62,7 +62,7 @@ private_key <- file.path(dir, 'sample-private-key-pw.pem')
 
 rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key, password = '1234')
 #> duckdb keeps downloaded extensions and secrets in a temporary directory:
-#> ℹ /tmp/RtmpcwKcmS/duckdb
+#> ℹ /tmp/Rtmpy1i6FS/duckdb
 #> This is removed when the R session ends.
 #> • Extensions are re-downloaded each session.
 #> • Secrets are lost.
@@ -73,7 +73,7 @@ temp_dir <- tempdir()
 
 write_rcdf_parquet(data = rcdf_data, path = temp_dir)
 #> duckdb keeps downloaded extensions and secrets in a temporary directory:
-#> ℹ /tmp/RtmpcwKcmS/duckdb
+#> ℹ /tmp/Rtmpy1i6FS/duckdb
 #> This is removed when the R session ends.
 #> • Extensions are re-downloaded each session.
 #> • Secrets are lost.
@@ -81,14 +81,14 @@ write_rcdf_parquet(data = rcdf_data, path = temp_dir)
 #> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
 #> ℹ See ?duckdb_storage for details and alternatives.
 #> duckdb keeps downloaded extensions and secrets in a temporary directory:
-#> ℹ /tmp/RtmpcwKcmS/duckdb
+#> ℹ /tmp/Rtmpy1i6FS/duckdb
 #> This is removed when the R session ends.
 #> • Extensions are re-downloaded each session.
 #> • Secrets are lost.
 #> ℹ Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).
 #> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
 #> ℹ See ?duckdb_storage for details and alternatives.
-#> [1] "/tmp/RtmpcwKcmS/data.parquet"
+#> [1] "/tmp/Rtmpy1i6FS/data.parquet"
 
 unlink(temp_dir, force = TRUE)
 ```
