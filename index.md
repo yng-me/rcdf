@@ -43,3 +43,9 @@ files.
 
 library(rcdf)
 ```
+
+## RCDF Reader App
+
+Prefer a graphical interface? [RCDF Reader
+App](https://github.com/yng-me/rcdf-reader-app) lets you open and browse
+RCDF files without writing any code.

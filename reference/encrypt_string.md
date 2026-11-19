@@ -28,5 +28,5 @@ Encrypted base64-encoded string
 dir <- system.file("extdata", package = "rcdf")
 pub_key <- file.path(dir, 'sample-public-key.pem')
 encrypt_string('hello', pub_key)
-#> [1] "GzhzNEo3QokD+Gc3rKp/9k+itltNxOLDARNfWJucgr0xYxc98Pu7wJ/8jgotXK/Jos5o21GTy94eFY4fBDNGLHUQxiavuEGKxeOZ/HWpYKi12tXT2/LD5FJqpbEOUZ5gUBXpROX5pJ57yY4SsxKZ5PdoLjEZKYrQBMcLYgivphdzi5z5/JPqgZn962bIQ/olJsAZ6rxK7RWOkeoKOHDxixunR49uUixObmw8jPgYHZVY5ghJ9WTnhKMBwv0ul1PQU6cRm8xhho8TIu+SvB6vulzddM34CdP1sddNf4g1aq6twqRPXyjdra9kuFaUQUKZ/GKUOIT9yWuKKgzOpj/pew=="
+#> [1] "sfhEvZDwn+PNitxCcGMVMTcGrSvZdUPpI23enrWzXf6dGjpHImDa3HSjrdcNdIktNylFPVZZVpsyqb0rmPtF2WGwI958Ytlznwlv5IfJPdCSLY2z/igAM6gu+1L+xceJ3UK/UTjY2DpPt2J0Mnmf6Pm19sCMPgqj1iRp/VrKiQuFTQf4Es1/Kkb0pbQv5mJrJZmfDkhtENG8rfeC9CVng4aBFjZIEoO/HJ8T1jWepFQaYCKM8ZxIs6FKRp0iI27bXX6XpQ6Syy4z792Ygihlnvptro2MYjfzfHG331F/R3a7aEcQKV60Ps3fpABv9M9IHPQ2PpUSXBnJpxfJFgQYsA=="
 ```

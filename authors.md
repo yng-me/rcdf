@@ -8,7 +8,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/yng-me/rcdf/blob/v0.2.1/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/yng-me/rcdf/blob/main/DESCRIPTION)
 
 Abdulsamad B (2026). *rcdf: A Comprehensive Toolkit for Working with
 Encrypted Parquet Files*. R package version 0.2.1,

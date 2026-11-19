@@ -29,9 +29,9 @@ A character string representing the generated password.
 
 ``` r
 generate_pw()
-#> [1] "HNAMFyQFBeWt!a)J"
+#> [1] "O>26%#xWv6>jnJum"
 generate_pw(32)
-#> [1] "mQiduHeiIYRcEJG=JPoXhG@N@d2ZA6wy"
+#> [1] "M?KKuisATA8OQ4CvbJ&1xL1jXGo*EW3g"
 generate_pw(12, special_chr = FALSE)
-#> [1] "XUqeC3KHrIqx"
+#> [1] "VuzprkWyU3GR"
 ```
