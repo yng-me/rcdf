@@ -34,14 +34,14 @@ write_rcdf_as <- function(data, path, formats, ...) {
 
   # Safe dispatch table — avoids eval(parse()) on user-supplied format names.
   writer_fns <- list(
-    csv     = write_rcdf_csv,
-    tsv     = write_rcdf_tsv,
-    json    = write_rcdf_json,
+    csv = write_rcdf_csv,
+    tsv = write_rcdf_tsv,
+    json = write_rcdf_json,
     parquet = write_rcdf_parquet,
-    xlsx    = write_rcdf_xlsx,
-    dta     = write_rcdf_dta,
-    sav     = write_rcdf_sav,
-    sqlite  = write_rcdf_sqlite
+    xlsx = write_rcdf_xlsx,
+    dta = write_rcdf_dta,
+    sav = write_rcdf_sav,
+    sqlite = write_rcdf_sqlite
   )
 
   valid_format_args <- which(formats %in% valid_formats)

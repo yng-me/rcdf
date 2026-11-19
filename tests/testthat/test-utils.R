@@ -236,9 +236,9 @@ test_that("decrypt_info_aes decrypts without a key (plain serialised base64)", {
 test_that("decrypt_info_aes decrypts with AES-CBC key and IV", {
   original <- "secret"
   aes_key <- "3e5bdf7031653ddcffca50831f6d9822f73cce44948c5a0861540cfb5620a633"
-  aes_iv  <- "9A5D8517510F8E26C564C6C8DD39EA68"
+  aes_iv <- "9A5D8517510F8E26C564C6C8DD39EA68"
   key_raw <- openssl::sha256(charToRaw(aes_key))
-  iv_raw  <- hex_to_raw(aes_iv)
+  iv_raw <- hex_to_raw(aes_iv)
   encrypted <- openssl::base64_encode(
     openssl::aes_cbc_encrypt(serialize(original, NULL), key_raw, iv = iv_raw)
   )
