@@ -11,9 +11,9 @@ test_that("collect.rcdf_tbl_db applies metadata labels and returns a plain data 
 
   meta <- data.frame(
     variable_name = c("sex", "age"),
-    label         = c("Gender", "Age"),
-    type          = c("categorical", "numeric"),
-    valueset      = I(list(
+    label = c("Gender", "Age"),
+    type = c("categorical", "numeric"),
+    valueset = I(list(
       data.frame(value = c(1L, 2L), label = c("Male", "Female")),
       NULL
     ))

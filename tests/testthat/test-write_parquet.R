@@ -116,7 +116,7 @@ test_that("check_duplicates aborts when ignore_duplicates = FALSE", {
 
 test_that("write_parquet uses zstd compression by default for unencrypted files", {
   data <- tibble::tibble(x = 1:1000L)
-  f_zstd   <- tempfile(fileext = ".parquet")
+  f_zstd <- tempfile(fileext = ".parquet")
   f_snappy <- tempfile(fileext = ".parquet")
   on.exit({ unlink(f_zstd, force = TRUE); unlink(f_snappy, force = TRUE) }, add = TRUE)
 
@@ -132,8 +132,8 @@ test_that("write_parquet uses zstd compression by default for unencrypted files"
 
 test_that("write_parquet encryption works via shared caller-supplied connection", {
   data <- tibble::tibble(a = 1:10)
-  key  <- "rppqM5CuEqotys4wQq/g7xh6wpIjRozcAIbI9sagwKE="
-  f    <- tempfile(fileext = ".parquet")
+  key <- "rppqM5CuEqotys4wQq/g7xh6wpIjRozcAIbI9sagwKE="
+  f <- tempfile(fileext = ".parquet")
   on.exit(unlink(f, force = TRUE), add = TRUE)
 
   conn <- DBI::dbConnect(duckdb::duckdb())

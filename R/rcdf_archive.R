@@ -45,7 +45,7 @@ extract_rcdf <- function(path, meta_only = FALSE) {
 
   list(
     meta = jsonlite::read_json(meta_file, simplifyVector = TRUE),
-    dir  = extract_dir,
+    dir = extract_dir,
     files = list.files(rcdf_lineage_dir(extract_dir), pattern = "\\.parquet$", full.names = TRUE),
     cleanup = cleanup
   )
@@ -90,9 +90,9 @@ pack_rcdf <- function(staging_dir, meta, path) {
 # so a multi-file read sees every file's dictionary and keys.
 combine_rcdf_meta <- function(acc, meta) {
 
-  acc$log_id     <- c(acc$log_id, meta$log_id)
+  acc$log_id <- c(acc$log_id, meta$log_id)
   acc$created_at <- c(acc$created_at, meta$created_at)
-  acc$version    <- c(acc$version, meta$version)
+  acc$version <- c(acc$version, meta$version)
 
   acc$area_names <- merge_by_name(acc$area_names, meta$area_names)
   acc$meta <- merge_by_name(acc$meta, meta$meta)

@@ -6,8 +6,8 @@ create_rcdf_for_merge <- function(dir, name, data_list) {
   write_rcdf(as_rcdf(data_list), path, file.path(dir, paste0(name, "-pub.pem")))
   list(
     path = path,
-    pub  = file.path(dir, paste0(name, "-pub.pem")),
-    prv  = file.path(dir, paste0(name, "-prv.pem"))
+    pub = file.path(dir, paste0(name, "-pub.pem")),
+    prv = file.path(dir, paste0(name, "-prv.pem"))
   )
 }
 
@@ -24,11 +24,11 @@ test_that("merge_rcdf with explicit pub_key merges files and round-trips data", 
 
   merged_path <- file.path(dir, "merged.rcdf")
   merge_rcdf(
-    rcdf_files    = c(f1$path, f2$path),
+    rcdf_files = c(f1$path, f2$path),
     decryption_keys = c(f1$prv, f2$prv),
-    passwords     = c(NULL, NULL),
+    passwords = c(NULL, NULL),
     merged_file_path = merged_path,
-    pub_key       = file.path(dir, "merge-pub.pem")
+    pub_key = file.path(dir, "merge-pub.pem")
   )
 
   expect_true(file.exists(merged_path))
@@ -49,9 +49,9 @@ test_that("merge_rcdf without pub_key auto-generates a key pair and writes a val
 
   suppressMessages(
     merge_rcdf(
-      rcdf_files      = f1$path,
+      rcdf_files = f1$path,
       decryption_keys = f1$prv,
-      passwords       = NULL,
+      passwords = NULL,
       merged_file_path = merged_path
     )
   )
@@ -73,11 +73,11 @@ test_that("merge_rcdf auto-appends .rcdf extension when missing", {
 
   merged_no_ext <- file.path(dir, "merged_no_ext")
   merge_rcdf(
-    rcdf_files      = f1$path,
+    rcdf_files = f1$path,
     decryption_keys = f1$prv,
-    passwords       = NULL,
+    passwords = NULL,
     merged_file_path = merged_no_ext,
-    pub_key         = file.path(dir, "m-pub.pem")
+    pub_key = file.path(dir, "m-pub.pem")
   )
 
   expect_true(file.exists(paste0(merged_no_ext, ".rcdf")))

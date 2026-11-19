@@ -28,8 +28,8 @@ in the table's metadata dictionary.
 }
 \examples{
 dir <- system.file("extdata", package = "rcdf")
-rcdf_path  <- file.path(dir, "mtcars.rcdf")
-prv_key    <- file.path(dir, "sample-private-key-pw.pem")
+rcdf_path <- file.path(dir, "mtcars.rcdf")
+prv_key <- file.path(dir, "sample-private-key-pw.pem")
 
 \dontrun{
 result <- read_rcdf(path = rcdf_path, decryption_key = prv_key,

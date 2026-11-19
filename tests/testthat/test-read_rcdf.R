@@ -175,9 +175,9 @@ test_that("read_rcdf errors when file lacks .rcdf extension", {
 test_that("normalize_credentials errors when key and password counts mismatch", {
   expect_error(
     normalize_credentials(
-      rcdf_files     = c("a.rcdf", "b.rcdf", "c.rcdf"),
+      rcdf_files = c("a.rcdf", "b.rcdf", "c.rcdf"),
       decryption_key = c("k1", "k2"),
-      password       = c("p1", "p2")
+      password = c("p1", "p2")
     ),
     "Mismatched"
   )

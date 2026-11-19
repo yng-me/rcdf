@@ -69,8 +69,7 @@ parse_dot_line <- function(line) {
   )
 
   match <- regexpr(line_regex, line, perl = TRUE)
-  if (match == -1) stop("Cannot parse dot-env line: ", substr(line, 1, 40),
-                        call. = FALSE)
+  if (match == -1) stop("Cannot parse dot-env line: ", substr(line, 1, 40), call. = FALSE)
   as.list(extract_match(line, match)[c("key", "value")])
 }
 
@@ -88,8 +87,8 @@ extract_match <- function(line, match) {
 
 set_env <- function(pairs) {
   structure(
-    .Data  = lapply(pairs, "[[", "value"),
-    .Names = sapply(pairs, "[[", "key")
+    .Data = lapply(pairs, "[[", "value"),
+    names = sapply(pairs, "[[", "key")
   )
 }
 
