@@ -1,6 +1,8 @@
 # Changelog
 
-## rcdf 0.2.0
+## rcdf 0.2.1
+
+CRAN release: 2026-11-19
 
 #### New behaviour
 

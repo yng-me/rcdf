@@ -43,9 +43,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.2.0" id="rcdf-020">rcdf 0.2.0<a class="anchor" aria-label="anchor" href="#rcdf-020"></a></h2>
+<h2 class="pkg-version" data-toc-text="0.2.1" id="rcdf-021">rcdf 0.2.1<a class="anchor" aria-label="anchor" href="#rcdf-021"></a></h2><p class="text-muted">CRAN release: 2026-11-19</p>
 <div class="section level4">
-<h4 id="new-behaviour-0-2-0">New behaviour<a class="anchor" aria-label="anchor" href="#new-behaviour-0-2-0"></a></h4>
+<h4 id="new-behaviour-0-2-1">New behaviour<a class="anchor" aria-label="anchor" href="#new-behaviour-0-2-1"></a></h4>
 <ul><li>
 <code><a href="../reference/read_rcdf.html">read_rcdf()</a></code> checks each Parquet file against the md5 checksum stored in the archive and stops if it differs. This detects corruption, not deliberate tampering. Files the checksum doesn’t list are skipped, so older archives still read.</li>
 <li>
@@ -58,7 +58,7 @@
 <code><a href="../reference/write_rcdf.html">write_rcdf()</a></code> accepts <code>metadata$created_at</code> to keep an original creation time; the write time is then stored as <code>updated_at</code>.</li>
 </ul></div>
 <div class="section level4">
-<h4 id="breaking-changes-0-2-0">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-2-0"></a></h4>
+<h4 id="breaking-changes-0-2-1">Breaking changes<a class="anchor" aria-label="anchor" href="#breaking-changes-0-2-1"></a></h4>
 <ul><li>
 <code><a href="../reference/merge_rcdf.html">merge_rcdf()</a></code> now returns <code>invisible(list(path, password))</code> instead of <code>NULL</code>. When it generates a new key pair, the private-key password is printed only in interactive sessions, so it no longer lands in job logs; scripts should read it from the return value.</li>
 <li>
@@ -68,11 +68,11 @@
 <li>The unused <code>rcdf.options</code> option set at package load has been removed.</li>
 </ul></div>
 <div class="section level4">
-<h4 id="security-0-2-0">Security<a class="anchor" aria-label="anchor" href="#security-0-2-0"></a></h4>
+<h4 id="security-0-2-1">Security<a class="anchor" aria-label="anchor" href="#security-0-2-1"></a></h4>
 <ul><li>Decrypted key fields from an archive are only unserialized if they are a plain character vector. Before, anyone holding the public key could craft an archive that runs code when read on R &lt; 4.4 (CVE-2024-27322).</li>
 </ul></div>
 <div class="section level4">
-<h4 id="performance-0-2-0">Performance<a class="anchor" aria-label="anchor" href="#performance-0-2-0"></a></h4>
+<h4 id="performance-0-2-1">Performance<a class="anchor" aria-label="anchor" href="#performance-0-2-1"></a></h4>
 <p>Measured on 2.5M rows across two records (2M-row person table), with a dictionary and primary keys:</p>
 <ul><li>
 <code><a href="../reference/write_rcdf.html">write_rcdf()</a></code>: about 4x faster (3.4s -&gt; 0.8-0.95s) and archives about 45% smaller (39.8 MB -&gt; 21.9 MB). Archives are now stored without zip compression (the encrypted data does not compress, and deflate made zipping about 10x slower), encrypted Parquet now uses zstd, and the write-time duplicate key check runs in DuckDB instead of pasting keys together in R.</li>
@@ -83,7 +83,7 @@
 <li>New archives remain readable by rcdf 0.1.6, and old and new archives can be read together.</li>
 </ul></div>
 <div class="section level4">
-<h4 id="bug-fixes-0-2-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-2-0"></a></h4>
+<h4 id="bug-fixes-0-2-1">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-0-2-1"></a></h4>
 <ul><li>
 <code>read_rcdf(lazy = TRUE)</code> no longer fails on archives that store a data dictionary.</li>
 <li>
@@ -129,7 +129,7 @@
 <code><a href="../reference/generate_pw.html">generate_pw()</a></code>: removed modulo bias, so every character in the pool is equally likely per draw.</li>
 </ul></div>
 <div class="section level4">
-<h4 id="documentation-0-2-0">Documentation<a class="anchor" aria-label="anchor" href="#documentation-0-2-0"></a></h4>
+<h4 id="documentation-0-2-1">Documentation<a class="anchor" aria-label="anchor" href="#documentation-0-2-1"></a></h4>
 <ul><li>
 <code>read_rcdf(lazy = TRUE)</code>: docs now show how to close the DuckDB connection, which holds the decrypted data until closed.</li>
 <li>
