@@ -28,3 +28,22 @@ test_that("collect.rcdf_tbl_db applies metadata labels and returns a plain data 
   expect_equal(attr(result$age, "label"), "Age")
   expect_true(inherits(result$sex, "haven_labelled"))
 })
+
+test_that("collect() passes plain lazy tables and data frames through to dplyr", {
+  conn <- DBI::dbConnect(duckdb::duckdb())
+  on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
+  DBI::dbWriteTable(conn, "t", data.frame(a = 1:3))
+
+  expect_equal(collect(dplyr::tbl(conn, "t"))$a, 1:3)
+  expect_equal(collect(data.frame(a = 1:3))$a, 1:3)
+})
+
+test_that("collect() on a lazy table whose connection is closed explains why", {
+  conn <- DBI::dbConnect(duckdb::duckdb())
+  DBI::dbWriteTable(conn, "t", data.frame(a = 1:3))
+  lazy <- dplyr::tbl(conn, "t")
+  class(lazy) <- c("rcdf_tbl_db", class(lazy))
+  DBI::dbDisconnect(conn, shutdown = TRUE)
+
+  expect_error(collect(lazy), "connection behind this lazy table is closed")
+})

@@ -5,6 +5,10 @@
 #' metadata such as system information and encryption keys.
 #'
 #' @param data A list of data frames or tables to be written to RCDF format. Each element of the list represents a record.
+#'   An element may be a lazy table on a DuckDB connection (e.g. from \code{dplyr::tbl()} or
+#'   \code{read_rcdf(lazy = TRUE)}); it is streamed to the archive by DuckDB without being
+#'   collected into R, so it can be larger than memory. Lazy tables on other databases are
+#'   collected first. See \code{\link{write_parquet}} for the effect on the source connection.
 #' @param path The path where the RCDF file will be written. The file will be saved with a \code{.rcdf} extension if not already specified.
 #' @param pub_key The public RSA key used to encrypt the AES encryption keys.
 #' @param ... Additional arguments passed to helper functions if needed.
@@ -82,7 +86,8 @@ write_rcdf <- function(data, path, pub_key, ..., metadata = list(), ignore_dupli
 
   dictionary <- NULL
 
-  if(!is.null(metadata$dictionary)) {
+  # length(): merge_rcdf() passes an empty list() when its sources had no dictionary.
+  if(length(metadata$dictionary) > 0) {
 
     if(is.character(metadata$dictionary)) {
       dictionary <- read_metadata(metadata$dictionary)
@@ -90,9 +95,10 @@ write_rcdf <- function(data, path, pub_key, ..., metadata = list(), ignore_dupli
       dictionary <- metadata$dictionary
     }
 
-    required_cols <- c("variable_name", "label", "type")
-    if (!all(required_cols %in% names(dictionary))) {
-      dictionary <- NULL
+    missing_cols <- setdiff(c("variable_name", "label", "type"), names(dictionary))
+    if (length(missing_cols) > 0) {
+      stop("`metadata$dictionary` is missing required column(s): ",
+           paste(missing_cols, collapse = ", "), call. = FALSE)
     }
   }
 
@@ -110,7 +116,8 @@ write_rcdf <- function(data, path, pub_key, ..., metadata = list(), ignore_dupli
     summary_statistics <- metadata$summary_statistics
   }
 
-  current_time <- substr(as.character(Sys.time()), 1, 19)
+  # UTC, so times from machines in different zones compare correctly (merge_rcdf keeps the earliest).
+  current_time <- format(Sys.time(), "%Y-%m-%d %H:%M:%S UTC", tz = "UTC")
 
   meta <- list(
     log_id = key_uuid,

@@ -3,11 +3,14 @@
 \name{collect}
 \alias{collect}
 \alias{collect.rcdf_tbl_db}
+\alias{collect.default}
 \title{Collect a lazy RCDF table into a data frame}
 \usage{
 collect(data, ...)
 
 \method{collect}{rcdf_tbl_db}(data, ...)
+
+\method{collect}{default}(data, ...)
 }
 \arguments{
 \item{data}{A lazy \code{rcdf_tbl_db} object (returned by

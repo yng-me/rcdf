@@ -150,17 +150,6 @@ generate_uuid <- function() {
 }
 
 
-raw_to_hex <- function(x) {
-  if (!is.raw(x)) {
-    stop("Input must be a raw vector.")
-  }
-
-  hex_string <- paste0(sprintf("%02X", as.integer(x)), collapse = "")
-
-  return(hex_string)
-}
-
-
 hex_to_raw <- function(x) {
   if (!is.character(x) || length(x) != 1L) {
     stop("hex_to_raw: input must be a single character string.", call. = FALSE)
@@ -281,8 +270,6 @@ get_pc_metadata <- function(which) {
   pc <- Sys.info()
 
   values$pc_os <- tolower(pc[["sysname"]])
-  values$pc_user <- pc[["user"]]
-  values$pc_effective_user <- pc[["effective_user"]]
   values$pc_os_release_date <- {
     raw <- pc[["version"]]
     m <- regexpr(":\\s\\w*\\s\\w*\\s\\d{2}\\s\\d{2}:\\d{2}:\\d{2}.*;", raw, perl = TRUE)
@@ -292,7 +279,6 @@ get_pc_metadata <- function(which) {
   }
   values$pc_os_version <- pc[["release"]]
   values$pc_hardware <- pc[["machine"]]
-  values$pc_pid <- Sys.getpid()
 
   values[[which]]
 
@@ -360,7 +346,8 @@ decrypt_key <- function(data, prv_key, password = NULL) {
   meta <- extract_key(data)
 
   is_rsa <- inherits(prv_key, "key") ||
-    (is.character(prv_key) && length(prv_key) == 1 && grepl("\\.pem$", prv_key))
+    (is.character(prv_key) && length(prv_key) == 1 &&
+       (grepl("\\.pem$", prv_key, ignore.case = TRUE) || file.exists(prv_key)))
 
   if (is_rsa) {
     # RSA private key (object or .pem path): `value` is always RSA-wrapped;

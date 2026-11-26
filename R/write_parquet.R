@@ -5,7 +5,11 @@
 #' encryption support. Without a key the file is written unencrypted, also by
 #' DuckDB, using the codec given in \code{compression}.
 #'
-#' @param data A data frame or tibble to write.
+#' @param data A data frame or tibble to write, or a lazy table on a DuckDB
+#'   connection. A lazy table is written with \code{COPY} on its own connection
+#'   (\code{conn} is ignored), so its rows never come into R. When encrypting,
+#'   this loads DuckDB's crypto support on that connection and registers the
+#'   AES key there; the key stays registered until the connection closes.
 #' @param path Character string. Destination file path for the Parquet file.
 #' @param ... Currently unused.
 #' @param encryption_key A raw AES key as a hex string (32, 48, or 64 hex
@@ -52,27 +56,16 @@ write_parquet <- function(data, path, ..., encryption_key = NULL, conn = NULL, c
 
   secret <- normalize_key_value(encryption_key)
 
-  if (is.null(secret)) {
-    pq_conn_w <- DBI::dbConnect(duckdb::duckdb())
-    on.exit(DBI::dbDisconnect(pq_conn_w, shutdown = TRUE), add = TRUE)
-    DBI::dbWriteTable(pq_conn_w, "__WRITE_DATA__", data, overwrite = TRUE)
-    DBI::dbExecute(
-      pq_conn_w,
-      sprintf(
-        "COPY __WRITE_DATA__ TO %s (FORMAT PARQUET, COMPRESSION %s)",
-        sql_literal(pq_conn_w, path),
-        sql_literal(pq_conn_w, toupper(compression))
-      )
-    )
-    DBI::dbRemoveTable(pq_conn_w, "__WRITE_DATA__")
-  } else {
-    # Reuse a caller-supplied connection to amortise setup cost across many tables.
-    if (is.null(conn)) {
-      conn <- DBI::dbConnect(drv = duckdb::duckdb())
-      on.exit(DBI::dbDisconnect(conn = conn, shutdown = TRUE), add = TRUE)
-    }
-    write_encrypted_parquet(conn, data, path, secret, compression = compression)
+  if (is_duckdb_lazy(data)) {
+    return(write_lazy_parquet(data, path, secret, compression = compression))
   }
+
+  # Reuse a caller-supplied connection to amortise setup cost across many tables.
+  if (is.null(conn)) {
+    conn <- DBI::dbConnect(drv = duckdb::duckdb())
+    on.exit(DBI::dbDisconnect(conn = conn, shutdown = TRUE), add = TRUE)
+  }
+  write_df_parquet(conn, data, path, secret, compression = compression)
 
 }
 
@@ -82,7 +75,7 @@ write_parquet <- function(data, path, ..., encryption_key = NULL, conn = NULL, c
 #'
 #' This function writes an RCDF object (a list of data frames) to multiple Parquet files. Each data frame in the list is written to its corresponding Parquet file in the specified path.
 #'
-#' @param data A list where each element is a data frame or tibble that will be written to a Parquet file.
+#' @param data A list where each element is a data frame or tibble that will be written to a Parquet file. DuckDB lazy tables are streamed without collecting; see \code{\link{write_parquet}}.
 #' @param path The directory path where the Parquet files will be written.
 #' @param ... Additional arguments passed to \code{rcdf::write_parquet()} while writing each Parquet file.
 #' @param parent_dir An optional parent directory to be included in the path where the files will be written.
@@ -118,7 +111,7 @@ write_rcdf_parquet <- function(data, path, ..., parent_dir = NULL, primary_key =
     file <- file.path(dir, paste0(record, ".parquet"))
     write_parquet(data = df, path = file, conn = pq_conn, ...)
     written <<- c(written, file)
-  })
+  }, keep_lazy = TRUE)
 
   written
 }
@@ -126,16 +119,21 @@ write_rcdf_parquet <- function(data, path, ..., parent_dir = NULL, primary_key =
 
 check_duplicates <- function(data, record, primary_key, ignore_duplicates, conn) {
 
-  pk_cols <- intersect(pk_columns(primary_key, record), names(data))
+  pk_cols <- intersect(pk_columns(primary_key, record), colnames(data))
   if (length(pk_cols) == 0) return(NULL)
 
-  # Zero-copy view of only the key columns; GROUP BY in DuckDB is ~6x faster
-  # than pasting keys together in R on millions of rows.
-  view <- "__PK_CHECK__"
-  duckdb::duckdb_register(conn, view, as.data.frame(data[pk_cols]), overwrite = TRUE)
-  on.exit(duckdb::duckdb_unregister(conn, view), add = TRUE, after = FALSE)
+  if (is_duckdb_lazy(data)) {
+    # Count in the source database; the rows never come into R.
+    conn <- dbplyr::remote_con(data)
+    from <- sprintf("(%s)", dbplyr::sql_render(data))
+  } else {
+    # Zero-copy view of only the key columns; GROUP BY in DuckDB is ~6x faster
+    # than pasting keys together in R on millions of rows.
+    from <- "__PK_CHECK__"
+    duckdb::duckdb_register(conn, from, as.data.frame(data[pk_cols]), overwrite = TRUE)
+    on.exit(duckdb::duckdb_unregister(conn, from), add = TRUE, after = FALSE)
+    from <- sql_ident(conn, from)
+  }
 
-  report_duplicates(record, count_duplicate_keys(conn, view, pk_cols), ignore_duplicates)
+  report_duplicates(record, count_duplicate_keys(conn, from, pk_cols), ignore_duplicates)
 }
-
-

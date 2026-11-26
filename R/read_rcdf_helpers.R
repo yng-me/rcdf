@@ -91,16 +91,17 @@ check_duplicate_keys <- function(conn, pk, ignore_duplicates) {
     cols <- intersect(pk_columns(pk, record), DBI::dbListFields(conn, record))
     if (length(cols) == 0) next
 
-    report_duplicates(record, count_duplicate_keys(conn, record, cols), ignore_duplicates)
+    report_duplicates(record, count_duplicate_keys(conn, sql_ident(conn, record), cols), ignore_duplicates)
   }
 }
 
-# Number of distinct key values that occur more than once in `table`.
-count_duplicate_keys <- function(conn, table, cols) {
+# Number of distinct key values that occur more than once in `from`, an
+# already-quoted table name or parenthesised subquery.
+count_duplicate_keys <- function(conn, from, cols) {
   col_sql <- paste(vapply(cols, sql_ident, character(1), conn = conn), collapse = ", ")
   DBI::dbGetQuery(conn, sprintf(
     "SELECT count(*) AS n FROM (SELECT 1 FROM %s GROUP BY %s HAVING count(*) > 1)",
-    sql_ident(conn, table), col_sql
+    from, col_sql
   ))$n
 }
 

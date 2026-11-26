@@ -14,7 +14,11 @@ write_parquet(
 )
 }
 \arguments{
-\item{data}{A data frame or tibble to write.}
+\item{data}{A data frame or tibble to write, or a lazy table on a DuckDB
+connection. A lazy table is written with \code{COPY} on its own connection
+(\code{conn} is ignored), so its rows never come into R. When encrypting,
+this loads DuckDB's crypto support on that connection and registers the
+AES key there; the key stays registered until the connection closes.}
 
 \item{path}{Character string. Destination file path for the Parquet file.}
 

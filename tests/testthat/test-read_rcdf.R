@@ -442,3 +442,61 @@ test_that("read_rcdf checks a primary key stored in any archive, not only the la
 
   expect_error(read_rcdf(c(p1, p2), decryption_key = key, ignore_duplicates = FALSE), "duplicates in `d`")
 })
+
+
+test_that("an archive with a '../' entry is refused before anything is extracted", {
+  dir <- withr::local_tempdir()
+  stage <- file.path(dir, "stage", "lineage")
+  dir.create(stage, recursive = TRUE)
+  writeLines("evil", file.path(dir, "stage", "evil.txt"))
+  jsonlite::write_json(list(log_id = "x"), file.path(dir, "metadata.json"))
+
+  # Inner zip whose entry escapes the extract folder.
+  withr::with_dir(stage, suppressWarnings(
+    zip::zip(file.path(dir, "lineage.zip"), files = "../evil.txt", mode = "mirror")
+  ))
+  bad <- file.path(dir, "bad.rcdf")
+  zip::zip(bad, files = file.path(dir, c("metadata.json", "lineage.zip")), mode = "cherry-pick")
+
+  before <- list.files(tempdir())
+  expect_error(extract_rcdf(bad), "Unsafe file path")
+  expect_false("evil.txt" %in% setdiff(list.files(tempdir()), before))
+})
+
+test_that("an RSA key file without a .pem extension is recognised", {
+  dir <- withr::local_tempdir()
+  key <- openssl::rsa_keygen()
+  pub <- file.path(dir, "pub.pem")
+  prv <- file.path(dir, "private.key")
+  openssl::write_pem(key$pubkey, pub)
+  openssl::write_pem(key, prv)
+  path <- file.path(dir, "x.rcdf")
+  write_rcdf(rcdf_list(d = data.frame(a = 1:3)), path, pub)
+
+  expect_equal(read_rcdf(path, decryption_key = prv)$d$a, 1:3)
+})
+
+test_that("lazy read returns views over the archive files, not in-memory copies", {
+  dir <- withr::local_tempdir()
+  key <- openssl::rsa_keygen()
+  pub <- file.path(dir, "pub.pem")
+  openssl::write_pem(key$pubkey, pub)
+  path <- file.path(dir, "x.rcdf")
+  write_rcdf(rcdf_list(d = data.frame(a = 1:3)), path, pub)
+
+  x <- read_rcdf(path, decryption_key = key, lazy = TRUE)
+  conn <- dbplyr::remote_con(x$d)
+  withr::defer(DBI::dbDisconnect(conn, shutdown = TRUE))
+
+  type <- DBI::dbGetQuery(conn, "SELECT table_type FROM information_schema.tables WHERE table_name = 'd'")$table_type
+  expect_equal(type, "VIEW")
+  expect_equal(as.vector(collect(x$d)$a), 1:3)
+})
+
+test_that("a failed extraction leaves nothing behind in tempdir()", {
+  bad <- withr::local_tempfile(fileext = ".rcdf")
+  writeLines("not a zip file", bad)
+  before <- list.files(tempdir())
+  expect_error(extract_rcdf(bad))
+  expect_setequal(list.files(tempdir()), before)
+})

@@ -351,11 +351,14 @@ write_rcdf_sqlite <- function(data, path, db_name = "cbms_data", ..., parent_dir
 
 # Shared record loop for every export writer: collects each record once and
 # hands it to `write_fn(df, record, dir)`. `__data_dictionary` is metadata, not a record.
-write_each_record <- function(data, path, parent_dir, write_fn) {
+# `keep_lazy = TRUE` hands DuckDB lazy tables to `write_fn` uncollected.
+write_each_record <- function(data, path, parent_dir, write_fn, keep_lazy = FALSE) {
   data <- check_if_rcdf(data)
   dir <- dir_create_new(path, parent_dir)
   for (record in setdiff(names(data), "__data_dictionary")) {
-    write_fn(dplyr::collect(data[[record]]), record, dir)
+    df <- data[[record]]
+    if (!(keep_lazy && is_duckdb_lazy(df))) df <- dplyr::collect(df)
+    write_fn(df, record, dir)
   }
   invisible()
 }

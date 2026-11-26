@@ -34,7 +34,7 @@ read_rcdf(
 
 \item{return_meta}{Logical. If \code{TRUE}, the metadata will be returned as an attribute of the RCDF object.}
 
-\item{lazy}{Logical. If \code{TRUE}, each dataset is returned as a lazy \code{rcdf_tbl_db} DuckDB-backed table instead of being collected into memory. The underlying DuckDB connection is kept alive; call \code{collect()} on each element when you are ready to materialise. When you are done, close it with \code{DBI::dbDisconnect(dbplyr::remote_con(x[[1]]), shutdown = TRUE)}; otherwise it stays open (holding the decrypted data in memory) until R garbage-collects it. Default is \code{FALSE}.}
+\item{lazy}{Logical. If \code{TRUE}, each dataset is returned as a lazy \code{rcdf_tbl_db} DuckDB-backed table instead of being collected into memory. The tables are DuckDB views over the extracted (still encrypted) Parquet files, so nothing is loaded into memory until you \code{collect()}; this works for data larger than memory. The extracted files stay under \code{tempdir()} until the R session ends, so that drive needs room for about one copy of the archive. When you are done, close it with \code{DBI::dbDisconnect(dbplyr::remote_con(x[[1]]), shutdown = TRUE)}. All tables from one call share this connection, so this closes every one of them; otherwise it stays open until R garbage-collects it. Default is \code{FALSE}.}
 
 \item{n_threads}{Integer or \code{NULL}. Number of DuckDB threads to use for reading. \code{NULL} (default) lets DuckDB choose based on available cores.}
 }

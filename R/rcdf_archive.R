@@ -26,23 +26,34 @@ extract_rcdf <- function(path, meta_only = FALSE) {
   extract_dir <- tempfile()
   dir.create(extract_dir, recursive = TRUE, showWarnings = FALSE)
   cleanup <- function() unlink(extract_dir, recursive = TRUE, force = TRUE)
+  # Any failure (e.g. disk full mid-unzip) must not leave gigabytes in tempdir().
+  ok <- FALSE
+  on.exit(if (!ok) cleanup(), add = TRUE)
 
-  zip::unzip(path, exdir = extract_dir, junkpaths = TRUE)
+  # meta_only: pull just metadata.json, not the (possibly huge) lineage.zip.
+  only <- if (meta_only) grep("metadata\\.json$", zip::zip_list(path)$filename, value = TRUE)
+  zip::unzip(path, files = only, exdir = extract_dir, junkpaths = TRUE)
 
   lineage_zip <- file.path(extract_dir, "lineage.zip")
 
   if (file.exists(lineage_zip)) {
-    if (!meta_only) zip::unzip(lineage_zip, exdir = extract_dir)
+    # Anyone can build an archive (no key needed), so a "../" or absolute entry
+    # name must never reach unzip: it would write outside extract_dir.
+    entries <- zip::zip_list(lineage_zip)$filename
+    if (any(grepl("(^|[/\\\\])\\.\\.([/\\\\]|$)|^([/\\\\]|[A-Za-z]:)", entries))) {
+      stop("Unsafe file path inside RCDF archive; refusing to extract it.", call. = FALSE)
+    }
+    zip::unzip(lineage_zip, exdir = extract_dir)
     unlink(lineage_zip, force = TRUE)
   }
 
   meta_file <- file.path(extract_dir, "metadata.json")
 
   if (!file.exists(meta_file)) {
-    cleanup()
     stop("metadata.json not found inside RCDF archive.")
   }
 
+  ok <- TRUE
   list(
     meta = jsonlite::read_json(meta_file, simplifyVector = TRUE),
     dir = extract_dir,
@@ -72,6 +83,9 @@ pack_rcdf <- function(staging_dir, meta, path) {
     # Store only: encrypted parquet does not compress, and deflate made zipping ~10x slower.
     compression_level = 0
   )
+  # Drop the parquet files now they are in lineage.zip: peak disk use is two
+  # copies of the data instead of three (parquet + lineage.zip + archive).
+  unlink(rcdf_lineage_dir(staging_dir), recursive = TRUE, force = TRUE)
 
   zip::zip(
     zipfile = path,
