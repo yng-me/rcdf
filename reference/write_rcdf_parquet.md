@@ -22,7 +22,9 @@ write_rcdf_parquet(
 - data:
 
   A list where each element is a data frame or tibble that will be
-  written to a Parquet file.
+  written to a Parquet file. DuckDB lazy tables are streamed without
+  collecting; see
+  [`write_parquet`](https://yng-me.github.io/rcdf/reference/write_parquet.md).
 
 - path:
 
@@ -62,7 +64,7 @@ private_key <- file.path(dir, 'sample-private-key-pw.pem')
 
 rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key, password = '1234')
 #> duckdb keeps downloaded extensions and secrets in a temporary directory:
-#> ℹ /tmp/RtmpJoKwXx/duckdb
+#> ℹ /tmp/RtmpnSnMhd/duckdb
 #> This is removed when the R session ends.
 #> • Extensions are re-downloaded each session.
 #> • Secrets are lost.
@@ -73,22 +75,14 @@ temp_dir <- tempdir()
 
 write_rcdf_parquet(data = rcdf_data, path = temp_dir)
 #> duckdb keeps downloaded extensions and secrets in a temporary directory:
-#> ℹ /tmp/RtmpJoKwXx/duckdb
+#> ℹ /tmp/RtmpnSnMhd/duckdb
 #> This is removed when the R session ends.
 #> • Extensions are re-downloaded each session.
 #> • Secrets are lost.
 #> ℹ Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).
 #> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
 #> ℹ See ?duckdb_storage for details and alternatives.
-#> duckdb keeps downloaded extensions and secrets in a temporary directory:
-#> ℹ /tmp/RtmpJoKwXx/duckdb
-#> This is removed when the R session ends.
-#> • Extensions are re-downloaded each session.
-#> • Secrets are lost.
-#> ℹ Run duckdb(shared_home = TRUE) (or create ~/.duckdb) to keep them (suitable for most users).
-#> ℹ Run duckdb(shared_home = FALSE) to accept the temporary directory (and silence this message).
-#> ℹ See ?duckdb_storage for details and alternatives.
-#> [1] "/tmp/RtmpJoKwXx/data.parquet"
+#> [1] "/tmp/RtmpnSnMhd/data.parquet"
 
 unlink(temp_dir, force = TRUE)
 ```

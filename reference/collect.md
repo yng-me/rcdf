@@ -11,6 +11,9 @@ collect(data, ...)
 
 # S3 method for class 'rcdf_tbl_db'
 collect(data, ...)
+
+# Default S3 method
+collect(data, ...)
 ```
 
 ## Arguments

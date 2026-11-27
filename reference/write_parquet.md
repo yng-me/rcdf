@@ -22,7 +22,12 @@ write_parquet(
 
 - data:
 
-  A data frame or tibble to write.
+  A data frame or tibble to write, or a lazy table on a DuckDB
+  connection. A lazy table is written with `COPY` on its own connection
+  (`conn` is ignored), so its rows never come into R. When encrypting,
+  this loads DuckDB's crypto support on that connection and registers
+  the AES key there; the key stays registered until the connection
+  closes.
 
 - path:
 

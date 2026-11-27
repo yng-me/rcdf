@@ -1,5 +1,64 @@
 # Changelog
 
+## rcdf 0.2.2
+
+#### New features
+
+- Larger-than-memory data.
+  [`write_rcdf()`](https://yng-me.github.io/rcdf/reference/write_rcdf.md)
+  accepts lazy DuckDB tables (e.g. `dplyr::tbl(con, "x")`) and writes
+  them without loading them into R. `read_rcdf(lazy = TRUE)` no longer
+  loads the data either: nothing is read until you
+  [`collect()`](https://yng-me.github.io/rcdf/reference/collect.md), so
+  filter or summarise first. Lazy tables from other databases still work
+  but are loaded into R first.
+- [`read_rcdf()`](https://yng-me.github.io/rcdf/reference/read_rcdf.md)
+  accepts an RSA private key file with any name, not only `.pem`.
+
+#### Breaking changes
+
+- [`write_rcdf()`](https://yng-me.github.io/rcdf/reference/write_rcdf.md)
+  now stops with an error when `metadata$dictionary` is missing
+  `variable_name`, `label` or `type`, or is an unsupported file type.
+  Before, the dictionary was silently left out.
+- `created_at` and `updated_at` are now recorded in UTC,
+  e.g. `2026-11-26 02:00:00 UTC`.
+
+#### Bug fixes
+
+- [`collect()`](https://yng-me.github.io/rcdf/reference/collect.md)
+  works on ordinary lazy tables again when rcdf is loaded after dplyr.
+- [`collect()`](https://yng-me.github.io/rcdf/reference/collect.md) on a
+  lazy table whose connection was closed now explains why. All tables
+  from one `read_rcdf(lazy = TRUE)` call share one connection, so
+  closing it closes them all.
+- A failed
+  [`read_rcdf()`](https://yng-me.github.io/rcdf/reference/read_rcdf.md)
+  (e.g. disk full) no longer leaves large temporary files behind.
+
+#### Security
+
+- [`read_rcdf()`](https://yng-me.github.io/rcdf/reference/read_rcdf.md)
+  rejects archives that try to write files outside its temporary folder.
+
+#### Performance
+
+- [`write_rcdf()`](https://yng-me.github.io/rcdf/reference/write_rcdf.md)
+  no longer keeps an extra copy of your data in memory, and uses less
+  temporary disk space.
+- [`get_attrs()`](https://yng-me.github.io/rcdf/reference/get_attrs.md)
+  and
+  [`get_rcdf_metadata()`](https://yng-me.github.io/rcdf/reference/get_rcdf_metadata.md)
+  are fast on large archives, since they no longer unpack the data.
+
+#### Notes
+
+- Lazy reads and all writes use
+  [`tempdir()`](https://rdrr.io/r/base/tempfile.html). For very large
+  data, point `TMPDIR` to a drive with plenty of free space: a lazy read
+  needs about twice the archive size while opening and keeps about one
+  copy until R exits.
+
 ## rcdf 0.2.1
 
 CRAN release: 2026-11-19

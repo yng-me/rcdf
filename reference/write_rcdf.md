@@ -24,7 +24,14 @@ write_rcdf(
 - data:
 
   A list of data frames or tables to be written to RCDF format. Each
-  element of the list represents a record.
+  element of the list represents a record. An element may be a lazy
+  table on a DuckDB connection (e.g. from
+  [`dplyr::tbl()`](https://dplyr.tidyverse.org/reference/tbl.html) or
+  `read_rcdf(lazy = TRUE)`); it is streamed to the archive by DuckDB
+  without being collected into R, so it can be larger than memory. Lazy
+  tables on other databases are collected first. See
+  [`write_parquet`](https://yng-me.github.io/rcdf/reference/write_parquet.md)
+  for the effect on the source connection.
 
 - path:
 

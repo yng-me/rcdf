@@ -68,14 +68,18 @@ read_rcdf(
 - lazy:
 
   Logical. If `TRUE`, each dataset is returned as a lazy `rcdf_tbl_db`
-  DuckDB-backed table instead of being collected into memory. The
-  underlying DuckDB connection is kept alive; call
-  [`collect()`](https://yng-me.github.io/rcdf/reference/collect.md) on
-  each element when you are ready to materialise. When you are done,
-  close it with
-  `DBI::dbDisconnect(dbplyr::remote_con(x[[1]]), shutdown = TRUE)`;
-  otherwise it stays open (holding the decrypted data in memory) until R
-  garbage-collects it. Default is `FALSE`.
+  DuckDB-backed table instead of being collected into memory. The tables
+  are DuckDB views over the extracted (still encrypted) Parquet files,
+  so nothing is loaded into memory until you
+  [`collect()`](https://yng-me.github.io/rcdf/reference/collect.md);
+  this works for data larger than memory. The extracted files stay under
+  [`tempdir()`](https://rdrr.io/r/base/tempfile.html) until the R
+  session ends, so that drive needs room for about one copy of the
+  archive. When you are done, close it with
+  `DBI::dbDisconnect(dbplyr::remote_con(x[[1]]), shutdown = TRUE)`. All
+  tables from one call share this connection, so this closes every one
+  of them; otherwise it stays open until R garbage-collects it. Default
+  is `FALSE`.
 
 - n_threads:
 
