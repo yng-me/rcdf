@@ -44,7 +44,7 @@ private_key <- file.path(dir, 'sample-private-key-pw.pem')
 
 rcdf_data <- read_rcdf(path = rcdf_path, decryption_key = private_key, password = '1234')
 #> duckdb keeps downloaded extensions and secrets in a temporary directory:
-#> ℹ /tmp/RtmpnSnMhd/duckdb
+#> ℹ /tmp/RtmpQ9o2F9/duckdb
 #> This is removed when the R session ends.
 #> • Extensions are re-downloaded each session.
 #> • Secrets are lost.
