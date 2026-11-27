@@ -13,14 +13,6 @@ test_that("as_rcdf adds the 'rcdf' class", {
 })
 
 
-# Test `raw_to_hex()`
-test_that("raw_to_hex converts raw to hex", {
-  raw_val <- charToRaw("hello")
-  hex_val <- raw_to_hex(raw_val)
-  expect_equal(hex_val, "68656C6C6F")
-  expect_error(raw_to_hex("not raw"), "Input must be a raw vector.")
-})
-
 # Test `dir_create_new()`
 test_that("dir_create_new creates a new directory", {
   new_dir <- tempfile()
@@ -88,12 +80,8 @@ test_that("check_if_rcdf passes through an existing rcdf unchanged", {
 })
 
 
-# Test `hex_to_raw()` round-trip with `raw_to_hex()`
-test_that("hex_to_raw round-trips correctly with raw_to_hex", {
-  original <- charToRaw("hello")
-  hex <- raw_to_hex(original)
-  restored <- hex_to_raw(hex)
-  expect_equal(restored, original)
+test_that("hex_to_raw decodes hex", {
+  expect_equal(hex_to_raw("68656C6C6F"), charToRaw("hello"))
 })
 
 

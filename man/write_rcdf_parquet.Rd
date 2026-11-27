@@ -14,7 +14,7 @@ write_rcdf_parquet(
 )
 }
 \arguments{
-\item{data}{A list where each element is a data frame or tibble that will be written to a Parquet file.}
+\item{data}{A list where each element is a data frame or tibble that will be written to a Parquet file. DuckDB lazy tables are streamed without collecting; see \code{\link{write_parquet}}.}
 
 \item{path}{The directory path where the Parquet files will be written.}
 

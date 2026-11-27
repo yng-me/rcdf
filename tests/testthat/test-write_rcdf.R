@@ -184,3 +184,57 @@ test_that("write_rcdf stores archive entries without zip compression", {
   entries <- zip::zip_list(path)
   expect_equal(entries$compressed_size, entries$uncompressed_size)
 })
+
+
+test_that("write_rcdf stops on a dictionary that lacks required columns", {
+  dir <- withr::local_tempdir()
+  pub <- create_mock_pub_key(dir)
+  dict <- data.frame(variable = "a", label = "A", type = "numeric")
+  expect_error(
+    write_rcdf(rcdf_list(d = data.frame(a = 1)), file.path(dir, "x.rcdf"), pub, metadata = list(dictionary = dict)),
+    "missing required column\\(s\\): variable_name"
+  )
+  expect_error(
+    write_rcdf(rcdf_list(d = data.frame(a = 1)), file.path(dir, "y.rcdf"), pub,
+               metadata = list(dictionary = file.path(dir, "dict.tsv"))),
+    "Unsupported dictionary file type"
+  )
+})
+
+test_that("write_rcdf keeps factor and labelled columns through the encrypted write", {
+  dir <- withr::local_tempdir()
+  key <- openssl::rsa_keygen()
+  pub <- file.path(dir, "pub.pem")
+  openssl::write_pem(key$pubkey, pub)
+  df <- data.frame(f = factor(c("x", "y", "x")), n = c(1.5, NA, 3))
+  df$l <- haven::labelled(c(1L, 2L, 1L), labels = c(Yes = 1L, No = 2L))
+  path <- file.path(dir, "t.rcdf")
+  write_rcdf(rcdf_list(d = df), path, pub)
+
+  out <- read_rcdf(path, decryption_key = key)$d
+  expect_equal(as.character(out$f), c("x", "y", "x"))
+  expect_equal(out$n, c(1.5, NA, 3))
+  expect_equal(as.vector(out$l), c(1, 2, 1))
+})
+
+test_that("write_rcdf stores created_at in UTC", {
+  dir <- withr::local_tempdir()
+  pub <- create_mock_pub_key(dir)
+  path <- file.path(dir, "x.rcdf")
+  write_rcdf(rcdf_list(d = data.frame(a = 1)), path, pub)
+  expect_match(get_attrs(path)$created_at, "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2} UTC$")
+})
+
+test_that("pack_rcdf removes the staged parquet files once they are zipped", {
+  staging <- withr::local_tempdir()
+  dir.create(rcdf_lineage_dir(staging))
+  writeLines("x", file.path(rcdf_lineage_dir(staging), "d.parquet"))
+  path <- file.path(withr::local_tempdir(), "x.rcdf")
+
+  pack_rcdf(staging, list(log_id = "abc"), path)
+
+  expect_false(dir.exists(rcdf_lineage_dir(staging)))
+  ext <- extract_rcdf(path)
+  on.exit(ext$cleanup(), add = TRUE)
+  expect_equal(basename(ext$files), "d.parquet")
+})

@@ -51,28 +51,47 @@ load_encrypted_parquet <- function(conn, table, files, key_labels, columns = NUL
   invisible()
 }
 
-write_encrypted_parquet <- function(conn, data, path, secret, compression = "zstd") {
-
-  load_duckdb_crypto(conn)
-  register_parquet_key(conn, secret)
+# Writes a data frame to Parquet, encrypted when `secret` is given. The frame is
+# registered as a view (no copy), so peak memory stays at one copy of the data.
+write_df_parquet <- function(conn, data, path, secret, compression = "zstd") {
 
   tmp <- "__TEMP_DATA__"
-  DBI::dbWriteTable(conn, tmp, data, overwrite = TRUE)
-  # Always drop the plaintext temp table, even if COPY fails.
-  on.exit(DBI::dbRemoveTable(conn, tmp), add = TRUE)
+  duckdb::duckdb_register(conn, tmp, as.data.frame(data), overwrite = TRUE)
+  on.exit(duckdb::duckdb_unregister(conn, tmp), add = TRUE)
 
-  DBI::dbExecute(
-    conn,
-    sprintf(
-      "COPY %s TO %s (ENCRYPTION_CONFIG { footer_key: %s }, COMPRESSION %s)",
-      sql_ident(conn, tmp),
-      sql_literal(conn, path),
-      sql_literal(conn, secret$key),
-      sql_literal(conn, toupper(compression))
-    )
-  )
+  copy_to_parquet(conn, sql_ident(conn, tmp), path, secret, compression)
+}
+
+# COPY `source` (a quoted table name or parenthesised query) to a Parquet file.
+copy_to_parquet <- function(conn, source, path, secret, compression) {
+
+  opts <- sprintf("FORMAT PARQUET, COMPRESSION %s", sql_literal(conn, toupper(compression)))
+
+  if (!is.null(secret)) {
+    load_duckdb_crypto(conn)
+    register_parquet_key(conn, secret)
+    opts <- sprintf("%s, ENCRYPTION_CONFIG { footer_key: %s }", opts, sql_literal(conn, secret$key))
+  }
+
+  DBI::dbExecute(conn, sprintf("COPY %s TO %s (%s)", source, sql_literal(conn, path), opts))
 
   invisible()
+}
+
+# A dbplyr lazy table on a DuckDB connection.
+is_duckdb_lazy <- function(x) {
+  inherits(x, "tbl_lazy") && inherits(dbplyr::remote_con(x), "duckdb_connection")
+}
+
+# Streams a DuckDB lazy table to Parquet with COPY on its own connection, so the
+# rows never come into R. When encrypting, the key stays registered on that
+# connection until it closes (DuckDB cannot unregister one).
+write_lazy_parquet <- function(data, path, secret, compression = "zstd") {
+
+  # Random label so we never replace a key the caller registered themselves.
+  if (!is.null(secret)) secret$key <- paste0("rcdf_", generate_uuid())
+
+  copy_to_parquet(dbplyr::remote_con(data), sprintf("(%s)", dbplyr::sql_render(data)), path, secret, compression)
 }
 
 # Load the full crypto module needed for AES-encrypted Parquet writes.

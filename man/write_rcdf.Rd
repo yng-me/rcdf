@@ -14,7 +14,11 @@ write_rcdf(
 )
 }
 \arguments{
-\item{data}{A list of data frames or tables to be written to RCDF format. Each element of the list represents a record.}
+\item{data}{A list of data frames or tables to be written to RCDF format. Each element of the list represents a record.
+An element may be a lazy table on a DuckDB connection (e.g. from \code{dplyr::tbl()} or
+\code{read_rcdf(lazy = TRUE)}); it is streamed to the archive by DuckDB without being
+collected into R, so it can be larger than memory. Lazy tables on other databases are
+collected first. See \code{\link{write_parquet}} for the effect on the source connection.}
 
 \item{path}{The path where the RCDF file will be written. The file will be saved with a \code{.rcdf} extension if not already specified.}
 

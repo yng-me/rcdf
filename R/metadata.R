@@ -157,6 +157,8 @@ read_metadata <- function(path) {
       conn_pq,
       sprintf("SELECT * FROM read_parquet(%s)", sql_literal(conn_pq, path))
     )
+  } else {
+    stop("Unsupported dictionary file type (use .json, .csv, .xlsx or .parquet): ", path, call. = FALSE)
   }
 
   data
@@ -183,14 +185,13 @@ read_metadata <- function(path) {
 
 get_rcdf_metadata <- function(path, name = NULL, key) {
 
-  ext <- extract_rcdf(path, meta_only = TRUE)
-  ext$cleanup()
+  meta <- get_attrs(path)
 
   if(!is.null(name)) {
-    ext$meta[[name]]
+    meta[[name]]
   } else {
     warning("The `key` argument is now deprecated. Use `name` instead.")
-    ext$meta[[key]]
+    meta[[key]]
   }
 
 }

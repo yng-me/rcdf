@@ -11,7 +11,7 @@
 #' @param ignore_duplicates A \code{logical} flag. If \code{TRUE}, a warning is issued when duplicates are found, based on the primary key/s defined during creation of RCDF file. If \code{FALSE}, the function stops with an error.
 #' @param recursive Logical. If \code{TRUE} and \code{path} is a directory, the function will search recursively for \code{.rcdf} files.
 #' @param return_meta Logical. If \code{TRUE}, the metadata will be returned as an attribute of the RCDF object.
-#' @param lazy Logical. If \code{TRUE}, each dataset is returned as a lazy \code{rcdf_tbl_db} DuckDB-backed table instead of being collected into memory. The underlying DuckDB connection is kept alive; call \code{collect()} on each element when you are ready to materialise. When you are done, close it with \code{DBI::dbDisconnect(dbplyr::remote_con(x[[1]]), shutdown = TRUE)}; otherwise it stays open (holding the decrypted data in memory) until R garbage-collects it. Default is \code{FALSE}.
+#' @param lazy Logical. If \code{TRUE}, each dataset is returned as a lazy \code{rcdf_tbl_db} DuckDB-backed table instead of being collected into memory. The tables are DuckDB views over the extracted (still encrypted) Parquet files, so nothing is loaded into memory until you \code{collect()}; this works for data larger than memory. The extracted files stay under \code{tempdir()} until the R session ends, so that drive needs room for about one copy of the archive. When you are done, close it with \code{DBI::dbDisconnect(dbplyr::remote_con(x[[1]]), shutdown = TRUE)}. All tables from one call share this connection, so this closes every one of them; otherwise it stays open until R garbage-collects it. Default is \code{FALSE}.
 #' @param n_threads Integer or \code{NULL}. Number of DuckDB threads to use for reading. \code{NULL} (default) lets DuckDB choose based on available cores.
 #'
 #' @return An RCDF object, which is a list of Parquet files (one for each record) along with attached metadata.
@@ -54,7 +54,8 @@ read_rcdf <- function(
   conn <- open_duckdb_connection(n_threads = n_threads)
   on.exit(DBI::dbDisconnect(conn, shutdown = TRUE), add = TRUE)
 
-  # Extracted parquet files live until read_rcdf() returns.
+  # Extracted (still encrypted) parquet files live until read_rcdf() returns,
+  # or, for lazy reads, until the R session ends.
   cleanups <- list()
   run_cleanups <- function() for (f in cleanups) f()
   on.exit(run_cleanups(), add = TRUE)
@@ -88,12 +89,11 @@ read_rcdf <- function(
   meta_list$dictionary <- NULL
   meta_list$primary_key <- NULL
 
-  # One table per record; same-named records across files are combined.
-  # Eager reads use views so data goes from parquet straight into R (one copy,
-  # not two). Lazy reads copy into DuckDB, since the files are deleted on return.
+  # One view per record; same-named records across files are combined. Views
+  # read the parquet files on demand, so nothing is loaded until it is collected.
   for (record in unique(sources$record)) {
     hit <- sources$record == record
-    load_encrypted_parquet(conn, record, sources$file[hit], sources$key_label[hit], view = !lazy)
+    load_encrypted_parquet(conn, record, sources$file[hit], sources$key_label[hit], view = TRUE)
   }
 
   # Checked after all files load, so duplicates across files are caught too.
@@ -101,10 +101,10 @@ read_rcdf <- function(
   if (!is.null(pk)) check_duplicate_keys(conn, pk, ignore_duplicates)
 
   if (lazy) {
-    # Return lazy DuckDB-backed tables. The connection is kept open; the
-    # caller is responsible for collecting when ready.
-    run_cleanups()
-    on.exit(NULL, add = FALSE)  # cancel the auto-disconnect
+    # Keep the connection and the files its views read. R deletes tempdir() on exit.
+    # shortcut: files are not freed on dbDisconnect, only at session end; add a
+    # cleanup hook if long sessions read many large archives.
+    on.exit(NULL, add = FALSE)
     pq <- collect_tables_lazy(conn, data_dictionary)
   } else {
     pq <- collect_tables(conn, data_dictionary)

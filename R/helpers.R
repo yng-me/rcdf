@@ -35,6 +35,12 @@ collect <- function(data, ...) { UseMethod('collect') }
 #' @export
 collect.rcdf_tbl_db <- function(data, ...) {
 
+  if (!DBI::dbIsValid(dbplyr::remote_con(data))) {
+    stop("The DuckDB connection behind this lazy table is closed. All tables from one ",
+         "`read_rcdf(lazy = TRUE)` call share one connection, so closing it closes them all, ",
+         "and lazy tables do not survive an R restart. Read the file again.", call. = FALSE)
+  }
+
   metadata <- attributes(data)$metadata
   attr(data, 'metadata') <- NULL
   class(data) <- setdiff(class(data), "rcdf_tbl_db")
@@ -42,6 +48,11 @@ collect.rcdf_tbl_db <- function(data, ...) {
   collected <- dplyr::collect(data)
   if (!is.null(metadata)) add_metadata(collected, metadata) else collected
 }
+
+# rcdf's collect() masks dplyr's when attached later; pass everything else through.
+#' @rdname collect
+#' @export
+collect.default <- function(data, ...) dplyr::collect(data, ...)
 
 
 
